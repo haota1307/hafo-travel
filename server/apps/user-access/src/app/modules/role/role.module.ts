@@ -7,7 +7,7 @@ import { RoleRepository } from './repositories/role.repository';
 @Module({
   imports: [MongooseModule.forFeature([RoleDestination])],
   controllers: [],
-  providers: [RoleRepository, RoleRepository],
+  providers: [RoleRepository],
   exports: [],
 })
 export class RoleModule {}

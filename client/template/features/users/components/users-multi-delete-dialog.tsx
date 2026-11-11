@@ -1,38 +1,44 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { type Table } from '@tanstack/react-table';
-import { AlertTriangle } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { type Table } from "@/template/components/data-table/table-features";
+import { AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
-import { useI18n } from '@/template/i18n/provider';
-import { sleep } from '@/template/lib/utils';
-import { Alert, AlertDescription, AlertTitle } from '@/template/components/ui/alert';
-import { Input } from '@/template/components/ui/input';
-import { Label } from '@/template/components/ui/label';
-import { ConfirmDialog } from '@/template/components/confirm-dialog';
+import { useI18n } from "@/template/i18n/provider";
+import { sleep } from "@/template/lib/utils";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/template/components/ui/alert";
+import { Input } from "@/template/components/ui/input";
+import { Label } from "@/template/components/ui/label";
+import { ConfirmDialog } from "@/template/components/confirm-dialog";
 
-type UserMultiDeleteDialogProps<TData> = {
+type UserMultiDeleteDialogProps<TData extends object> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table: Table<TData>;
 };
 
-const CONFIRM_WORD = 'DELETE';
+const CONFIRM_WORD = "DELETE";
 
-export function UsersMultiDeleteDialog<TData>({
+export function UsersMultiDeleteDialog<TData extends object>({
   open,
   onOpenChange,
   table,
 }: UserMultiDeleteDialogProps<TData>) {
   const { t } = useI18n();
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
   const handleDelete = () => {
     if (value.trim() !== CONFIRM_WORD) {
-      toast.error(t('Please type "{word}" to confirm.', { word: CONFIRM_WORD }));
+      toast.error(
+        t('Please type "{word}" to confirm.', { word: CONFIRM_WORD }),
+      );
 
       return;
     }
@@ -40,14 +46,14 @@ export function UsersMultiDeleteDialog<TData>({
     onOpenChange(false);
 
     toast.promise(sleep(2000), {
-      loading: t('Deleting users...'),
+      loading: t("Deleting users..."),
       success: () => {
-        setValue('');
+        setValue("");
         table.resetRowSelection();
 
-        return t('Deleted {count} user(s)', { count: selectedRows.length });
+        return t("Deleted {count} user(s)", { count: selectedRows.length });
       },
-      error: t('Error'),
+      error: t("Error"),
     });
   };
 
@@ -59,8 +65,11 @@ export function UsersMultiDeleteDialog<TData>({
       disabled={value.trim() !== CONFIRM_WORD}
       title={
         <span className="text-destructive">
-          <AlertTriangle className="me-1 inline-block stroke-destructive" size={18} />{' '}
-          {t('Delete {count} user(s)', { count: selectedRows.length })}
+          <AlertTriangle
+            className="me-1 inline-block stroke-destructive"
+            size={18}
+          />{" "}
+          {t("Delete {count} user(s)", { count: selectedRows.length })}
         </span>
       }
       desc={
@@ -73,8 +82,8 @@ export function UsersMultiDeleteDialog<TData>({
           className="space-y-4"
         >
           <p className="mb-2">
-            {t('Are you sure you want to delete the selected users?')} <br />
-            {t('This action cannot be undone.')}{' '}
+            {t("Are you sure you want to delete the selected users?")} <br />
+            {t("This action cannot be undone.")}{" "}
           </p>
 
           <Label className="my-4 flex flex-col items-start gap-1.5">
@@ -93,14 +102,16 @@ export function UsersMultiDeleteDialog<TData>({
           </Label>
 
           <Alert variant="destructive">
-            <AlertTitle>{t('Warning!')}</AlertTitle>
+            <AlertTitle>{t("Warning!")}</AlertTitle>
             <AlertDescription>
-              {t('Please be careful, this operation can not be rolled back.')}{' '}
+              {t(
+                "Please be careful, this operation can not be rolled back.",
+              )}{" "}
             </AlertDescription>
           </Alert>
         </form>
       }
-      confirmText={t('Delete')}
+      confirmText={t("Delete")}
       destructive
     />
   );

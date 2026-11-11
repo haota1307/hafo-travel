@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { AuthorizeResponse } from '../tcp/authorizer';
+import { AuthorizeResponse } from '../common/authorization.interface';
 
 export interface RequestContext extends Request {
   processId?: string;

@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { type ColumnDef } from '@tanstack/react-table';
+import { useMemo } from "react";
+import { type ColumnDef } from "@/template/components/data-table/table-features";
 
-import { useI18n } from '@/template/i18n/provider';
-import { Badge } from '@/template/components/ui/badge';
-import { Checkbox } from '@/template/components/ui/checkbox';
-import { DataTableColumnHeader } from '@/template/components/data-table';
+import { useI18n } from "@/template/i18n/provider";
+import { Badge } from "@/template/components/ui/badge";
+import { Checkbox } from "@/template/components/ui/checkbox";
+import { DataTableColumnHeader } from "@/template/components/data-table";
 
-import { labels, priorities, statuses } from '../data/data';
-import { type Task } from '../data/schema';
-import { DataTableRowActions } from './data-table-row-actions';
+import { labels, priorities, statuses } from "../data/data";
+import { type Task } from "../data/schema";
+import { DataTableRowActions } from "./data-table-row-actions";
 
 export function useTasksColumns() {
   const { t } = useI18n();
@@ -18,15 +18,17 @@ export function useTasksColumns() {
   return useMemo<ColumnDef<Task>[]>(
     () => [
       {
-        id: 'select',
+        id: "select",
         header: ({ table }) => (
           <Checkbox
             checked={
               table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
+              (table.getIsSomePageRowsSelected() && "indeterminate")
             }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label={t('Select all')}
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label={t("Select all")}
             className="translate-y-0.5"
           />
         ),
@@ -34,7 +36,7 @@ export function useTasksColumns() {
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label={t('Select row')}
+            aria-label={t("Select row")}
             className="translate-y-0.5"
           />
         ),
@@ -42,36 +44,48 @@ export function useTasksColumns() {
         enableHiding: false,
       },
       {
-        accessorKey: 'id',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Task')} />,
-        cell: ({ row }) => <div className="w-20">{row.getValue('id')}</div>,
+        accessorKey: "id",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title={t("Task")} />
+        ),
+        cell: ({ row }) => <div className="w-20">{row.getValue("id")}</div>,
         enableSorting: false,
         enableHiding: false,
       },
       {
-        accessorKey: 'title',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Title')} />,
+        accessorKey: "title",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title={t("Title")} />
+        ),
         meta: {
-          className: 'ps-1 max-w-0 w-2/3',
-          tdClassName: 'ps-4',
+          className: "ps-1 max-w-0 w-2/3",
+          tdClassName: "ps-4",
         },
         cell: ({ row }) => {
-          const label = labels.find((label) => label.value === row.original.label);
+          const label = labels.find(
+            (label) => label.value === row.original.label,
+          );
 
           return (
             <div className="flex space-x-2">
               {label && <Badge variant="outline">{t(label.label)}</Badge>}
-              <span className="truncate font-medium">{t(row.getValue('title'))}</span>
+              <span className="truncate font-medium">
+                {t(row.getValue("title"))}
+              </span>
             </div>
           );
         },
       },
       {
-        accessorKey: 'status',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Status')} />,
-        meta: { className: 'ps-1', tdClassName: 'ps-4' },
+        accessorKey: "status",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title={t("Status")} />
+        ),
+        meta: { className: "ps-1", tdClassName: "ps-4" },
         cell: ({ row }) => {
-          const status = statuses.find((status) => status.value === row.getValue('status'));
+          const status = statuses.find(
+            (status) => status.value === row.getValue("status"),
+          );
 
           if (!status) {
             return null;
@@ -79,7 +93,9 @@ export function useTasksColumns() {
 
           return (
             <div className="flex w-25 items-center gap-2">
-              {status.icon && <status.icon className="size-4 text-muted-foreground" />}
+              {status.icon && (
+                <status.icon className="size-4 text-muted-foreground" />
+              )}
               <span>{t(status.label)}</span>
             </div>
           );
@@ -89,12 +105,14 @@ export function useTasksColumns() {
         },
       },
       {
-        accessorKey: 'priority',
-        header: ({ column }) => <DataTableColumnHeader column={column} title={t('Priority')} />,
-        meta: { className: 'ps-1', tdClassName: 'ps-3' },
+        accessorKey: "priority",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title={t("Priority")} />
+        ),
+        meta: { className: "ps-1", tdClassName: "ps-3" },
         cell: ({ row }) => {
           const priority = priorities.find(
-            (priority) => priority.value === row.getValue('priority'),
+            (priority) => priority.value === row.getValue("priority"),
           );
 
           if (!priority) {
@@ -103,7 +121,9 @@ export function useTasksColumns() {
 
           return (
             <div className="flex items-center gap-2">
-              {priority.icon && <priority.icon className="size-4 text-muted-foreground" />}
+              {priority.icon && (
+                <priority.icon className="size-4 text-muted-foreground" />
+              )}
               <span>{t(priority.label)}</span>
             </div>
           );
@@ -113,7 +133,7 @@ export function useTasksColumns() {
         },
       },
       {
-        id: 'actions',
+        id: "actions",
         cell: ({ row }) => <DataTableRowActions row={row} />,
       },
     ],

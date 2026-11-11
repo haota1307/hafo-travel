@@ -1,37 +1,45 @@
-import { requestTcp } from '@common/utils/rpc.util';
+import { requestGrpc } from '@common/utils/rpc.util';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Inject, Post } from '@nestjs/common';
-
+import {
+  Body,
+  Controller,
+  Inject,
+  type OnModuleInit,
+  Post,
+} from '@nestjs/common';
+import type { ClientGrpc } from '@nestjs/microservices';
 import {
   LoginRequestDto,
   LoginResponseDto,
 } from '@common/interfaces/gateway/authorizer';
-import { TCP_SERVICES } from '@common/configuration/tcp.config';
-import { ProcessId } from '@common/decorators/process-id.decorator';
-import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
-import { ResponseDto } from '@common/interfaces/gateway/response.interface';
+import { GRPC_SERVICES } from '@common/configuration/grpc.config';
 import {
-  LoginTcpRequest,
-  LoginTcpResponse,
-} from '@common/interfaces/tcp/authorizer';
-import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
+  AUTHORIZER_SERVICE_NAME,
+  type AuthorizerServiceClient,
+} from '@common/interfaces/grpc/authorizer/v1/authorizer';
+import { ProcessId } from '@common/decorators/process-id.decorator';
+import { ResponseDto } from '@common/interfaces/gateway/response.interface';
 
 @ApiTags('Authorizer')
 @Controller('authorizer')
-export class AuthorizerController {
+export class AuthorizerController implements OnModuleInit {
+  private authorizer: AuthorizerServiceClient;
+
   constructor(
-    @Inject(TCP_SERVICES.AUTHORIZER_SERVICE)
-    private readonly authorizerClient: TcpClient,
+    @Inject(GRPC_SERVICES.AUTHORIZER_SERVICE)
+    private readonly authorizerClient: ClientGrpc,
   ) {}
+
+  onModuleInit() {
+    this.authorizer = this.authorizerClient.getService<AuthorizerServiceClient>(
+      AUTHORIZER_SERVICE_NAME,
+    );
+  }
 
   @Post('login')
   @ApiOkResponse({ type: ResponseDto<LoginResponseDto> })
   @ApiOperation({ summary: 'Login with username and password' })
   login(@Body() body: LoginRequestDto, @ProcessId() processId: string) {
-    return requestTcp<LoginTcpResponse, LoginTcpRequest>(
-      this.authorizerClient,
-      TCP_REQUEST_MESSAGE.AUTHORIZER.LOGIN,
-      { data: body, processId },
-    );
+    return requestGrpc(this.authorizer.login, body, { processId });
   }
 }

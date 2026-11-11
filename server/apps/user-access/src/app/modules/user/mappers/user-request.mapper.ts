@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 
 import { User } from '@common/schemas/user.schema';
-import { CreateUserTcpRequest } from '@common/interfaces/tcp/user';
+import type { CreateUserRequest } from '@common/interfaces/grpc/user-access/v1/user-access';
 
 export const createUserRequestMapper = (
-  data: CreateUserTcpRequest,
+  data: CreateUserRequest,
   userId: string,
 ): Partial<User> => {
   return {

@@ -1,26 +1,33 @@
 import { Controller } from '@nestjs/common';
-
-import { MessagePattern } from '@nestjs/microservices';
+import { GrpcMethod } from '@nestjs/microservices';
+import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
+import {
+  AUTHORIZER_SERVICE_NAME,
+  type LoginRequest,
+  type VerifyUserTokenRequest,
+  type VerifyUserTokenResponse,
+} from '@common/interfaces/grpc/authorizer/v1/authorizer';
+import { grpcCallContext } from '@common/utils/rpc.util';
 import { AuthorizerService } from '../services/authorizer.service';
-import { LoginTcpRequest } from '@common/interfaces/tcp/authorizer';
-import { ProcessId } from '@common/decorators/process-id.decorator';
-import { RequestParams } from '@common/decorators/request-param.decorator';
-import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 
 @Controller()
 export class AuthorizerController {
   constructor(private readonly authorizerService: AuthorizerService) {}
 
-  @MessagePattern(TCP_REQUEST_MESSAGE.AUTHORIZER.LOGIN)
-  login(@RequestParams() body: LoginTcpRequest) {
+  @GrpcMethod(AUTHORIZER_SERVICE_NAME, 'Login')
+  login(body: LoginRequest) {
     return this.authorizerService.login(body);
   }
 
-  @MessagePattern(TCP_REQUEST_MESSAGE.AUTHORIZER.VERIFY_USER_TOKEN)
+  @GrpcMethod(AUTHORIZER_SERVICE_NAME, 'VerifyUserToken')
   verifyUserToken(
-    @RequestParams() token: string,
-    @ProcessId() processId: string,
+    body: VerifyUserTokenRequest,
+    metadata: Metadata,
+    call: ServerUnaryCall<VerifyUserTokenRequest, VerifyUserTokenResponse>,
   ) {
-    return this.authorizerService.verifyUserToken(token, processId);
+    return this.authorizerService.verifyUserToken(
+      body.token,
+      grpcCallContext(metadata, call),
+    );
   }
 }

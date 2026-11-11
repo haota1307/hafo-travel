@@ -1,7 +1,7 @@
 {
   "editor.multiCursorModifier": "alt",
   "editor.definitionLinkOpensInPeek": false,
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.preferences.importModuleSpecifier": "project-relative",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }

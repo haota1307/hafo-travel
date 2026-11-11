@@ -1,6 +1,29 @@
 import { publicImages } from "@/features/public-site/data/image-assets";
 import { useTranslations } from "next-intl";
-import { PublicImage } from "@/features/public-site/components/public-image";
+import { HowWorksItem } from "@/features/public-site/components/how-works-item";
+
+const steps = [
+  {
+    icon: publicImages.icons.inspiration,
+    title: "howItWorks.goalsTitle",
+    description: "howItWorks.goalsDescription",
+  },
+  {
+    icon: publicImages.icons.destination,
+    title: "howItWorks.matchesTitle",
+    description: "howItWorks.matchesDescription",
+  },
+  {
+    icon: publicImages.icons.conversation,
+    title: "howItWorks.packageTitle",
+    description: "howItWorks.packageDescription",
+  },
+  {
+    icon: publicImages.icons.journey,
+    title: "howItWorks.progressTitle",
+    description: "howItWorks.progressDescription",
+  },
+] as const;
 
 export function HowItWorksSection() {
   const t = useTranslations("publicSite");
@@ -34,140 +57,20 @@ export function HowItWorksSection() {
             </div>
           </div>
           <div className="how-works">
-            <div data-animation="how-works-item-1" className="how-works-item">
-              <div
-                data-animation="how-works-item-head-1"
-                className="how-works-item__head"
-              >
-                <PublicImage
-                  src={publicImages.icons.inspiration}
-                  loading="lazy"
-                  alt=""
-                  className="how-works-item__icon"
-                />
-                <div className="how-works-item__count">{"01"}</div>
-              </div>
-              <div className="how-works-item__body">
-                <div
-                  data-animation="how-works-item-title-1"
-                  className="body-md"
-                >
-                  {t.rich("howItWorks.goalsTitle", {
-                    emphasis: (chunks) => (
-                      <span className="mobile-fw">{chunks}</span>
-                    ),
-                  })}
-                </div>
-                <div
-                  data-animation="how-works-item-description-1"
-                  className="body-md color-white-50 mobile-no-br"
-                >
-                  {t.rich("howItWorks.goalsDescription", { br: () => <br /> })}
-                </div>
-              </div>
-            </div>
-            <div data-animation="how-works-item-2" className="how-works-item">
-              <div
-                data-animation="how-works-item-head-2"
-                className="how-works-item__head"
-              >
-                <PublicImage
-                  src={publicImages.icons.destination}
-                  loading="lazy"
-                  alt=""
-                  className="how-works-item__icon"
-                />
-                <div className="how-works-item__count">{"02"}</div>
-              </div>
-              <div className="how-works-item__body">
-                <div
-                  data-animation="how-works-item-title-2"
-                  className="body-md"
-                >
-                  {t.rich("howItWorks.matchesTitle", {
-                    emphasis: (chunks) => (
-                      <span className="mobile-fw">{chunks}</span>
-                    ),
-                  })}
-                </div>
-                <div
-                  data-animation="how-works-item-description-2"
-                  className="body-md color-white-50 mobile-no-br"
-                >
-                  {t.rich("howItWorks.matchesDescription", {
-                    br: () => <br />,
-                  })}
-                </div>
-              </div>
-            </div>
-            <div data-animation="how-works-item-3" className="how-works-item">
-              <div
-                data-animation="how-works-item-head-3"
-                className="how-works-item__head"
-              >
-                <PublicImage
-                  src={publicImages.icons.conversation}
-                  loading="lazy"
-                  alt=""
-                  className="how-works-item__icon"
-                />
-                <div className="how-works-item__count">{"03"}</div>
-              </div>
-              <div className="how-works-item__body">
-                <div
-                  data-animation="how-works-item-title-3"
-                  className="body-md"
-                >
-                  {t.rich("howItWorks.packageTitle", {
-                    emphasis: (chunks) => (
-                      <span className="mobile-fw">{chunks}</span>
-                    ),
-                  })}
-                </div>
-                <div
-                  data-animation="how-works-item-description-3"
-                  className="body-md color-white-50 mobile-no-br"
-                >
-                  {t.rich("howItWorks.packageDescription", {
-                    br: () => <br />,
-                  })}
-                </div>
-              </div>
-            </div>
-            <div data-animation="how-works-item-4" className="how-works-item">
-              <div
-                data-animation="how-works-item-head-4"
-                className="how-works-item__head"
-              >
-                <PublicImage
-                  src={publicImages.icons.journey}
-                  loading="lazy"
-                  alt=""
-                  className="how-works-item__icon"
-                />
-                <div className="how-works-item__count">{"04"}</div>
-              </div>
-              <div className="how-works-item__body">
-                <div
-                  data-animation="how-works-item-title-4"
-                  className="body-md"
-                >
-                  {t.rich("howItWorks.progressTitle", {
-                    emphasis: (chunks) => (
-                      <span className="mobile-fw">{chunks}</span>
-                    ),
-                  })}
-                </div>
-                <div
-                  data-animation="how-works-item-description-4"
-                  className="body-md color-white-50 mobile-no-br"
-                >
-                  {t.rich("howItWorks.progressDescription", {
-                    br: () => <br />,
-                  })}
-                </div>
-              </div>
-            </div>
+            {steps.map((step, index) => (
+              <HowWorksItem
+                key={step.title}
+                icon={step.icon}
+                number={index + 1}
+                animated
+                title={t.rich(step.title, {
+                  emphasis: (chunks) => (
+                    <span className="mobile-fw">{chunks}</span>
+                  ),
+                })}
+                description={t.rich(step.description, { br: () => <br /> })}
+              />
+            ))}
           </div>
         </div>
       </section>

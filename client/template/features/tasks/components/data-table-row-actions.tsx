@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { type Row } from '@tanstack/react-table';
-import { Trash2 } from 'lucide-react';
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { type Row } from "@/template/components/data-table/table-features";
+import { Trash2 } from "lucide-react";
 
-import { useI18n } from '@/template/i18n/provider';
-import { Button } from '@/template/components/ui/button';
+import { useI18n } from "@/template/i18n/provider";
+import { Button } from "@/template/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,17 +18,19 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/template/components/ui/dropdown-menu';
+} from "@/template/components/ui/dropdown-menu";
 
-import { labels } from '../data/data';
-import { taskSchema } from '../data/schema';
-import { useTasks } from './tasks-provider';
+import { labels } from "../data/data";
+import { taskSchema } from "../data/schema";
+import { useTasks } from "./tasks-provider";
 
-type DataTableRowActionsProps<TData> = {
+type DataTableRowActionsProps<TData extends object> = {
   row: Row<TData>;
 };
 
-export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData extends object>({
+  row,
+}: DataTableRowActionsProps<TData>) {
   const { t } = useI18n();
   const task = taskSchema.parse(row.original);
 
@@ -37,25 +39,28 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
+        <Button
+          variant="ghost"
+          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+        >
           <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">{t('Open menu')}</span>
+          <span className="sr-only">{t("Open menu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem
           onClick={() => {
             setCurrentRow(task);
-            setOpen('update');
+            setOpen("update");
           }}
         >
-          {t('Edit')}{' '}
+          {t("Edit")}{" "}
         </DropdownMenuItem>
-        <DropdownMenuItem disabled>{t('Make a copy')}</DropdownMenuItem>
-        <DropdownMenuItem disabled>{t('Favorite')}</DropdownMenuItem>
+        <DropdownMenuItem disabled>{t("Make a copy")}</DropdownMenuItem>
+        <DropdownMenuItem disabled>{t("Favorite")}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>{t('Labels')}</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger>{t("Labels")}</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup value={task.label}>
               {labels.map((label) => (
@@ -70,10 +75,10 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
         <DropdownMenuItem
           onClick={() => {
             setCurrentRow(task);
-            setOpen('delete');
+            setOpen("delete");
           }}
         >
-          {t('Delete')}{' '}
+          {t("Delete")}{" "}
           <DropdownMenuShortcut>
             <Trash2 size={16} />
           </DropdownMenuShortcut>

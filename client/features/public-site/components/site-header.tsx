@@ -29,7 +29,7 @@ export function SiteHeader() {
   const menuOpen = menuPath === pathname;
   const links = [
     { href: "/#retreats", label: t("retreats") },
-    { href: "/trai-nghiem", label: t("experiences") },
+    { href: "/experiences", label: t("experiences") },
     { href: "/contacts", label: t("contacts") },
   ];
 

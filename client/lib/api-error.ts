@@ -1,74 +1,83 @@
-import { EntityError, HttpError } from './http';
+import { HttpError } from "./http";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
+  return typeof value === "object" && value !== null;
 }
 
-function getDetails(error: unknown): unknown {
-  if (!(error instanceof HttpError) || !isRecord(error.payload) || !isRecord(error.payload.error)) {
-    return undefined;
-  }
-
-  return error.payload.error.details;
-}
-
-export function getApiValidationErrors(error: unknown): Record<string, string[]> {
+export function getApiValidationErrors(
+  error: unknown,
+): Record<string, string[]> {
   const fields: Record<string, string[]> = {};
-  const details = getDetails(error);
 
-  if (!(error instanceof EntityError) || !isRecord(details) || !Array.isArray(details.message)) {
+  if (
+    !(error instanceof HttpError) ||
+    ![400, 422].includes(error.status) ||
+    !isRecord(error.payload) ||
+    !Array.isArray(error.payload.message)
+  ) {
     return fields;
   }
 
-  for (const issue of details.message) {
-    if (!isRecord(issue) || typeof issue.message !== 'string') {
+  for (const issue of error.payload.message) {
+    if (!isRecord(issue) || typeof issue.message !== "string") {
       continue;
     }
 
-    const path = Array.isArray(issue.path) ? issue.path.join('.') : issue.path;
+    const path = Array.isArray(issue.path) ? issue.path.join(".") : issue.path;
 
     if (
-      typeof path !== 'string' ||
+      typeof path !== "string" ||
       !path ||
-      ['__proto__', 'constructor', 'prototype'].includes(path)
+      ["__proto__", "constructor", "prototype"].includes(path)
     ) {
       continue;
     }
 
-    fields[path] = [...(Object.hasOwn(fields, path) ? fields[path] : []), issue.message];
+    fields[path] = [
+      ...(Object.hasOwn(fields, path) ? fields[path] : []),
+      issue.message,
+    ];
   }
 
   return fields;
 }
 
 export function getApiErrorCode(error: unknown): string | undefined {
-  const details = getDetails(error);
+  if (!(error instanceof HttpError) || !isRecord(error.payload)) {
+    return undefined;
+  }
 
   const messages = [
-    error instanceof HttpError && isRecord(error.payload) ? error.payload.message : undefined,
-    isRecord(details) ? details.message : undefined,
+    error.payload.code,
+    ...(Array.isArray(error.payload.message)
+      ? error.payload.message
+      : [error.payload.message]),
     ...Object.values(getApiValidationErrors(error)).flat(),
   ];
 
   return messages.find(
     (message): message is string =>
-      typeof message === 'string' && /^[A-Z][A-Z0-9_]*$/.test(message),
+      typeof message === "string" && /^[A-Z][A-Z0-9_]*$/.test(message),
   );
 }
 
 /** The caller supplies a translated fallback; never expose transport/internal errors. */
 export function getApiErrorMessage(error: unknown, fallback: string): string {
-  if (!(error instanceof HttpError) || error.status >= 500 || !isRecord(error.payload)) {
+  if (
+    !(error instanceof HttpError) ||
+    error.status >= 500 ||
+    !isRecord(error.payload)
+  ) {
     return fallback;
   }
 
   const message = error.payload.message;
 
   if (
-    typeof message !== 'string' ||
+    typeof message !== "string" ||
     !message ||
     getApiErrorCode(error) ||
-    message.startsWith('Error.') ||
+    message.startsWith("Error.") ||
     /^(HTTP \d+|Bad Request|Unprocessable Entity|Unauthorized|Forbidden|Not Found|Too Many Requests|Validation failed)$/i.test(
       message,
     )

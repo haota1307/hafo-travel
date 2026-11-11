@@ -5,5 +5,6 @@ export const legacyPublicRoutes: Record<string, string> = {
   "morocco-holiday-desert-moon": "kham-pha-ninh-binh",
   "8-day-juice-detox-retreat-in-portugal": "hanh-trinh-ha-long",
   "7-day-solo-travelers-retreat-fun-in-bali": "nghi-duong-phu-quoc",
-  coaches: "trai-nghiem",
+  coaches: "experiences",
+  "trai-nghiem": "experiences",
 };

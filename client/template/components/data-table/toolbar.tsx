@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { type Table } from '@tanstack/react-table';
+import { Cross2Icon } from "@radix-ui/react-icons";
+import { type Table } from "@/template/components/data-table/table-features";
 
-import { useI18n } from '@/template/i18n/provider';
-import { Button } from '@/template/components/ui/button';
-import { Input } from '@/template/components/ui/input';
+import { useI18n } from "@/template/i18n/provider";
+import { Button } from "@/template/components/ui/button";
+import { Input } from "@/template/components/ui/input";
 
-import { DataTableFacetedFilter } from './faceted-filter';
-import { DataTableViewOptions } from './view-options';
+import { DataTableFacetedFilter } from "./faceted-filter";
+import { DataTableViewOptions } from "./view-options";
 
-type DataTableToolbarProps<TData> = {
+type DataTableToolbarProps<TData extends object> = {
   table: Table<TData>;
   searchPlaceholder?: string;
   searchKey?: string;
@@ -25,14 +25,15 @@ type DataTableToolbarProps<TData> = {
   }[];
 };
 
-export function DataTableToolbar<TData>({
+export function DataTableToolbar<TData extends object>({
   table,
-  searchPlaceholder = 'Filter...',
+  searchPlaceholder = "Filter...",
   searchKey,
   filters = [],
 }: DataTableToolbarProps<TData>) {
   const { t } = useI18n();
-  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().globalFilter;
+  const isFiltered =
+    table.state.columnFilters.length > 0 || table.state.globalFilter;
 
   return (
     <div className="flex items-center justify-between">
@@ -40,14 +41,18 @@ export function DataTableToolbar<TData>({
         {searchKey ? (
           <Input
             placeholder={t(searchPlaceholder)}
-            value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
-            onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
+            value={
+              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn(searchKey)?.setFilterValue(event.target.value)
+            }
             className="h-8 w-37.5 lg:w-62.5"
           />
         ) : (
           <Input
             placeholder={t(searchPlaceholder)}
-            value={table.getState().globalFilter ?? ''}
+            value={table.state.globalFilter ?? ""}
             onChange={(event) => table.setGlobalFilter(event.target.value)}
             className="h-8 w-37.5 lg:w-62.5"
           />
@@ -75,11 +80,11 @@ export function DataTableToolbar<TData>({
             variant="ghost"
             onClick={() => {
               table.resetColumnFilters();
-              table.setGlobalFilter('');
+              table.setGlobalFilter("");
             }}
             className="h-8 px-2 lg:px-3"
           >
-            {t('Reset')} <Cross2Icon className="ms-2 h-4 w-4" />
+            {t("Reset")} <Cross2Icon className="ms-2 h-4 w-4" />
           </Button>
         )}
       </div>

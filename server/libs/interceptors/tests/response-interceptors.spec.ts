@@ -1,109 +1,103 @@
-import { Controller, ExecutionContext, INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  MessagePattern,
-  Payload,
-  RpcException,
-  Transport,
-} from '@nestjs/microservices';
-import { AddressInfo, Server } from 'node:net';
-import { firstValueFrom, of, timeout } from 'rxjs';
-import { TcpResponse } from '@common/interfaces/tcp/common/response.interface';
-import { ResponseDto } from '@common/interfaces/gateway/response.interface';
+import { BadRequestException, type ExecutionContext } from '@nestjs/common';
+import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
+import { firstValueFrom, of } from 'rxjs';
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
-import { connectTcpMicroservice } from '../src/lib/connect-tcp-microservice';
+import { normalizeError, toGrpcError } from '@common/utils/error.util';
+import { requestGrpcData, PROCESS_ID_METADATA } from '@common/utils/rpc.util';
 import { HttpResponseInterceptor } from '../src/lib/http-response.interceptor';
 
-@Controller()
-class ResponseController {
-  @MessagePattern('echo')
-  async echo(@Payload() data: { value: unknown }) {
-    return data.value;
-  }
-
-  @MessagePattern('failure')
-  failure() {
-    throw new RpcException({ code: 400, message: 'Invalid input' });
-  }
-}
-
-describe('TcpResponse contract', () => {
-  let app: INestApplication;
-  let client: ClientProxy;
-
-  beforeAll(async () => {
-    const module = await Test.createTestingModule({
-      controllers: [ResponseController],
-    }).compile();
-    app = module.createNestApplication({ logger: false });
-    const tcp = connectTcpMicroservice(app, {
-      host: '127.0.0.1',
-      port: 0,
-    });
-    await app.startAllMicroservices();
-    const { port } = tcp.unwrap<Server>().address() as AddressInfo;
-    client = ClientProxyFactory.create({
-      transport: Transport.TCP,
-      options: { host: '127.0.0.1', port },
-    });
-    await client.connect();
-  });
-
-  afterAll(async () => {
-    client?.close();
-    await app?.close();
-  });
-
+describe('gRPC and HTTP response boundaries', () => {
   it.each([
-    HTTP_MESSAGE.CREATED,
     null,
     false,
     0,
-    { id: 'user-1', data: { nested: true } },
-  ])('preserves the TCP contract for %p', async (value) => {
-    const response = await firstValueFrom(
-      client.send('echo', { value }).pipe(timeout(3000)),
-    );
-    expect(response).toEqual(
-      JSON.parse(JSON.stringify(TcpResponse.success(value))),
-    );
-  });
+    HTTP_MESSAGE.CREATED,
+    { accessToken: 'token', refreshToken: 'refresh' },
+  ])(
+    'wraps raw service data once and keeps the HTTP contract for %p',
+    async (value) => {
+      const context = {
+        switchToHttp: () => ({
+          getRequest: () => ({ processId: 'request-1', startTime: 100 }),
+        }),
+      } as unknown as ExecutionContext;
+      const clock = jest.spyOn(Date, 'now').mockReturnValue(125);
 
-  it('propagates RPC errors instead of turning them into success responses', async () => {
-    await expect(
-      firstValueFrom(client.send('failure', {}).pipe(timeout(3000))),
-    ).rejects.toMatchObject({ code: 400, message: 'Invalid input' });
+      try {
+        const result = await firstValueFrom(
+          new HttpResponseInterceptor().intercept(context, {
+            handle: () => of(value),
+          }),
+        );
+
+        expect(result).toMatchObject({
+          data: value,
+          code: HTTP_MESSAGE.SUCCESS,
+          message: HTTP_MESSAGE.SUCCESS,
+          statusCode: 200,
+          processId: 'request-1',
+          duration: '25 ms',
+        });
+      } finally {
+        clock.mockRestore();
+      }
+    },
+  );
+
+  it('preserves validation arrays and Unicode through binary error metadata', () => {
+    const messages = ['Email không hợp lệ', 'Thiếu họ tên'];
+    const error = toGrpcError(new BadRequestException(messages));
+
+    expect(error.code).toBe(GrpcStatus.INVALID_ARGUMENT);
+    expect(normalizeError(error)).toEqual({
+      statusCode: 400,
+      message: messages,
+    });
   });
 
   it.each([
-    null,
-    HTTP_MESSAGE.CREATED,
-    { accessToken: 'token', refreshToken: 'refresh' },
-  ])('preserves BFF fields without double wrapping %p', async (value) => {
-    const envelope = JSON.parse(JSON.stringify(TcpResponse.success(value)));
-    const request = { processId: 'request-1', startTime: 100 };
-    const context = {
-      switchToHttp: () => ({ getRequest: () => request }),
-    } as unknown as ExecutionContext;
-    const clock = jest.spyOn(Date, 'now').mockReturnValue(125);
-    try {
-      const result = await firstValueFrom(
-        new HttpResponseInterceptor().intercept(context, {
-          handle: () => of(envelope),
-        }),
-      );
-      expect(result).toEqual(
-        Object.assign(new ResponseDto(envelope), {
-          processId: 'request-1',
-          duration: '25 ms',
-        }),
-      );
-      expect(result.data).toEqual(value);
-      expect(envelope).not.toHaveProperty('processId');
-    } finally {
-      clock.mockRestore();
-    }
+    [GrpcStatus.UNAUTHENTICATED, 401],
+    [GrpcStatus.PERMISSION_DENIED, 403],
+    [GrpcStatus.NOT_FOUND, 404],
+    [GrpcStatus.UNAVAILABLE, 503],
+    [GrpcStatus.DEADLINE_EXCEEDED, 504],
+  ])(
+    'maps native gRPC status %s to HTTP %s without private metadata',
+    (code, statusCode) =>
+      expect(normalizeError({ code, details: 'Failure' })).toEqual({
+        statusCode,
+        message: 'Failure',
+      }),
+  );
+
+  it('passes correlation metadata and the incoming deadline into native call options', async () => {
+    const deadline = Date.now() + 1500;
+    const method = jest.fn(() => of({ ok: true }));
+
+    await expect(
+      requestGrpcData(
+        method,
+        { value: 1 },
+        { processId: 'request-1', deadline },
+        5000,
+      ),
+    ).resolves.toEqual({ ok: true });
+    expect(method).toHaveBeenCalledWith({ value: 1 }, expect.any(Metadata), {
+      deadline,
+    });
+    expect(
+      (method.mock.calls[0] as unknown as [unknown, Metadata])[1].get(
+        PROCESS_ID_METADATA,
+      ),
+    ).toEqual(['request-1']);
+  });
+
+  it('rejects an expired deadline before dispatching an RPC', async () => {
+    const method = jest.fn(() => of({ ok: true }));
+
+    await expect(
+      requestGrpcData(method, {}, { deadline: Date.now() - 1 }),
+    ).rejects.toMatchObject({ status: 504 });
+    expect(method).not.toHaveBeenCalled();
   });
 });

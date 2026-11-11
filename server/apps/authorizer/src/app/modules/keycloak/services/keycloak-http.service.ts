@@ -11,7 +11,7 @@ import {
   ExchangeClientTokenResponse,
   ExchangeUserTokenResponse,
 } from '@common/interfaces/common';
-import { LoginTcpRequest } from '@common/interfaces/tcp/authorizer';
+import type { LoginRequest } from '@common/interfaces/grpc/authorizer/v1/authorizer';
 
 @Injectable()
 export class KeycloakHttpService {
@@ -23,12 +23,14 @@ export class KeycloakHttpService {
 
   constructor(private readonly configService: ConfigService) {
     this.axiosInstance = axios.create({
-      baseURL: this.configService.get<string>('KEYCLOAK_CONFIG.HOST'),
+      baseURL: this.configService.getOrThrow<string>('KEYCLOAK_CONFIG.HOST'),
     });
 
-    this.realm = this.configService.get<string>('KEYCLOAK_CONFIG.REALM');
-    this.clientId = this.configService.get<string>('KEYCLOAK_CONFIG.CLIENT_ID');
-    this.clientSecret = this.configService.get<string>(
+    this.realm = this.configService.getOrThrow<string>('KEYCLOAK_CONFIG.REALM');
+    this.clientId = this.configService.getOrThrow<string>(
+      'KEYCLOAK_CONFIG.CLIENT_ID',
+    );
+    this.clientSecret = this.configService.getOrThrow<string>(
       'KEYCLOAK_CONFIG.CLIENT_SECRET',
     );
   }
@@ -70,7 +72,14 @@ export class KeycloakHttpService {
       },
     );
 
-    const location = headers['location'];
+    const location: unknown = headers['location'];
+
+    if (typeof location !== 'string') {
+      throw new InternalServerErrorException(
+        'Failed to create user in Keycloak',
+      );
+    }
+
     const userId = location.split('/').pop();
 
     if (!userId) {
@@ -84,9 +93,7 @@ export class KeycloakHttpService {
     return userId;
   }
 
-  exchangeUserToken(
-    params: LoginTcpRequest,
-  ): Promise<ExchangeUserTokenResponse> {
+  exchangeUserToken(params: LoginRequest): Promise<ExchangeUserTokenResponse> {
     return this.requestToken<ExchangeUserTokenResponse>({
       grant_type: 'password',
       username: params.username,
@@ -110,6 +117,7 @@ export class KeycloakHttpService {
       body,
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
     );
+
     return data;
   }
 }

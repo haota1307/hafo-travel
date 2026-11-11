@@ -1,19 +1,20 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
-
+import { GrpcMethod } from '@nestjs/microservices';
+import {
+  AUTHORIZER_SERVICE_NAME,
+  type CreateKeycloakUserRequest,
+  type CreateKeycloakUserResponse,
+} from '@common/interfaces/grpc/authorizer/v1/authorizer';
 import { KeycloakHttpService } from '../services/keycloak-http.service';
-import { RequestParams } from '@common/decorators/request-param.decorator';
-import { CreateKeycloakUserTcpRequest } from '@common/interfaces/tcp/authorizer';
-import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 
 @Controller()
 export class KeycloakController {
   constructor(private readonly keycloakHttpService: KeycloakHttpService) {}
 
-  @MessagePattern(TCP_REQUEST_MESSAGE.KEYCLOAK.CREATE_USER)
-  createUser(
-    @RequestParams() data: CreateKeycloakUserTcpRequest,
-  ): Promise<string> {
-    return this.keycloakHttpService.createUser(data);
+  @GrpcMethod(AUTHORIZER_SERVICE_NAME, 'CreateKeycloakUser')
+  async createKeycloakUser(
+    data: CreateKeycloakUserRequest,
+  ): Promise<CreateKeycloakUserResponse> {
+    return { userId: await this.keycloakHttpService.createUser(data) };
   }
 }

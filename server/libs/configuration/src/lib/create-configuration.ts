@@ -6,5 +6,6 @@ export function createConfiguration<T extends BaseConfiguration>(
 ): T {
   const configuration = new Configuration();
   configuration.validate();
+
   return configuration;
 }

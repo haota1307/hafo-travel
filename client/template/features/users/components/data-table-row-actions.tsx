@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { type Row } from '@tanstack/react-table';
-import { Trash2, UserPen } from 'lucide-react';
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { type Row } from "@/template/components/data-table/table-features";
+import { Trash2, UserPen } from "lucide-react";
 
-import { useI18n } from '@/template/i18n/provider';
-import { Button } from '@/template/components/ui/button';
+import { useI18n } from "@/template/i18n/provider";
+import { Button } from "@/template/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,10 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/template/components/ui/dropdown-menu';
+} from "@/template/components/ui/dropdown-menu";
 
-import { type User } from '../data/schema';
-import { useUsers } from './users-provider';
+import { type User } from "../data/schema";
+import { useUsers } from "./users-provider";
 
 type DataTableRowActionsProps = {
   row: Row<User>;
@@ -30,19 +30,22 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
             <DotsHorizontalIcon className="h-4 w-4" />
-            <span className="sr-only">{t('Open menu')}</span>
+            <span className="sr-only">{t("Open menu")}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(row.original);
-              setOpen('edit');
+              setOpen("edit");
             }}
           >
-            {t('Edit')}{' '}
+            {t("Edit")}{" "}
             <DropdownMenuShortcut>
               <UserPen size={16} />
             </DropdownMenuShortcut>
@@ -51,11 +54,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(row.original);
-              setOpen('delete');
+              setOpen("delete");
             }}
             className="text-red-500!"
           >
-            {t('Delete')}{' '}
+            {t("Delete")}{" "}
             <DropdownMenuShortcut>
               <Trash2 size={16} />
             </DropdownMenuShortcut>

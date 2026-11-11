@@ -1,18 +1,13 @@
-import { getApiBaseUrl } from './api-url';
-
-export type PaginationMeta = {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages?: number;
-};
+import { getApiBaseUrl } from "./api-url";
 
 export type ApiEnvelope<T> = {
-  success: boolean;
-  message: string;
+  statusCode: number;
+  message: string | string[];
   data?: T;
-  error?: { statusCode: number; details: unknown };
-  meta?: { pagination?: PaginationMeta; [key: string]: unknown };
+  processId?: string;
+  duration?: string;
+  code?: string;
+  error?: string;
 };
 
 export type HttpResponse<TPayload> = {
@@ -20,13 +15,13 @@ export type HttpResponse<TPayload> = {
   payload: TPayload;
 };
 
-export type HttpOptions = Omit<RequestInit, 'method' | 'body'> & {
+export type HttpOptions = Omit<RequestInit, "method" | "body"> & {
   baseUrl?: string;
 };
 
 type HttpBody = object | string | null;
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export class HttpError extends Error {
   constructor(
@@ -34,10 +29,12 @@ export class HttpError extends Error {
     public readonly payload: unknown,
   ) {
     super(
-      isRecord(payload) && typeof payload.message === 'string' ? payload.message : `HTTP ${status}`,
+      isRecord(payload) && typeof payload.message === "string"
+        ? payload.message
+        : `HTTP ${status}`,
     );
 
-    this.name = 'HttpError';
+    this.name = "HttpError";
   }
 }
 
@@ -45,27 +42,25 @@ export class EntityError extends HttpError {
   constructor(status: number, payload: unknown) {
     super(status, payload);
 
-    this.name = 'EntityError';
+    this.name = "EntityError";
   }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object';
+  return value !== null && typeof value === "object";
 }
 
 function unwrapPayload(body: unknown): unknown {
-  if (!isRecord(body) || typeof body.success !== 'boolean' || typeof body.message !== 'string') {
+  if (
+    !isRecord(body) ||
+    typeof body.statusCode !== "number" ||
+    !(
+      typeof body.message === "string" ||
+      (Array.isArray(body.message) &&
+        body.message.every((message) => typeof message === "string"))
+    )
+  ) {
     return body;
-  }
-
-  const pagination = isRecord(body.meta) ? body.meta.pagination : undefined;
-
-  if (isRecord(pagination)) {
-    if (!Array.isArray(body.data)) {
-      throw new Error('Invalid paginated API response: data must be an array.');
-    }
-
-    return { items: body.data, ...pagination };
   }
 
   return body.data;
@@ -77,11 +72,12 @@ function getRequestUrl(path: string, configuredBaseUrl?: string) {
   }
 
   const baseUrl =
-    configuredBaseUrl ?? (typeof window === 'undefined' ? getApiBaseUrl() : '/api/backend');
-  const url = `${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+    configuredBaseUrl ??
+    (typeof window === "undefined" ? getApiBaseUrl() : "/api/backend");
+  const url = `${baseUrl.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
 
-  if (typeof window === 'undefined' && !/^https?:\/\//i.test(url)) {
-    throw new Error('Server HTTP requests require an absolute baseUrl.');
+  if (typeof window === "undefined" && !/^https?:\/\//i.test(url)) {
+    throw new Error("Server HTTP requests require an absolute baseUrl.");
   }
 
   return url;
@@ -92,7 +88,7 @@ function serializeBody(body: HttpBody | undefined): BodyInit | undefined {
     return undefined;
   }
   if (
-    typeof body === 'string' ||
+    typeof body === "string" ||
     body instanceof FormData ||
     body instanceof URLSearchParams ||
     body instanceof Blob
@@ -113,29 +109,29 @@ async function request<TPayload>(
   const headers = new Headers(customHeaders);
   const serializedBody = serializeBody(body);
 
-  if (!headers.has('Accept')) {
-    headers.set('Accept', 'application/json');
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/json");
   }
   if (
     body != null &&
-    typeof body === 'object' &&
+    typeof body === "object" &&
     !(body instanceof FormData) &&
     !(body instanceof URLSearchParams) &&
     !(body instanceof Blob) &&
-    !headers.has('Content-Type')
+    !headers.has("Content-Type")
   ) {
-    headers.set('Content-Type', 'application/json');
+    headers.set("Content-Type", "application/json");
   }
 
   const response = await fetch(getRequestUrl(path, baseUrl), {
-    cache: 'no-store',
+    cache: "no-store",
     ...requestOptions,
     method,
     headers,
     body: serializedBody,
   });
   const text = await response.text();
-  const contentType = response.headers.get('Content-Type') ?? '';
+  const contentType = response.headers.get("Content-Type") ?? "";
 
   let payload: unknown = text || null;
 
@@ -155,19 +151,23 @@ async function request<TPayload>(
     throw new ErrorClass(response.status, payload);
   }
 
-  return { status: response.status, payload: unwrapPayload(payload) as TPayload };
+  return {
+    status: response.status,
+    payload: unwrapPayload(payload) as TPayload,
+  };
 }
 
 const http = {
-  get: <T>(path: string, options?: HttpOptions) => request<T>('GET', path, undefined, options),
+  get: <T>(path: string, options?: HttpOptions) =>
+    request<T>("GET", path, undefined, options),
   post: <T>(path: string, body?: HttpBody, options?: HttpOptions) =>
-    request<T>('POST', path, body, options),
+    request<T>("POST", path, body, options),
   put: <T>(path: string, body?: HttpBody, options?: HttpOptions) =>
-    request<T>('PUT', path, body, options),
+    request<T>("PUT", path, body, options),
   patch: <T>(path: string, body?: HttpBody, options?: HttpOptions) =>
-    request<T>('PATCH', path, body, options),
+    request<T>("PATCH", path, body, options),
   delete: <T>(path: string, options?: HttpOptions) =>
-    request<T>('DELETE', path, undefined, options),
+    request<T>("DELETE", path, undefined, options),
 };
 
 export default http;

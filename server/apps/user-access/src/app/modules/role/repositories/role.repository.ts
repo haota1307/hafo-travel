@@ -1,4 +1,4 @@
-import { RoleModel, RoleModelName } from '@common/schemas/role.schema';
+import { type RoleModel, RoleModelName } from '@common/schemas/role.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ROLE } from '@common/constants/enum/role.enum';

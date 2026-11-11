@@ -36,7 +36,45 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
-    // Override or add rules here
-    rules: {},
+    rules: {
+      curly: ['error', 'all'],
+      'padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: '*', next: 'return' },
+        { blankLine: 'always', prev: ['function', 'class'], next: '*' },
+        {
+          blankLine: 'always',
+          prev: '*',
+          next: ['if', 'for', 'while', 'do', 'try', 'switch'],
+        },
+        {
+          blankLine: 'always',
+          prev: ['if', 'for', 'while', 'do', 'try', 'switch'],
+          next: '*',
+        },
+        { blankLine: 'any', prev: 'if', next: 'if' },
+      ],
+    },
+  },
+  {
+    files: ['**/tests/authorizer-http.spec.ts'],
+    rules: {
+      '@nx/enforce-module-boundaries': [
+        'error',
+        {
+          enforceBuildableLibDependency: true,
+          allow: [
+            '../../authorizer/src/app/modules/authorizer/controllers/authorizer.controller',
+            '../../authorizer/src/app/modules/authorizer/services/authorizer.service',
+            '../../authorizer/src/app/modules/keycloak/controllers/keycloak.controller',
+            '../../authorizer/src/app/modules/keycloak/services/keycloak-http.service',
+            '../../user-access/src/app/modules/user/controllers/user.controller',
+            '../../user-access/src/app/modules/user/services/user.service',
+            '../../user-access/src/app/modules/user/repositories/user.repository',
+          ],
+          depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }],
+        },
+      ],
+    },
   },
 ];

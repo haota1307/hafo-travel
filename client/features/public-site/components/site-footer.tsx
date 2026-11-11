@@ -39,7 +39,7 @@ export function SiteFooter() {
                     <div className="column column-6">
                       <div className="footer-top__links">
                         <div className="footer-top__link">
-                          <Link href="/trai-nghiem" className="h3 color-white">
+                          <Link href="/experiences" className="h3 color-white">
                             {t.rich("footer.experiences", {
                               emphasis: (chunks) => (
                                 <span className="color-white-40">{chunks}</span>

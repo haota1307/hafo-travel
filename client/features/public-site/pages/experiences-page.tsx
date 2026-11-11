@@ -1,9 +1,52 @@
 import { publicImages } from "@/features/public-site/data/image-assets";
 import { SiteMark } from "@/features/public-site/components/site-mark";
 import { useTranslations } from "next-intl";
-import { PublicImage } from "@/features/public-site/components/public-image";
+import { HowWorksItem } from "@/features/public-site/components/how-works-item";
 import { ExperienceCard } from "@/features/public-site/components/experience-card";
 import { getExperiences } from "@/features/public-site/data/experiences";
+
+const values = [
+  {
+    icon: publicImages.icons.clarity,
+    title: "experiencesPage.honestyTitle",
+    description: "experiencesPage.honestyDescription",
+  },
+  {
+    icon: publicImages.icons.respect,
+    title: "experiencesPage.responsibilityTitle",
+    description: "experiencesPage.responsibilityDescription",
+  },
+  {
+    icon: publicImages.icons.pace,
+    title: "experiencesPage.kindnessTitle",
+    description: "experiencesPage.kindnessDescription",
+  },
+  {
+    icon: publicImages.icons.details,
+    title: "experiencesPage.dedicationTitle",
+    description: "experiencesPage.dedicationDescription",
+  },
+  {
+    icon: publicImages.icons.connection,
+    title: "experiencesPage.serviceTitle",
+    description: "experiencesPage.serviceDescription",
+  },
+  {
+    icon: publicImages.icons.beauty,
+    title: "experiencesPage.beautyTitle",
+    description: "experiencesPage.beautyDescription",
+  },
+  {
+    icon: publicImages.icons.rest,
+    title: "experiencesPage.wellbeingTitle",
+    description: "experiencesPage.wellbeingDescription",
+  },
+  {
+    icon: publicImages.icons.discovery,
+    title: "experiencesPage.progressTitle",
+    description: "experiencesPage.progressDescription",
+  },
+] as const;
 
 export function ExperiencesPage() {
   const t = useTranslations("publicSite");
@@ -78,178 +121,20 @@ export function ExperiencesPage() {
               </div>
             </div>
             <div className="how-works">
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.clarity}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"01"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.honestyTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.honestyDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.respect}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"02"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.responsibilityTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.responsibilityDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.pace}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"03"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.kindnessTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.kindnessDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.details}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"04"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.dedicationTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.dedicationDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.connection}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"05"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.serviceTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.serviceDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.beauty}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"06"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.beautyTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.beautyDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.rest}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"07"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t.rich("experiencesPage.wellbeingTitle", {
-                      emphasis: (chunks) => (
-                        <span className="mobile-fw">{chunks}</span>
-                      ),
-                    })}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.wellbeingDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="how-works-item size-s">
-                <div className="how-works-item__head">
-                  <PublicImage
-                    src={publicImages.icons.discovery}
-                    loading="lazy"
-                    alt=""
-                    className="how-works-item__icon"
-                  />
-                  <div className="how-works-item__count">{"08"}</div>
-                </div>
-                <div className="how-works-item__body">
-                  <div className="body-md">
-                    {t("experiencesPage.progressTitle")}
-                  </div>
-                  <div className="body-md color-white-50 mobile-no-br mobile-body-sm">
-                    {t.rich("experiencesPage.progressDescription", {
-                      br: () => <br />,
-                    })}
-                  </div>
-                </div>
-              </div>
+              {values.map((value, index) => (
+                <HowWorksItem
+                  key={value.title}
+                  icon={value.icon}
+                  number={index + 1}
+                  compact
+                  title={t.rich(value.title, {
+                    emphasis: (chunks) => (
+                      <span className="mobile-fw">{chunks}</span>
+                    ),
+                  })}
+                  description={t.rich(value.description, { br: () => <br /> })}
+                />
+              ))}
             </div>
           </div>
         </section>

@@ -1,29 +1,23 @@
 import { Logger } from '@nestjs/common';
-import { connectTcpMicroservice } from '@common/interceptors/connect-tcp-microservice';
 import { NestFactory } from '@nestjs/core';
+import type { GrpcOptions } from '@nestjs/microservices';
+import {
+  GRPC_SERVICES,
+  grpcServerOptions,
+} from '@common/configuration/grpc.config';
+import { GrpcLoggingInterceptor } from '@common/interceptors/grpc-logging.interceptor';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.enableCors({
-    origin: '*',
-  });
-
-  connectTcpMicroservice(
-    app,
-    AppModule.CONFIGURATION.TCP_SERV.TCP_USER_ACCESS_SERVICE.options,
+  const options = grpcServerOptions(GRPC_SERVICES.USER_ACCESS_SERVICE);
+  const app = await NestFactory.createMicroservice<GrpcOptions>(
+    AppModule,
+    options,
   );
+  app.useGlobalInterceptors(new GrpcLoggingInterceptor());
 
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.USER_ACCESS_PORT || 3303;
-
-  await app.startAllMicroservices();
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
-  );
+  await app.listen();
+  Logger.log(`User-access gRPC is listening on ${options.options.url}`);
 }
 
 bootstrap();

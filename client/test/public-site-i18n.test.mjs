@@ -79,6 +79,18 @@ function assertMatchingContent(en, vi, key = "publicSite") {
   }
 }
 
+test("Legacy experience URLs redirect directly to the English route", async () => {
+  const { legacyPublicRoutes } = await import(
+    moduleUrl("../features/public-site/data/legacy-routes.ts")
+  );
+  assert.equal(legacyPublicRoutes["trai-nghiem"], "experiences");
+  assert.equal(legacyPublicRoutes.coaches, "experiences");
+
+  for (const destination of Object.values(legacyPublicRoutes)) {
+    assert.equal(Object.hasOwn(legacyPublicRoutes, destination), false);
+  }
+});
+
 test("Public messages have complete matching structures and valid ICU/rich text", () => {
   assertMatchingContent(locales.en.publicSite, locales.vi.publicSite);
   const rawCollections = new Set([

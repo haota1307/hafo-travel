@@ -4,7 +4,7 @@ Hafo Travel dùng Next.js App Router hiện có, với nội dung gợi ý hành
 
 ## Chạy và cấu hình
 
-Chạy `pnpm dev` trong `roviet-client`, mở `/vi` hoặc `/en`. Locale mặc định là `vi`; nút VI/EN giữ pathname, query và hash.
+Chạy `pnpm dev` trong `client`, mở `/vi` hoặc `/en`. Locale mặc định là `vi`; nút VI/EN giữ pathname, query và hash.
 
 Thông tin liên hệ hiện được chủ dự án cung cấp: `haodev1307@gmail.com`, `0947055644`. Sửa tập trung trong `features/public-site/site.config.ts`.
 
@@ -13,7 +13,7 @@ Thông tin liên hệ hiện được chủ dự án cung cấp: `haodev1307@gma
 | Trang                | Đường dẫn sau `/vi` hoặc `/en` |
 | -------------------- | ------------------------------ |
 | Trang chủ            | `/`                            |
-| Trải nghiệm Việt Nam | `/trai-nghiem`                 |
+| Trải nghiệm Việt Nam | `/experiences`                 |
 | Liên hệ              | `/contacts`                    |
 | Hà Giang             | `/kham-pha-ha-giang`           |
 | Đà Lạt               | `/nghi-duong-da-lat`           |
@@ -24,7 +24,7 @@ Thông tin liên hệ hiện được chủ dự án cung cấp: `haodev1307@gma
 | Điều khoản           | `/terms-and-conditions`        |
 | Bảo mật              | `/privacy-policy`              |
 
-Sáu URL retreat cũ và `/coaches` redirect 308 sang URL tương ứng, giữ locale và query. Bảng tương thích duy nhất ở `data/legacy-routes.ts`, được `next.config.ts` sử dụng. Tên địa điểm cũ chỉ còn trong bảng này và hồ sơ khảo sát.
+Sáu URL retreat cũ redirect 308 sang URL tương ứng; `/coaches` và `/trai-nghiem` redirect 308 trực tiếp tới `/experiences`, giữ locale và query. Route trải nghiệm đặt tiếng Anh cho cả hai locale, nội dung dịch theo locale; slug sáu hành trình giữ nguyên. Bảng tương thích duy nhất ở `data/legacy-routes.ts`, được `next.config.ts` sử dụng.
 
 ## Sửa ở đâu
 
@@ -52,6 +52,7 @@ public/hafo/                Logo, icon, ảnh WebP và font có license
 ## Dữ liệu và hành vi
 
 - Giữ nguyên thứ tự tám section, sáu card hành trình, ba nhóm trải nghiệm, grid bốn ảnh của gallery và các control Base UI hiện có.
+- Các giá trị trang trải nghiệm và các bước trang chủ dùng cấu hình riêng, render chung `HowWorksItem`; giữ rich text, class compact và data-animation theo từng vị trí.
 - Giữ reveal qua IntersectionObserver/Web Animations API, menu Sheet, Popover trải nghiệm, Carousel mobile, scroll snap, sticky navigation và reduced motion. Thông số reveal vẫn ở `publicMotion`.
 - Mục chuyên gia demo được thay bằng 12 góc nhìn du lịch Việt Nam. Card và Popover giới thiệu địa điểm, không tạo hồ sơ nhân viên hoặc chứng chỉ.
 - Card và detail cùng lấy giá/slug/ảnh từ `retreatDetails`. Giá có kiểu `number | null`; hiện là `null` và hiển thị “Liên hệ tư vấn”. Khi có giá thật, hiển thị VND theo locale, không quy đổi từ giá demo.

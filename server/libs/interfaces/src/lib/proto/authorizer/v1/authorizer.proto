@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package authorizer.v1;
+
+import "user-access/v1/user-access.proto";
+
+service AuthorizerService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc VerifyUserToken(VerifyUserTokenRequest) returns (VerifyUserTokenResponse);
+  rpc CreateKeycloakUser(CreateKeycloakUserRequest) returns (CreateKeycloakUserResponse);
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message VerifyUserTokenRequest {
+  string token = 1;
+}
+
+message VerifyUserTokenResponse {
+  bool valid = 1;
+  AuthorizedMetadata metadata = 2;
+}
+
+message AuthorizedMetadata {
+  string user_id = 1;
+  useraccess.v1.UserProfile user = 2;
+  repeated string permissions = 3;
+  string jwt_json = 4;
+}
+
+message CreateKeycloakUserRequest {
+  string email = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string password = 4;
+}
+
+message CreateKeycloakUserResponse {
+  string user_id = 1;
+}

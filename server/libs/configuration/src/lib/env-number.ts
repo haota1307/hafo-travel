@@ -7,8 +7,10 @@ export function envNumber(
 ): number {
   const raw = override ?? process.env[name];
   const value = raw === undefined || raw === '' ? fallback : Number(raw);
+
   if (!Number.isSafeInteger(value) || value < min || value > max) {
     throw new Error(`${name} must be an integer between ${min} and ${max}`);
   }
+
   return value;
 }

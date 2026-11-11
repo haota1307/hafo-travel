@@ -9,12 +9,18 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "webpack-cli build",
-        "args": ["--node-env=production"],
-        "cwd": "apps/authorizer"
+        "args": ["--mode=production"],
+        "cwd": "apps/authorizer",
+        "env": {
+          "NODE_ENV": "production"
+        }
       },
       "configurations": {
         "development": {
-          "args": ["--node-env=development"]
+          "args": ["--mode=development"],
+          "env": {
+            "NODE_ENV": "development"
+          }
         }
       }
     },
@@ -24,11 +30,23 @@
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
         "{workspaceRoot}/dist/apps/authorizer/package.json",
-        "{workspaceRoot}/dist/apps/authorizer/pnpm-lock.yaml"
+        "{workspaceRoot}/dist/apps/authorizer/pnpm-lock.yaml",
+        "{workspaceRoot}/dist/apps/authorizer/pnpm-workspace.yaml",
+        "{workspaceRoot}/dist/apps/authorizer/patches",
+        "{workspaceRoot}/dist/apps/authorizer/local_path_modules"
       ],
       "options": {
         "buildTarget": "build"
-      }
+      },
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        "{workspaceRoot}/package.json",
+        {
+          "runtime": "node -e \"try{console.log('pnpm major '+require('child_process').execSync('pnpm --version',{stdio:['ignore','pipe','ignore']}).toString().trim().split('.')[0])}catch{console.log('pnpm major unavailable')}\""
+        }
+      ]
     },
     "copy-workspace-modules": {
       "dependsOn": ["build"],
@@ -64,6 +82,14 @@
     "test": {
       "options": {
         "passWithNoTests": true
+      }
+    },
+    "preview": {
+      "options": {
+        "args": ["--mode=production"],
+        "env": {
+          "NODE_ENV": "production"
+        }
       }
     }
   }

@@ -1,28 +1,37 @@
-import { MessagePattern } from '@nestjs/microservices';
+import { GrpcMethod } from '@nestjs/microservices';
 import { Controller } from '@nestjs/common';
-
-import { CreateUserTcpRequest } from '@common/interfaces/tcp/user';
-import { UserService } from '../services/user.service';
-import { RequestParams } from '@common/decorators/request-param.decorator';
-import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
+import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
+import {
+  USER_ACCESS_SERVICE_NAME,
+  type CreateUserRequest,
+  type CreateUserResponse,
+  type GetUserByIdRequest,
+  type GetUserByIdResponse,
+} from '@common/interfaces/grpc/user-access/v1/user-access';
+import { grpcCallContext } from '@common/utils/rpc.util';
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
-import { ProcessId } from '@common/decorators/process-id.decorator';
+import { UserService } from '../services/user.service';
+import { userProfileMapper } from '../mappers/user-profile.mapper';
 
-@Controller('user')
+@Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @MessagePattern(TCP_REQUEST_MESSAGE.USER.CREATE)
-  async create(
-    @RequestParams() params: CreateUserTcpRequest,
-    @ProcessId() processId: string,
-  ): Promise<string> {
-    await this.userService.create(params, processId);
-    return HTTP_MESSAGE.CREATED;
+  @GrpcMethod(USER_ACCESS_SERVICE_NAME, 'CreateUser')
+  async createUser(
+    params: CreateUserRequest,
+    metadata: Metadata,
+    call: ServerUnaryCall<CreateUserRequest, CreateUserResponse>,
+  ): Promise<CreateUserResponse> {
+    await this.userService.create(params, grpcCallContext(metadata, call));
+
+    return { message: HTTP_MESSAGE.CREATED };
   }
 
-  @MessagePattern(TCP_REQUEST_MESSAGE.USER.GET_BY_ID)
-  getByUserId(@RequestParams() userId: string) {
-    return this.userService.getUserByUserId(userId);
+  @GrpcMethod(USER_ACCESS_SERVICE_NAME, 'GetUserById')
+  async getUserById(params: GetUserByIdRequest): Promise<GetUserByIdResponse> {
+    const user = await this.userService.getUserByUserId(params.userId);
+
+    return { user: user ? userProfileMapper(user) : undefined };
   }
 }

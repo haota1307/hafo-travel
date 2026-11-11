@@ -6,11 +6,13 @@ import { UserService } from './services/user.service';
 import { UserDestination } from '@common/schemas/user.schema';
 import { UserRepository } from './repositories/user.repository';
 import { UserController } from './controllers/user.controller';
-import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
+import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
 @Module({
   imports: [
-    ClientsModule.registerAsync([TcpProvider(TCP_SERVICES.AUTHORIZER_SERVICE)]),
+    ClientsModule.registerAsync([
+      GrpcProvider(GRPC_SERVICES.AUTHORIZER_SERVICE),
+    ]),
     MongooseModule.forFeature([UserDestination]),
   ],
   controllers: [UserController],

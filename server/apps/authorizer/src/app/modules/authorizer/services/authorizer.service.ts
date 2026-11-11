@@ -2,33 +2,37 @@ import {
   Inject,
   Injectable,
   Logger,
+  type OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
-import { requestTcpData } from '@common/utils/rpc.util';
 import { ConfigService } from '@nestjs/config';
-import JwksRsa, { JwksClient } from 'jwks-rsa';
-import { decode, JwtPayload, verify } from 'jsonwebtoken';
-
+import type { ClientGrpc } from '@nestjs/microservices';
+import JwksRsa, { type JwksClient } from 'jwks-rsa';
+import { decode, type JwtPayload, verify } from 'jsonwebtoken';
+import { requestGrpcData, type GrpcCallContext } from '@common/utils/rpc.util';
 import {
-  AuthorizeResponse,
-  LoginTcpRequest,
-} from '@common/interfaces/tcp/authorizer';
-import { UserWithRoles } from '@common/schemas/user.schema';
-import { TCP_SERVICES } from '@common/configuration/tcp.config';
-import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
+  type LoginRequest,
+  type VerifyUserTokenResponse,
+} from '@common/interfaces/grpc/authorizer/v1/authorizer';
+import {
+  USER_ACCESS_SERVICE_NAME,
+  type UserAccessServiceClient,
+  type UserProfile,
+} from '@common/interfaces/grpc/user-access/v1/user-access';
+import { GRPC_SERVICES } from '@common/configuration/grpc.config';
 import { KeycloakHttpService } from '../../keycloak/services/keycloak-http.service';
-import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
 
 @Injectable()
-export class AuthorizerService {
+export class AuthorizerService implements OnModuleInit {
   private readonly logger = new Logger(AuthorizerService.name);
-  private jwksClient: JwksClient;
+  private readonly jwksClient: JwksClient;
+  private users: UserAccessServiceClient;
 
   constructor(
     private readonly keycloakHttpService: KeycloakHttpService,
     private readonly configService: ConfigService,
-    @Inject(TCP_SERVICES.USER_ACCESS_SERVICE)
-    private readonly userAccessClient: TcpClient,
+    @Inject(GRPC_SERVICES.USER_ACCESS_SERVICE)
+    private readonly userAccessClient: ClientGrpc,
   ) {
     const host = this.configService.get<string>('KEYCLOAK_CONFIG.HOST');
     const realm = this.configService.get<string>('KEYCLOAK_CONFIG.REALM');
@@ -40,9 +44,14 @@ export class AuthorizerService {
     });
   }
 
-  async login(params: LoginTcpRequest) {
-    const { username, password } = params;
+  onModuleInit() {
+    this.users = this.userAccessClient.getService<UserAccessServiceClient>(
+      USER_ACCESS_SERVICE_NAME,
+    );
+  }
 
+  async login(params: LoginRequest) {
+    const { username, password } = params;
     const { access_token: accessToken, refresh_token: refreshToken } =
       await this.keycloakHttpService.exchangeUserToken({ username, password });
 
@@ -51,8 +60,8 @@ export class AuthorizerService {
 
   async verifyUserToken(
     token: string,
-    processId: string,
-  ): Promise<AuthorizeResponse> {
+    context: GrpcCallContext,
+  ): Promise<VerifyUserTokenResponse> {
     const decodedToken = decode(token, { complete: true });
 
     if (!decodedToken || !decodedToken.header || !decodedToken.header.kid) {
@@ -66,41 +75,42 @@ export class AuthorizerService {
         algorithms: ['RS256'],
       }) as JwtPayload;
 
-      const user = await this.userValidation(payload.sub, processId);
+      if (typeof payload.sub !== 'string' || !payload.sub) {
+        throw new UnauthorizedException('Invalid token subject');
+      }
+
+      const user = await this.userValidation(payload.sub, context);
 
       return {
         valid: true,
-        MetadataKeys: {
-          jwt: payload,
-          permissions: user.roles.map((role) => role.permissions).flat(),
+        metadata: {
+          jwtJson: JSON.stringify(payload),
+          permissions: user.roles.flatMap((role) => role.permissions),
           user,
           userId: user.id,
         },
       };
     } catch {
       this.logger.warn('Token verification failed');
+
       throw new UnauthorizedException('Invalid token');
     }
   }
 
   private async userValidation(
     userId: string,
-    processId: string,
-  ): Promise<UserWithRoles> {
-    const user = await this.getUserByUserId(userId, processId);
+    context: GrpcCallContext,
+  ): Promise<UserProfile> {
+    const { user } = await requestGrpcData(
+      this.users.getUserById,
+      { userId },
+      context,
+    );
 
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
     return user;
-  }
-
-  private getUserByUserId(userId: string, processId: string) {
-    return requestTcpData<UserWithRoles | null, string>(
-      this.userAccessClient,
-      TCP_REQUEST_MESSAGE.USER.GET_BY_ID,
-      { data: userId, processId },
-    );
   }
 }

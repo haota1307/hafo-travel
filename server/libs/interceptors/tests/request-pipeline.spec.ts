@@ -9,6 +9,8 @@ import { RpcException } from '@nestjs/microservices';
 import { Cache } from 'cache-manager';
 import { Response as ExpressResponse } from 'express';
 import { NEVER, of, throwError } from 'rxjs';
+import type { ClientGrpc } from '@nestjs/microservices';
+import { status as GrpcStatus } from '@grpc/grpc-js';
 import { EventEmitter } from 'node:events';
 import { Authorization } from '@common/decorators/authorizer.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
@@ -16,12 +18,10 @@ import { PERMISSION } from '@common/constants/enum/role.enum';
 import { UserGuard } from '@common/guards/user.guard';
 import { PermissionGuard } from '@common/guards/permissions.guard';
 import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
-import { AuthorizeResponse } from '@common/interfaces/tcp/authorizer';
-import { TcpResponse } from '@common/interfaces/tcp/common/response.interface';
-import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
+import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware';
 import { normalizeError } from '@common/utils/error.util';
-import { requestTcpData } from '@common/utils/rpc.util';
+import { requestGrpcData } from '@common/utils/rpc.util';
 
 @Authorization({ secured: true })
 class ProtectedController {
@@ -52,7 +52,7 @@ function context(
 describe('Auth and request pipeline', () => {
   const now = 1700000000000;
   let request: RequestContext;
-  let send: jest.Mock;
+  let verifyUserToken: jest.Mock;
   let cache: { get: jest.Mock; set: jest.Mock; del: jest.Mock };
   let guard: UserGuard;
   const authorized = (exp?: number) =>
@@ -73,7 +73,17 @@ describe('Auth and request pipeline', () => {
       headers: { authorization: 'Bearer test-token' },
       processId: 'request-1',
     } as RequestContext;
-    send = jest.fn(() => of(TcpResponse.success(authorized(now / 1000 + 60))));
+    verifyUserToken = jest.fn(() =>
+      of({
+        valid: true,
+        metadata: {
+          userId: 'user-1',
+          user: undefined,
+          permissions: [],
+          jwtJson: JSON.stringify({ exp: now / 1000 + 60 }),
+        },
+      }),
+    );
     cache = {
       get: jest.fn().mockResolvedValue(undefined),
       set: jest.fn().mockResolvedValue(undefined),
@@ -81,15 +91,16 @@ describe('Auth and request pipeline', () => {
     };
     guard = new UserGuard(
       new Reflector(),
-      { send } as unknown as TcpClient,
+      { getService: () => ({ verifyUserToken }) } as unknown as ClientGrpc,
       cache as unknown as Cache,
     );
+    guard.onModuleInit();
   });
   afterEach(() => jest.restoreAllMocks());
 
   it('honors public method override of secured controller metadata', () => {
     expect(guard.canActivate(context(request, 'public'))).toBe(true);
-    expect(send).not.toHaveBeenCalled();
+    expect(verifyUserToken).not.toHaveBeenCalled();
   });
   it('limits token cache lifetime to JWT expiry', async () => {
     await expect(guard.canActivate(context(request))).resolves.toBe(true);
@@ -102,12 +113,15 @@ describe('Auth and request pipeline', () => {
   it('uses a valid unexpired cache without an RPC call', async () => {
     cache.get.mockResolvedValue(authorized(now / 1000 + 10));
     await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(send).not.toHaveBeenCalled();
+    expect(verifyUserToken).not.toHaveBeenCalled();
   });
   it('rejects an expired cached token if authorizer rejects it', async () => {
     cache.get.mockResolvedValue(authorized(now / 1000 - 1));
-    send.mockReturnValue(
-      throwError(() => ({ code: 401, message: 'Expired token' })),
+    verifyUserToken.mockReturnValue(
+      throwError(() => ({
+        code: GrpcStatus.UNAUTHENTICATED,
+        details: 'Expired token',
+      })),
     );
     await expect(guard.canActivate(context(request))).rejects.toMatchObject({
       status: 401,
@@ -116,7 +130,12 @@ describe('Auth and request pipeline', () => {
     expect(request.userData).toBeUndefined();
   });
   it('does not cache tokens without an expiration', async () => {
-    send.mockReturnValue(of(TcpResponse.success(authorized())));
+    verifyUserToken.mockReturnValue(
+      of({
+        valid: true,
+        metadata: { userId: 'user-1', permissions: [], jwtJson: '{}' },
+      }),
+    );
     await expect(guard.canActivate(context(request))).resolves.toBe(true);
     expect(cache.set).not.toHaveBeenCalled();
   });
@@ -124,7 +143,7 @@ describe('Auth and request pipeline', () => {
     cache.get.mockRejectedValue(new Error('Redis unavailable'));
     cache.set.mockRejectedValue(new Error('Redis unavailable'));
     await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(send).toHaveBeenCalledTimes(1);
+    expect(verifyUserToken).toHaveBeenCalledTimes(1);
   });
   it('returns 401 for permissions without a user instead of crashing', () => {
     const permissions = new PermissionGuard(new Reflector());
@@ -153,12 +172,12 @@ describe('Auth and request pipeline', () => {
     });
   });
   it('times out RPC requests that never return', async () => {
-    send.mockReturnValue(NEVER);
+    verifyUserToken.mockReturnValue(NEVER);
     await expect(
-      requestTcpData({ send } as unknown as TcpClient, 'test', {}, 5),
+      requestGrpcData(verifyUserToken, {}, {}, 5),
     ).rejects.toBeInstanceOf(HttpException);
     await expect(
-      requestTcpData({ send } as unknown as TcpClient, 'test', {}, 5),
+      requestGrpcData(verifyUserToken, {}, {}, 5),
     ).rejects.toMatchObject({ status: 504 });
   });
   it('logs HTTP completion once without exposing body or query credentials', () => {

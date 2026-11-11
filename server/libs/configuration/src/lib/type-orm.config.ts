@@ -1,7 +1,7 @@
 import { envNumber } from './env-number';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { DatabaseType } from 'typeorm';
+import type { DatabaseType } from 'typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 export class TypeOrmConfiguration {

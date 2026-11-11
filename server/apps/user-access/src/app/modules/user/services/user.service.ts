@@ -3,60 +3,64 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  type OnModuleInit,
 } from '@nestjs/common';
-
-import { TCP_SERVICES } from '@common/configuration/tcp.config';
-import { UserRepository } from '../repositories/user.repository';
-import { CreateUserTcpRequest } from '@common/interfaces/tcp/user';
+import type { ClientGrpc } from '@nestjs/microservices';
+import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import {
+  AUTHORIZER_SERVICE_NAME,
+  type AuthorizerServiceClient,
+  type CreateKeycloakUserRequest,
+} from '@common/interfaces/grpc/authorizer/v1/authorizer';
+import type { CreateUserRequest } from '@common/interfaces/grpc/user-access/v1/user-access';
 import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
+import { requestGrpcData, type GrpcCallContext } from '@common/utils/rpc.util';
+import { UserRepository } from '../repositories/user.repository';
 import { createUserRequestMapper } from '../mappers/user-request.mapper';
-import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
-import { CreateKeycloakUserTcpRequest } from '@common/interfaces/tcp/authorizer';
-import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message.enum';
-import { requestTcpData } from '@common/utils/rpc.util';
+
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
+  private authorizer: AuthorizerServiceClient;
+
   constructor(
     private readonly userRepository: UserRepository,
-    @Inject(TCP_SERVICES.AUTHORIZER_SERVICE)
-    private readonly authorizerService: TcpClient,
+    @Inject(GRPC_SERVICES.AUTHORIZER_SERVICE)
+    private readonly authorizerClient: ClientGrpc,
   ) {}
 
-  async create(data: CreateUserTcpRequest, processId: string) {
-    const { email, firstName, lastName, password } = data;
+  onModuleInit() {
+    this.authorizer = this.authorizerClient.getService<AuthorizerServiceClient>(
+      AUTHORIZER_SERVICE_NAME,
+    );
+  }
 
+  async create(data: CreateUserRequest, context: GrpcCallContext) {
+    const { email, firstName, lastName, password } = data;
     const existingUser = await this.userRepository.exists(email);
 
     if (existingUser) {
       throw new BadRequestException(CODE_ERROR.USER_ALREADY_EXISTS);
     }
 
-    const userId = await this.createKeycloakUser(
-      {
-        email,
-        firstName,
-        lastName,
-        password,
-      },
-      processId,
+    const { userId } = await this.createKeycloakUser(
+      { email, firstName, lastName, password },
+      context,
     );
 
-    if (!userId)
+    if (!userId) {
       throw new InternalServerErrorException('Keycloak returned no user ID');
+    }
+
     const input = createUserRequestMapper(data, userId);
 
     return this.userRepository.create(input);
   }
 
   private createKeycloakUser(
-    data: CreateKeycloakUserTcpRequest,
-    processId: string,
+    data: CreateKeycloakUserRequest,
+    context: GrpcCallContext,
   ) {
-    return requestTcpData<string, CreateKeycloakUserTcpRequest>(
-      this.authorizerService,
-      TCP_REQUEST_MESSAGE.KEYCLOAK.CREATE_USER,
-      { data, processId },
-    );
+    return requestGrpcData(this.authorizer.createKeycloakUser, data, context);
   }
 
   getUserByUserId(userId: string) {

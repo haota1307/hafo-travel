@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModel, UserModelName } from '@common/schemas/user.schema';
+import {
+  User,
+  type UserModel,
+  UserModelName,
+} from '@common/schemas/user.schema';
 import { Role } from '@common/schemas/role.schema';
 
 @Injectable()
@@ -30,6 +34,7 @@ export class UserRepository {
 
   async exists(email: string): Promise<boolean> {
     const result = await this.userModel.exists({ email }).exec();
+
     return !!result;
   }
 }

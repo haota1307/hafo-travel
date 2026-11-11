@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthorizeResponse } from '@common/interfaces/tcp/authorizer';
+import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
 
 export const UserData = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {

@@ -15,7 +15,7 @@ import { AuthorizerModule } from './modules/authorizer/authorizer.module';
 import { ExceptionInterceptor } from '@common/interceptors/exception.interceptor';
 import { HttpResponseInterceptor } from '@common/interceptors/http-response.interceptor';
 import { ClientsModule } from '@nestjs/microservices';
-import { TCP_SERVICES, TcpProvider } from '@common/configuration/tcp.config';
+import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 import { PermissionGuard } from '@common/guards/permissions.guard';
 import { RedisProvider } from '@common/configuration/redis.config';
 
@@ -24,7 +24,9 @@ import { RedisProvider } from '@common/configuration/redis.config';
     ConfigModule.forRoot({ isGlobal: true, load: [() => CONFIGURATION] }),
     UserModule,
     AuthorizerModule,
-    ClientsModule.registerAsync([TcpProvider(TCP_SERVICES.AUTHORIZER_SERVICE)]),
+    ClientsModule.registerAsync([
+      GrpcProvider(GRPC_SERVICES.AUTHORIZER_SERVICE),
+    ]),
     RedisProvider,
   ],
   controllers: [],

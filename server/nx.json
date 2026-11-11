@@ -2,10 +2,7 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "defaultBase": "master",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/tests/**/*",
@@ -17,9 +14,7 @@
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/test-setup.[jt]s"
     ],
-    "sharedGlobals": [
-      "{workspaceRoot}/.github/workflows/ci.yml"
-    ]
+    "sharedGlobals": []
   },
   "plugins": [
     {
@@ -45,5 +40,17 @@
         "targetName": "test"
       }
     }
-  ]
+  ],
+  "affected": {
+    "legacy": true
+  },
+  "targetDefaults": {
+    "test": {
+      "options": {
+        "env": {
+          "NODE_OPTIONS": "--experimental-vm-modules"
+        }
+      }
+    }
+  }
 }

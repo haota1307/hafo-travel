@@ -18,6 +18,7 @@ export class ExceptionInterceptor implements NestInterceptor {
   ): Observable<unknown> {
     const request = context.switchToHttp().getRequest<RequestContext>();
     const startTime = request.startTime ?? Date.now();
+
     return next.handle().pipe(
       catchError((error: unknown) => {
         const { statusCode, message } = normalizeError(error);

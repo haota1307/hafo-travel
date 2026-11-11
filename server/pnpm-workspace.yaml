@@ -1,0 +1,42 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@scarf/scarf': false
+  '@nestjs/core': true
+  '@swc/core': true
+  '@swc-node/sourcemap-support': true
+  esbuild: true
+  '@bufbuild/buf': true
+  less: true
+  nx: true
+  protobufjs: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@nx/devkit@24.0.6'
+  - '@nx/docker@24.0.6'
+  - '@nx/eslint-plugin@24.0.6'
+  - '@nx/eslint@24.0.6'
+  - '@nx/jest@24.0.6'
+  - '@nx/js@24.0.6'
+  - '@nx/nest@24.0.6'
+  - '@nx/node@24.0.6'
+  - '@nx/nx-darwin-arm64@24.0.6'
+  - '@nx/nx-darwin-x64@24.0.6'
+  - '@nx/nx-freebsd-x64@24.0.6'
+  - '@nx/nx-linux-arm-gnueabihf@24.0.6'
+  - '@nx/nx-linux-arm64-gnu@24.0.6'
+  - '@nx/nx-linux-arm64-musl@24.0.6'
+  - '@nx/nx-linux-x64-gnu@24.0.6'
+  - '@nx/nx-linux-x64-musl@24.0.6'
+  - '@nx/nx-win32-arm64-msvc@24.0.6'
+  - '@nx/nx-win32-x64-msvc@24.0.6'
+  - '@nx/web@24.0.6'
+  - '@nx/webpack@24.0.6'
+  - '@nx/workspace@24.0.6'
+  - nx@24.0.6
+overrides:
+  '@nx/nest>@nestjs/schematics': 12.0.13
+peerDependencyRules:
+  allowedVersions:
+    '@nx/nest>@nestjs/core': 12.4.2
+    '@nx/nest>@nestjs/common': 12.4.2
+    '@nx/webpack>webpack-dev-server': 6.1.0
