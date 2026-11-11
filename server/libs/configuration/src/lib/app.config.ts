@@ -1,0 +1,11 @@
+import { envNumber } from './env-number';
+import { IsNumber } from 'class-validator';
+
+export class AppConfiguration {
+  @IsNumber()
+  PORT: number;
+
+  constructor() {
+    this.PORT = envNumber('PORT', 3300, undefined, 1, 65535);
+  }
+}

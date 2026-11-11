@@ -1,0 +1,100 @@
+# Nguồn và mapping ảnh Hafo Travel
+
+Các trang nguồn đã được kiểm tra ngày 09/11/2026; file ảnh được tải thành công và chuyển sang WebP local. Từng trang ảnh được chọn ghi Unsplash License; [license nguồn](https://unsplash.com/license). Không dùng Unsplash+ hoặc URL ảnh tự đoán.
+
+Ảnh resort, du thuyền và không gian dịch vụ là tư liệu gợi cảm hứng; không tạo logo đối tác hoặc khẳng định quan hệ hợp tác.
+
+## Mapping
+
+| Vị trí                        | Vai trò                                                     | Dữ liệu quản lý                 |
+| ----------------------------- | ----------------------------------------------------------- | ------------------------------- |
+| Hero                          | Phú Quốc; hai lớp cùng ảnh, crop responsive                 | `publicImages.hero`             |
+| Categories                    | Biển Phú Quốc, non nước Ninh Bình, rừng thông Đà Lạt        | `coast`, `nature`, `slow`       |
+| About                         | Kiến trúc Huế                                               | `about`                         |
+| Featured                      | Sáu hành trình Việt Nam                                     | `coverImage` trong từng retreat |
+| Combine                       | Không gian nghỉ dưỡng Đà Lạt                                | `combine`                       |
+| Destination                   | Bắc–Trung–Nam: Ninh Bình, Hội An, Phú Quốc                  | `north`, `central`, `south`     |
+| Experience                    | 12 góc nhìn Việt Nam                                        | `data/experiences.ts`           |
+| Gallery                       | Bốn ảnh riêng cho mỗi trang hành trình                      | `images`                        |
+| Hương vị                      | 24 ảnh cảm hứng ẩm thực Việt Nam; địa điểm chụp được ghi rõ | `foodImages`                    |
+| Dấu ấn địa phương và điểm đến | Cảnh quan đúng hành trình                                   | `team`, `meetingImage`          |
+| Liên hệ                       | Hà Nội                                                      | `contact`                       |
+| Footer                        | Hạ Long                                                     | `footer`                        |
+| Open Graph                    | Ảnh Phú Quốc cùng nhận diện Hafo Travel                     | `brand/og-image.jpg`            |
+
+Bảng nguồn dưới đây tương ứng registry `features/public-site/data/photo-assets.json`. Sửa ảnh theo ID trong registry và các vai trò ở `image-assets.ts`; không rải URL ngoài vào component.
+
+## Danh mục nguồn
+
+| ID            | Địa điểm/nội dung     | Tác giả               | Trang nguồn                                                                                                           | File local                                           |
+| ------------- | --------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `OQvuJBiXIjI` | Phú Quốc              | Manh Tuan Nguyen      | [Unsplash](https://unsplash.com/photos/an-aerial-view-of-a-resort-on-the-ocean-OQvuJBiXIjI)                           | `/hafo/images/phu-quoc-01.webp`                      |
+| `-SmvQUbPzGg` | Ninh Bình             | Bernd 📷 Dittrich     | [Unsplash](https://unsplash.com/photos/boats-navigate-a-river-surrounded-by-lush-green-karst-mountains--SmvQUbPzGg)   | `/hafo/images/ninh-binh-01.webp`                     |
+| `0-8UDMJTsso` | Đà Lạt                | Pete Walls            | [Unsplash](https://unsplash.com/photos/a-pool-with-umbrellas-and-lounge-chairs-next-to-it-0-8UDMJTsso)                | `/hafo/images/da-lat-01.webp`                        |
+| `tj9LPxkFRx0` | Hội An                | Juup Schram           | [Unsplash](https://unsplash.com/photos/colorful-lanterns-hang-from-trees-and-buildings-tj9LPxkFRx0)                   | `/hafo/images/hoi-an-01.webp`                        |
+| `7Sj9X8NqNAk` | Hà Giang              | Nguyen Huy Hoang      | [Unsplash](https://unsplash.com/photos/a-boat-traveling-down-a-river-surrounded-by-mountains-7Sj9X8NqNAk)             | `/hafo/images/ha-giang-01.webp`                      |
+| `kG7pOXbBfNs` | Hạ Long               | Marina Lobato         | [Unsplash](https://unsplash.com/photos/boats-on-turquoise-ha-long-bay-kG7pOXbBfNs)                                    | `/hafo/images/ha-long-01.webp`                       |
+| `tzet8Uk51Q0` | Phú Quốc              | Vivu Vietnam          | [Unsplash](https://unsplash.com/photos/a-birds-eye-view-of-a-resort-on-the-beach-tzet8Uk51Q0)                         | `/hafo/images/phu-quoc-02.webp`                      |
+| `z47CAQ0C6KE` | Phú Quốc              | Anton Shuvalov        | [Unsplash](https://unsplash.com/photos/areal-photography-of-beach-z47CAQ0C6KE)                                        | `/hafo/images/phu-quoc-03.webp`                      |
+| `r6CIzamxaek` | Phú Quốc              | Vivu Vietnam          | [Unsplash](https://unsplash.com/photos/a-beach-with-palm-trees-and-a-white-sand-beach-r6CIzamxaek)                    | `/hafo/images/phu-quoc-04.webp`                      |
+| `tOCa0lSuS3M` | Phú Quốc              | Ted Victor            | [Unsplash](https://unsplash.com/photos/a-view-of-a-tropical-island-with-palm-trees-tOCa0lSuS3M)                       | `/hafo/images/phu-quoc-05.webp`                      |
+| `nz9b1pZJ-S4` | Phú Quốc              | Fiona Doan            | [Unsplash](https://unsplash.com/photos/palm-trees-line-the-shore-of-a-tropical-beach-nz9b1pZJ-S4)                     | `/hafo/images/phu-quoc-06.webp`                      |
+| `jWECaopdAH8` | Phú Quốc              | Tony Pham             | [Unsplash](https://unsplash.com/photos/coconut-trees-on-the-beach-photograph-jWECaopdAH8)                             | `/hafo/images/phu-quoc-07.webp`                      |
+| `KMa7k1tJc74` | Đà Lạt                | Abdelrahman Ismail    | [Unsplash](https://unsplash.com/photos/a-forest-filled-with-lots-of-tall-pine-trees-KMa7k1tJc74)                      | `/hafo/images/da-lat-02.webp`                        |
+| `cvvWOR85mf4` | Đà Lạt                | Jeremy Brady          | [Unsplash](https://unsplash.com/photos/misty-valley-viewed-through-pine-trees-cvvWOR85mf4)                            | `/hafo/images/da-lat-03.webp`                        |
+| `egdrGoF8r0I` | Đà Lạt                | Mạnh Ngô              | [Unsplash](https://unsplash.com/photos/misty-valley-with-mountains-and-pine-trees-egdrGoF8r0I)                        | `/hafo/images/da-lat-04.webp`                        |
+| `qZGdIs5W3LI` | Hội An                | Markus Winkler        | [Unsplash](https://unsplash.com/photos/a-group-of-people-standing-on-a-bridge-over-a-body-of-water-qZGdIs5W3LI)       | `/hafo/images/hoi-an-02.webp`                        |
+| `gXNgbsazPg8` | Hội An                | Pete Walls            | [Unsplash](https://unsplash.com/photos/a-photographer-captures-a-street-scene-with-cyclists-and-lanterns-gXNgbsazPg8) | `/hafo/images/hoi-an-03.webp`                        |
+| `scAOTOLLEaM` | Hội An                | Jason Pham            | [Unsplash](https://unsplash.com/photos/lamps-float-on-a-dark-river-at-night-scAOTOLLEaM)                              | `/hafo/images/hoi-an-04.webp`                        |
+| `Xk5oe8IezJ8` | Hội An                | Nick Guenov           | [Unsplash](https://unsplash.com/photos/ornate-building-facade-with-a-tranquil-pond-and-garden-Xk5oe8IezJ8)            | `/hafo/images/hoi-an-05.webp`                        |
+| `sTja0Dx9pyk` | Hội An                | Marek Okon            | [Unsplash](https://unsplash.com/photos/brown-and-white-boat-on-water-near-brown-building-during-daytime-sTja0Dx9pyk)  | `/hafo/images/hoi-an-06.webp`                        |
+| `68TjFyhPJec` | Ninh Bình             | Danielle Suijkerbuijk | [Unsplash](https://unsplash.com/photos/a-valley-surrounded-by-mountains-with-a-river-68TjFyhPJec)                     | `/hafo/images/ninh-binh-02.webp`                     |
+| `nu9oI3vSmS8` | Ninh Bình             | Hoang Vu Tuyen        | [Unsplash](https://unsplash.com/photos/a-body-of-water-with-trees-around-it-nu9oI3vSmS8)                              | `/hafo/images/ninh-binh-03.webp`                     |
+| `PgSxHidgJHQ` | Ninh Bình             | Rowan Heuvel          | [Unsplash](https://unsplash.com/photos/pagoda-surrounded-by-body-of-water-and-mountains-PgSxHidgJHQ)                  | `/hafo/images/ninh-binh-04.webp`                     |
+| `MWfCxsC9T74` | Ninh Bình             | Bernd 📷 Dittrich     | [Unsplash](https://unsplash.com/photos/the-sun-is-setting-over-a-mountain-range-MWfCxsC9T74)                          | `/hafo/images/ninh-binh-05.webp`                     |
+| `T8pZ0JepBkg` | Hà Giang              | Harry Le              | [Unsplash](https://unsplash.com/photos/a-boat-travels-on-a-river-between-steep-green-mountains-T8pZ0JepBkg)           | `/hafo/images/ha-giang-02.webp`                      |
+| `vf1r6eSJvl4` | Hà Giang              | Harry Le              | [Unsplash](https://unsplash.com/photos/a-person-walks-down-a-rural-road-through-green-hills-vf1r6eSJvl4)              | `/hafo/images/ha-giang-03.webp`                      |
+| `fcnEa-mu2Ac` | Hà Giang              | Brayden Prato         | [Unsplash](https://unsplash.com/photos/a-lush-green-hillside-with-a-small-village-on-top-of-it-fcnEa-mu2Ac)           | `/hafo/images/ha-giang-04.webp`                      |
+| `9zP2ihhMBV4` | Hà Giang              | Huỳnh Tấn             | [Unsplash](https://unsplash.com/photos/mountains-rise-above-a-valley-shrouded-in-morning-fog-9zP2ihhMBV4)             | `/hafo/images/ha-giang-05.webp`                      |
+| `7JBdrcomnms` | Hà Giang              | Claire                | [Unsplash](https://unsplash.com/photos/a-scenic-view-of-a-mountain-valley-with-a-winding-road-7JBdrcomnms)            | `/hafo/images/ha-giang-06.webp`                      |
+| `5RjpoBtb54o` | Hạ Long               | Adam Young            | [Unsplash](https://unsplash.com/photos/a-boat-sails-through-a-bay-with-limestone-karsts-5RjpoBtb54o)                  | `/hafo/images/ha-long-02.webp`                       |
+| `dooX1R4_0Z8` | Hạ Long               | Adam Young            | [Unsplash](https://unsplash.com/photos/a-boat-sails-through-a-bay-with-towering-limestone-karsts-dooX1R4_0Z8)         | `/hafo/images/ha-long-03.webp`                       |
+| `rriWG4_2_js` | Hạ Long               | Steve Matthews        | [Unsplash](https://unsplash.com/photos/limestone-karsts-rise-from-calm-waters-rriWG4_2_js)                            | `/hafo/images/ha-long-04.webp`                       |
+| `aQNHyIOwFZs` | Hạ Long               | Veronica Tironi       | [Unsplash](https://unsplash.com/photos/limestone-karsts-and-islands-in-ha-long-bay-vietnam-aQNHyIOwFZs)               | `/hafo/images/ha-long-05.webp`                       |
+| `Mye1qNF-kjU` | Hội An                | Thuy                  | [Unsplash](https://unsplash.com/photos/a-table-full-of-food-Mye1qNF-kjU)                                              | `/hafo/images/am-thuc-hoi-an-01.webp`                |
+| `uo2rdcNXOpc` | Hội An                | Huy Nguyen            | [Unsplash](https://unsplash.com/photos/cozy-cafe-interior-with-plants-and-wooden-furniture-uo2rdcNXOpc)               | `/hafo/images/am-thuc-hoi-an-02.webp`                |
+| `vr6NpzGM7xs` | Hội An                | Sam                   | [Unsplash](https://unsplash.com/photos/a-street-food-stall-in-hoi-an-vietnam-vr6NpzGM7xs)                             | `/hafo/images/am-thuc-hoi-an-03.webp`                |
+| `qzbR-y7n-yI` | Hội An                | WL Rai                | [Unsplash](https://unsplash.com/photos/a-food-stand-with-a-bunch-of-food-hanging-from-its-sides-qzbR-y7n-yI)          | `/hafo/images/am-thuc-hoi-an-04.webp`                |
+| `4RxWol2YqxE` | Đà Lạt                | Taan Huyn             | [Unsplash](https://unsplash.com/photos/a-table-with-plates-of-desserts-4RxWol2YqxE)                                   | `/hafo/images/am-thuc-da-lat-01.webp`                |
+| `6GAhQYVY8wA` | Đà Lạt                | Russie Vu             | [Unsplash](https://unsplash.com/photos/desserts-and-tea-set-on-a-table-by-the-window-6GAhQYVY8wA)                     | `/hafo/images/am-thuc-da-lat-02.webp`                |
+| `U8KZBz2t1pE` | Đà Lạt                | Truog Dieu            | [Unsplash](https://unsplash.com/photos/a-table-with-a-flower-and-a-cup-on-it-U8KZBz2t1pE)                             | `/hafo/images/am-thuc-da-lat-03.webp`                |
+| `IetJfRZOZIY` | Đà Lạt                | Taan Huyn             | [Unsplash](https://unsplash.com/photos/a-wooden-house-with-a-table-and-chairs-in-the-front-IetJfRZOZIY)               | `/hafo/images/am-thuc-da-lat-04.webp`                |
+| `h0ACFHTLWyk` | Phú Quốc              | Evgeny Matveev        | [Unsplash](https://unsplash.com/photos/people-on-a-motorbike-pass-a-fish-vendor-on-street-h0ACFHTLWyk)                | `/hafo/images/am-thuc-phu-quoc-01.webp`              |
+| `zNsXLClT73o` | Phú Quốc              | Ondrej Bocek          | [Unsplash](https://unsplash.com/photos/fresh-seafood-displayed-on-ice-at-a-market-zNsXLClT73o)                        | `/hafo/images/am-thuc-phu-quoc-02.webp`              |
+| `lzjlYsMGYXg` | Huế                   | Nguyen Minh           | [Unsplash](https://unsplash.com/photos/imperial-citadel-in-hue-vietnam-under-a-clear-sky-lzjlYsMGYXg)                 | `/hafo/images/hue-01.webp`                           |
+| `zaxhTnx8WFc` | Sa Pa                 | Daniele Franchi       | [Unsplash](https://unsplash.com/photos/terraced-rice-fields-and-village-in-the-hills-zaxhTnx8WFc)                     | `/hafo/images/sa-pa-01.webp`                         |
+| `mZ_L9K36pjo` | Hà Nội                | Thuỷ Nguyễn           | [Unsplash](https://unsplash.com/photos/a-lake-surrounded-by-trees-with-a-building-in-the-background-mZ_L9K36pjo)      | `/hafo/images/ha-noi-01.webp`                        |
+| `nLH08BnLB3Y` | Đà Nẵng               | Quang Tran            | [Unsplash](https://unsplash.com/photos/beach-with-city-skyline-and-mountains-in-background-nLH08BnLB3Y)               | `/hafo/images/da-nang-01.webp`                       |
+| `AmBpgKYcswM` | Quy Nhơn              | snap shoot            | [Unsplash](https://unsplash.com/photos/a-beach-with-a-hill-and-a-body-of-water-AmBpgKYcswM)                           | `/hafo/images/quy-nhon-01.webp`                      |
+| `XyRQ8_uXbH0` | Phú Yên               | Nguyen Huong          | [Unsplash](https://unsplash.com/photos/fishing-boats-on-coastal-water-XyRQ8_uXbH0)                                    | `/hafo/images/phu-yen-01.webp`                       |
+| `ygbULTajumg` | Hà Nội                | Nat.chee Kim          | [Unsplash](https://unsplash.com/photos/ygbULTajumg)                                                                   | `/hafo/images/am-thuc-ha-noi-01.webp`                |
+| `MFydc2AnklU` | Hà Nội                | Ivy Dao               | [Unsplash](https://unsplash.com/photos/two-drinks-on-a-tray-in-a-cafe-MFydc2AnklU)                                    | `/hafo/images/am-thuc-ha-noi-02.webp`                |
+| `hf0ub1tRpeA` | Hà Nội                | Ivy Dao               | [Unsplash](https://unsplash.com/photos/cozy-cafe-corner-with-small-table-and-chairs-hf0ub1tRpeA)                      | `/hafo/images/am-thuc-ha-noi-03.webp`                |
+| `JbXoBwie0Tk` | Hà Nội                | Patrik Aradi          | [Unsplash](https://unsplash.com/photos/woman-in-conical-hat-sells-fruit-from-a-bicycle-cart-JbXoBwie0Tk)              | `/hafo/images/am-thuc-ha-noi-04.webp`                |
+| `Xwasijgdm5Q` | Thành phố Hồ Chí Minh | Pete Walls            | [Unsplash](https://unsplash.com/photos/a-woman-standing-in-front-of-a-food-cart-Xwasijgdm5Q)                          | `/hafo/images/am-thuc-thanh-pho-ho-chi-minh-01.webp` |
+| `MBcRaYe4zqM` | Hội An                | Pete Walls            | [Unsplash](https://unsplash.com/photos/people-at-a-busy-outdoor-market-under-a-bridge-MBcRaYe4zqM)                    | `/hafo/images/am-thuc-hoi-an-05.webp`                |
+| `SG_m4YXjUQw` | Đà Lạt                | Taan Huyn             | [Unsplash](https://unsplash.com/photos/a-bowl-of-food-SG_m4YXjUQw)                                                    | `/hafo/images/am-thuc-da-lat-05.webp`                |
+| `78m6KKAH35I` | Đà Lạt                | Taan Huyn             | [Unsplash](https://unsplash.com/photos/a-table-with-food-on-it-78m6KKAH35I)                                           | `/hafo/images/am-thuc-da-lat-06.webp`                |
+| `675E30NDIVo` | Đà Lạt                | Jeremy Brady          | [Unsplash](https://unsplash.com/photos/woman-sitting-at-a-vibrant-fruit-stand-675E30NDIVo)                            | `/hafo/images/am-thuc-da-lat-07.webp`                |
+| `4Dmu_WaK9MY` | Phú Quốc              | Vivu Vietnam          | [Unsplash](https://unsplash.com/photos/two-people-relaxing-on-sun-loungers-by-a-blue-pool-4Dmu_WaK9MY)                | `/hafo/images/am-thuc-phu-quoc-03.webp`              |
+| `XxP2J4NvzJQ` | Hà Nội                | Evgeny Matveev        | [Unsplash](https://unsplash.com/photos/two-women-sit-at-a-small-table-outside-a-cafe-XxP2J4NvzJQ)                     | `/hafo/images/am-thuc-ha-noi-05.webp`                |
+| `KcjXLXhohRs` | Hà Nội                | Yu Ko                 | [Unsplash](https://unsplash.com/photos/people-eating-at-a-street-food-stall-at-night-KcjXLXhohRs)                     | `/hafo/images/am-thuc-ha-noi-06.webp`                |
+| `rqcEEipdD98` | Đà Lạt                | Tien Vu Ngoc          | [Unsplash](https://unsplash.com/photos/a-woman-standing-in-a-kitchen-preparing-food-rqcEEipdD98)                      | `/hafo/images/am-thuc-da-lat-08.webp`                |
+| `p3p5RzMvKfM` | Phú Quốc              | Aleksandra Dementeva  | [Unsplash](https://unsplash.com/photos/table-with-leftover-food-and-drinks-after-meal-p3p5RzMvKfM)                    | `/hafo/images/am-thuc-phu-quoc-04.webp`              |
+| `OSs1KVJYIhE` | Đà Lạt                | pha tran              | [Unsplash](https://unsplash.com/id/foto/badan-air-besar-yang-dikelilingi-oleh-hutan-OSs1KVJYIhE)                      | `/hafo/images/da-lat-05.webp`                        |
+| `8mO1Jpm2d2I` | Đà Lạt                | Thai Tong             | [Unsplash](https://unsplash.com/photos/a-scenic-view-of-a-winding-road-in-the-woods-8mO1Jpm2d2I)                      | `/hafo/images/da-lat-06.webp`                        |
+| `qqmZrehZtj0` | Hà Nội                | Daniel Buckle         | [Unsplash](https://unsplash.com/photos/brown-metal-temple-qqmZrehZtj0)                                                | `/hafo/images/ha-noi-02.webp`                        |
+| `I73-kiWh7UI` | Ninh Bình             | Hiep Tong             | [Unsplash](https://unsplash.com/photos/high-angle-photography-of-rock-plateau-with-trees-I73-kiWh7UI)                 | `/hafo/images/ninh-binh-06.webp`                     |
+| `TvB_S0cB2ik` | Hạ Long               | Fuu J                 | [Unsplash](https://unsplash.com/photos/a-group-of-boats-in-the-water-with-ha-long-bay-in-the-background-TvB_S0cB2ik)  | `/hafo/images/ha-long-06.webp`                       |
+
+Logo, icon H và các SVG giao diện mới được vẽ bằng vector cho dự án. Font Inter giữ license riêng. Asset nguyên mẫu đã chuyển khỏi thư mục public, được lưu trong `output/hafo-remix/original-assets/` để bảo toàn hồ sơ clone.

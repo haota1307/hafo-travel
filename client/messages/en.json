@@ -1,0 +1,1645 @@
+{
+  "template": {
+    "123456789": "+123456789",
+    "comingSoon": "Coming Soon!",
+    "thisPageHasNotBeenCreatedYet": "This page has not been created yet.",
+    "stayTunedThough": "Stay tuned though!",
+    "typeACommandOrSearch": "Type a command or search...",
+    "noResultsFound": "No results found.",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "openThemeSettings": "Open theme settings",
+    "themeSettings": "Theme Settings",
+    "adjustTheAppearanceAndLayoutToSuitYourPreferences": "Adjust the appearance and layout to suit your preferences.",
+    "resetAllSettingsToDefaultValues": "Reset all settings to default values",
+    "reset": "Reset",
+    "theme": "Theme",
+    "selectThemePreference": "Select theme preference",
+    "chooseBetweenSystemPreferenceLightModeOrDarkMode": "Choose between system preference, light mode, or dark mode",
+    "sidebar": "Sidebar",
+    "selectSidebarStyle": "Select sidebar style",
+    "inset": "Inset",
+    "floating": "Floating",
+    "chooseBetweenInsetFloatingOrStandardSidebarLayout": "Choose between inset, floating, or standard sidebar layout",
+    "layout": "Layout",
+    "selectLayoutStyle": "Select layout style",
+    "default": "Default",
+    "compact": "Compact",
+    "fullLayout": "Full layout",
+    "chooseBetweenDefaultExpandedCompactIconOnlyOrFullLayoutMode": "Choose between default expanded, compact icon-only, or full layout mode",
+    "direction": "Direction",
+    "selectSiteDirection": "Select site direction",
+    "leftToRight": "Left to Right",
+    "rightToLeft": "Right to Left",
+    "chooseBetweenLeftToRightOrRightToLeftSiteDirection": "Choose between left-to-right or right-to-left site direction",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "clearSelection": "Clear selection",
+    "clearSelectionEscape": "Clear selection (Escape)",
+    "selected": "selected",
+    "asc": "Asc",
+    "desc": "Desc",
+    "hide": "Hide",
+    "clearFilters": "Clear filters",
+    "page": "Page",
+    "of": "of",
+    "rowsPerPage": "Rows per page",
+    "goToFirstPage": "Go to first page",
+    "goToPreviousPage": "Go to previous page",
+    "goToPage": "Go to page",
+    "goToNextPage": "Go to next page",
+    "goToLastPage": "Go to last page",
+    "filter": "Filter...",
+    "view": "View",
+    "toggleColumns": "Toggle columns",
+    "pickADate": "Pick a date",
+    "toggleSidebar": "Toggle Sidebar",
+    "enterprise": "Enterprise",
+    "startup": "Startup",
+    "general": "General",
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "chats": "Chats",
+    "users": "Users",
+    "pages": "Pages",
+    "auth": "Auth",
+    "signIn": "Sign In",
+    "signIn2Col": "Sign In (2 Col)",
+    "signUp": "Sign Up",
+    "forgotPassword": "Forgot Password",
+    "otp": "OTP",
+    "errors": "Errors",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "notFound": "Not Found",
+    "internalServerError": "Internal Server Error",
+    "maintenanceError": "Maintenance Error",
+    "other": "Other",
+    "settings": "Settings",
+    "profile": "Profile",
+    "account": "Account",
+    "appearance": "Appearance",
+    "notifications": "Notifications",
+    "display": "Display",
+    "helpCenter": "Help Center",
+    "upgradeToPro": "Upgrade to Pro",
+    "billing": "Billing",
+    "signOut": "Sign out",
+    "teams": "Teams",
+    "addTeam": "Add team",
+    "toggleNavigationMenu": "Toggle navigation menu",
+    "learnMore": "Learn more",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "newTeam": "New Team",
+    "search": "Search",
+    "select": "Select",
+    "loading": "Loading...",
+    "previewTheSignInScreenThisTemplateDoesNotCreateASession": "Preview the sign-in screen. This template does not create a session.",
+    "skipToMain": "Skip to Main",
+    "toggleTheme": "Toggle theme",
+    "commandPalette": "Command Palette",
+    "searchForACommandToRun": "Search for a command to run...",
+    "close": "Close",
+    "displaysTheMobileSidebar": "Displays the mobile sidebar.",
+    "pleaseEnterYourEmail": "Please enter your email.",
+    "previewingPasswordReset": "Previewing password reset...",
+    "error": "Error",
+    "email": "Email",
+    "enterYourRegisteredEmailAnd": "Enter your registered email and",
+    "weWillSendYouALinkToResetYourPassword": "we will send you a link to reset your password.",
+    "donTHaveAnAccount": "Don''t have an account?",
+    "signUp2": "Sign up",
+    "pleaseEnterThe6DigitCode": "Please enter the 6-digit code.",
+    "oneTimePassword": "One-Time Password",
+    "verify": "Verify",
+    "twoFactorAuthentication": "Two-factor Authentication",
+    "enterAnySixDigitsToPreviewVerification": "Enter any six digits to preview verification.",
+    "thisTemplateDoesNotSendAuthenticationCodes": "This template does not send authentication codes.",
+    "returnToThe": "Return to the",
+    "signInPreview": "sign-in preview",
+    "pleaseEnterYourPassword": "Please enter your password.",
+    "passwordMustBeAtLeast7CharactersLong": "Password must be at least 7 characters long.",
+    "signingIn": "Signing in...",
+    "password": "Password",
+    "forgotPassword2": "Forgot password?",
+    "signIn2": "Sign in",
+    "enterYourEmailAndPasswordBelowToLogInto": "Enter your email and password below to log into",
+    "yourAccountDonTHaveAnAccount": "your account. Don''t have an account?",
+    "templatePreviewOnlyFormSubmissionsDoNotCreateAnAccountOrStartASession": "Template preview only. Form submissions do not create an account or start a session.",
+    "pleaseConfirmYourPassword": "Please confirm your password.",
+    "passwordsDonTMatch": "Passwords don''t match.",
+    "creatingAccount": "Creating account...",
+    "confirmPassword": "Confirm Password",
+    "createAccount": "Create Account",
+    "createAnAccount": "Create an account",
+    "enterYourEmailAndPasswordToCreateAnAccount": "Enter your email and password to create an account.",
+    "alreadyHaveAnAccount": "Already have an account?",
+    "newMessage": "New message",
+    "to": "To:",
+    "searchPeople": "Search people...",
+    "noPeopleFound": "No people found.",
+    "chat": "Chat",
+    "inbox": "Inbox",
+    "searchChat": "Search chat...",
+    "you": "You",
+    "chatTextBox": "Chat Text Box",
+    "typeYourMessages": "Type your messages...",
+    "send": "Send",
+    "yourMessages": "Your messages",
+    "sendAMessageToStartAChat": "Send a message to start a chat.",
+    "sendMessage": "Send message",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun",
+    "trafficOverview": "Traffic Overview",
+    "weeklyClicksAndUniqueVisitors": "Weekly clicks and unique visitors",
+    "totalClicks": "Total Clicks",
+    "124VsLastWeek": "+12.4% vs last week",
+    "uniqueVisitors": "Unique Visitors",
+    "58VsLastWeek": "+5.8% vs last week",
+    "bounceRate": "Bounce Rate",
+    "32VsLastWeek": "-3.2% vs last week",
+    "avgSession": "Avg. Session",
+    "3m24s": "3m 24s",
+    "18sVsLastWeek": "+18s vs last week",
+    "referrers": "Referrers",
+    "topSourcesDrivingTraffic": "Top sources driving traffic",
+    "direct": "Direct",
+    "blog": "Blog",
+    "devices": "Devices",
+    "howUsersAccessYourApp": "How users access your app",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "tablet": "Tablet",
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec",
+    "download": "Download",
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "totalRevenue": "Total Revenue",
+    "201FromLastMonth": "+20.1% from last month",
+    "subscriptions": "Subscriptions",
+    "1801FromLastMonth": "+180.1% from last month",
+    "sales": "Sales",
+    "19FromLastMonth": "+19% from last month",
+    "activeNow": "Active Now",
+    "201SinceLastHour": "+201 since last hour",
+    "recentSales": "Recent Sales",
+    "youMade265SalesThisMonth": "You made 265 sales this month.",
+    "customers": "Customers",
+    "products": "Products",
+    "accessForbidden": "Access Forbidden",
+    "youDonTHaveNecessaryPermission": "You don''t have necessary permission",
+    "toViewThisResource": "to view this resource.",
+    "goBack": "Go Back",
+    "backToHome": "Back to Home",
+    "oopsSomethingWentWrong": "Oops! Something went wrong",
+    "weApologizeForTheInconvenience": "We apologize for the inconvenience.",
+    "pleaseTryAgainLater": "Please try again later.",
+    "websiteIsUnderMaintenance": "Website is under maintenance!",
+    "theSiteIsNotAvailableAtTheMoment": "The site is not available at the moment.",
+    "weLlBeBackOnlineShortly": "We''ll be back online shortly.",
+    "oopsPageNotFound": "Oops! Page Not Found!",
+    "itSeemsLikeThePageYouReLookingFor": "It seems like the page you''re looking for",
+    "doesNotExistOrMightHaveBeenRemoved": "does not exist or might have been removed.",
+    "unauthorizedAccess": "Unauthorized Access",
+    "pleaseLogInWithTheAppropriateCredentials": "Please log in with the appropriate credentials",
+    "toAccessThisResource": "to access this resource.",
+    "english": "English",
+    "vietnamese": "Vietnamese",
+    "pleaseEnterYourName": "Please enter your name.",
+    "nameMustBeAtLeast2Characters": "Name must be at least 2 characters.",
+    "nameMustNotBeLongerThan30Characters": "Name must not be longer than 30 characters.",
+    "pleaseSelectYourDateOfBirth": "Please select your date of birth.",
+    "pleaseSelectALanguage": "Please select a language.",
+    "name": "Name",
+    "yourName": "Your name",
+    "thisIsTheNameThatWillBeDisplayedOnYourProfileAndInEmails": "This is the name that will be displayed on your profile and in emails.",
+    "dateOfBirth": "Date of birth",
+    "yourDateOfBirthIsUsedToCalculateYourAge": "Your date of birth is used to calculate your age.",
+    "language": "Language",
+    "changeLanguage": "Change language",
+    "selectLanguage": "Select language",
+    "searchLanguage": "Search language...",
+    "noLanguageFound": "No language found.",
+    "thisIsTheLanguageThatWillBeUsedInTheDashboard": "This is the language that will be used in the dashboard.",
+    "updateAccount": "Update account",
+    "updateYourAccountSettingsSetYourPreferredLanguageAndTimezone": "Update your account settings. Set your preferred language and timezone.",
+    "font": "Font",
+    "setTheFontYouWantToUseInTheDashboard": "Set the font you want to use in the dashboard.",
+    "selectTheThemeForTheDashboard": "Select the theme for the dashboard.",
+    "updatePreferences": "Update preferences",
+    "customizeTheAppearanceOfTheAppAutomaticallySwitchBetweenDayAndNightThemes": "Customize the appearance of the app. Automatically switch between day and night themes.",
+    "recents": "Recents",
+    "applications": "Applications",
+    "downloads": "Downloads",
+    "documents": "Documents",
+    "youHaveToSelectAtLeastOneItem": "You have to select at least one item.",
+    "selectTheItemsYouWantToDisplayInTheSidebar": "Select the items you want to display in the sidebar.",
+    "updateDisplay": "Update display",
+    "turnItemsOnOrOffToControlWhatSDisplayedInTheApp": "Turn items on or off to control what''s displayed in the app.",
+    "manageYourAccountSettingsAndSetEMailPreferences": "Manage your account settings and set e-mail preferences.",
+    "configureHowYouReceiveNotifications": "Configure how you receive notifications.",
+    "pleaseSelectANotificationType": "Please select a notification type.",
+    "notifyMeAbout": "Notify me about...",
+    "allNewMessages": "All new messages",
+    "directMessagesAndMentions": "Direct messages and mentions",
+    "nothing": "Nothing",
+    "emailNotifications": "Email Notifications",
+    "communicationEmails": "Communication emails",
+    "receiveEmailsAboutYourAccountActivity": "Receive emails about your account activity.",
+    "marketingEmails": "Marketing emails",
+    "receiveEmailsAboutNewProductsFeaturesAndMore": "Receive emails about new products, features, and more.",
+    "socialEmails": "Social emails",
+    "receiveEmailsForFriendRequestsFollowsAndMore": "Receive emails for friend requests, follows, and more.",
+    "securityEmails": "Security emails",
+    "receiveEmailsAboutYourAccountActivityAndSecurity": "Receive emails about your account activity and security.",
+    "useDifferentSettingsForMyMobileDevices": "Use different settings for my mobile devices",
+    "youCanManageYourMobileNotificationsInThe": "You can manage your mobile notifications in the",
+    "mobileSettings": "mobile settings",
+    "page2": "page.",
+    "updateNotifications": "Update notifications",
+    "thisIsHowOthersWillSeeYouOnTheSite": "This is how others will see you on the site.",
+    "pleaseEnterYourUsername": "Please enter your username.",
+    "usernameMustBeAtLeast2Characters": "Username must be at least 2 characters.",
+    "usernameMustNotBeLongerThan30Characters": "Username must not be longer than 30 characters.",
+    "pleaseSelectAnEmailToDisplay": "Please select an email to display.",
+    "pleaseEnterAValidURL": "Please enter a valid URL.",
+    "username": "Username",
+    "thisIsYourPublicDisplayNameItCanBeYourRealNameOrAPseudonymYouCanOnlyChangeThisOnceEvery30Days": "This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days.",
+    "selectAVerifiedEmailToDisplay": "Select a verified email to display",
+    "youCanManageVerifiedEmailAddressesInYour": "You can manage verified email addresses in your",
+    "emailSettings": "email settings",
+    "bio": "Bio",
+    "tellUsALittleBitAboutYourself": "Tell us a little bit about yourself",
+    "youCan": "You can",
+    "mention": "@mention",
+    "otherUsersAndOrganizationsToLinkToThem": "other users and organizations to link to them.",
+    "urls": "URLs",
+    "addLinksToYourWebsiteBlogOrSocialMediaProfiles": "Add links to your website, blog, or social media profiles.",
+    "addURL": "Add URL",
+    "updateProfile": "Update profile",
+    "updatingStatus": "Updating status...",
+    "updatingPriority": "Updating priority...",
+    "exportingTasks": "Exporting tasks...",
+    "updateStatus": "Update status",
+    "updatePriority": "Update priority",
+    "exportTasks": "Export tasks",
+    "deleteSelectedTasks": "Delete selected tasks",
+    "openMenu": "Open menu",
+    "edit": "Edit",
+    "makeACopy": "Make a copy",
+    "favorite": "Favorite",
+    "labels": "Labels",
+    "delete": "Delete",
+    "selectAll": "Select all",
+    "selectRow": "Select row",
+    "task": "Task",
+    "title": "Title",
+    "status": "Status",
+    "priority": "Priority",
+    "theFollowingTaskHasBeenDeleted": "The following task has been deleted:",
+    "youAreAboutToDeleteATaskWithTheID": "You are about to delete a task with the ID",
+    "thisActionCannotBeUndone": "This action cannot be undone.",
+    "pleaseUploadAFile": "Please upload a file.",
+    "pleaseUploadCsvFormat": "Please upload csv format.",
+    "youHaveImportedTheFollowingFile": "You have imported the following file:",
+    "importTasks": "Import Tasks",
+    "importTasksQuicklyFromACSVFile": "Import tasks quickly from a CSV file.",
+    "file": "File",
+    "import": "Import",
+    "deletingTasks": "Deleting tasks...",
+    "areYouSureYouWantToDeleteTheSelectedTasks": "Are you sure you want to delete the selected tasks?",
+    "confirmByTyping": "Confirm by typing \"",
+    "warning": "Warning!",
+    "pleaseBeCarefulThisOperationCanNotBeRolledBack": "Please be careful, this operation can not be rolled back.",
+    "titleIsRequired": "Title is required.",
+    "pleaseSelectAStatus": "Please select a status.",
+    "pleaseSelectALabel": "Please select a label.",
+    "pleaseChooseAPriority": "Please choose a priority.",
+    "update": "Update",
+    "create": "Create",
+    "updateTheTaskByProvidingNecessaryInfo": "Update the task by providing necessary info.",
+    "addANewTaskByProvidingNecessaryInfo": "Add a new task by providing necessary info.",
+    "clickSaveWhenYouReDone": "Click save when you''re done.",
+    "enterATitle": "Enter a title",
+    "selectDropdown": "Select dropdown",
+    "inProgress": "In Progress",
+    "inProgress2": "In progress",
+    "backlog": "Backlog",
+    "todo": "Todo",
+    "canceled": "Canceled",
+    "done": "Done",
+    "label": "Label",
+    "documentation": "Documentation",
+    "feature": "Feature",
+    "bug": "Bug",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "saveChanges": "Save changes",
+    "filterByTitleOrID": "Filter by title or ID...",
+    "noResults": "No results.",
+    "critical": "Critical",
+    "hereSAListOfYourTasksForThisMonth": "Here''s a list of your tasks for this month!",
+    "invitingUsers": "Inviting users...",
+    "errorInvitingUsers": "Error inviting users",
+    "inviteSelectedUsers": "Invite selected users",
+    "activateSelectedUsers": "Activate selected users",
+    "deactivateSelectedUsers": "Deactivate selected users",
+    "deleteSelectedUsers": "Delete selected users",
+    "firstNameIsRequired": "First Name is required.",
+    "lastNameIsRequired": "Last Name is required.",
+    "usernameIsRequired": "Username is required.",
+    "phoneNumberIsRequired": "Phone number is required.",
+    "emailIsRequired": "Email is required.",
+    "roleIsRequired": "Role is required.",
+    "passwordIsRequired": "Password is required.",
+    "passwordMustBeAtLeast8CharactersLong": "Password must be at least 8 characters long.",
+    "passwordMustContainAtLeastOneLowercaseLetter": "Password must contain at least one lowercase letter.",
+    "passwordMustContainAtLeastOneNumber": "Password must contain at least one number.",
+    "editUser": "Edit User",
+    "addNewUser": "Add New User",
+    "updateTheUserHere": "Update the user here.",
+    "createNewUserHere": "Create new user here.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "role": "Role",
+    "selectARole": "Select a role",
+    "eGS3cur3PSsw0rd": "e.g., S3cur3P@ssw0rd",
+    "theFollowingUserHasBeenDeleted": "The following user has been deleted:",
+    "deleteUser": "Delete User",
+    "areYouSureYouWantToDelete": "Are you sure you want to delete",
+    "thisActionWillPermanentlyRemoveTheUserWithTheRoleOf": "This action will permanently remove the user with the role of",
+    "fromTheSystemThisCannotBeUndone": "from the system. This cannot be undone.",
+    "username2": "Username:",
+    "enterUsernameToConfirmDeletion": "Enter username to confirm deletion.",
+    "pleaseEnterAnEmailToInvite": "Please enter an email to invite.",
+    "inviteUser": "Invite User",
+    "inviteNewUserToJoinYourTeamBySendingThemAnEmailInvitationAssignARoleToDefineTheirAccessLevel": "Invite new user to join your team by sending them an email invitation. Assign a role to define their access level.",
+    "egJohnDoeGmailCom": "eg: john.doe@gmail.com",
+    "descriptionOptional": "Description (optional)",
+    "addAPersonalNoteToYourInvitationOptional": "Add a personal note to your invitation (optional)",
+    "invite": "Invite",
+    "deletingUsers": "Deleting users...",
+    "areYouSureYouWantToDeleteTheSelectedUsers": "Are you sure you want to delete the selected users?",
+    "addUser": "Add User",
+    "filterUsers": "Filter users...",
+    "active": "Active",
+    "inactive": "Inactive",
+    "invited": "Invited",
+    "suspended": "Suspended",
+    "superadmin": "Superadmin",
+    "admin": "Admin",
+    "manager": "Manager",
+    "cashier": "Cashier",
+    "userList": "User List",
+    "manageYourUsersAndTheirRolesHere": "Manage your users and their roles here.",
+    "youSubmittedTheFollowingValues": "You submitted the following values:",
+    "loadingTasks": "Loading tasks...",
+    "loadingUsers": "Loading users...",
+    "invalidEmailAddress": "Invalid email address",
+    "invalidURL": "Invalid URL",
+    "active2": "active",
+    "inactive2": "inactive",
+    "invited2": "invited",
+    "suspended2": "suspended",
+    "superadmin2": "superadmin",
+    "admin2": "admin",
+    "manager2": "manager",
+    "cashier2": "cashier",
+    "todo2": "todo",
+    "inProgress3": "in progress",
+    "done2": "done",
+    "canceled2": "canceled",
+    "backlog2": "backlog",
+    "low2": "low",
+    "medium2": "medium",
+    "high2": "high",
+    "critical2": "critical",
+    "task2": "task",
+    "user": "user",
+    "fullname": "fullName",
+    "phonenumber": "phoneNumber",
+    "username3": "username",
+    "email2": "email",
+    "status2": "status",
+    "role2": "role",
+    "title2": "title",
+    "priority2": "priority",
+    "reviewTheDashboardLayoutAndNavigation": "Review the dashboard layout and navigation",
+    "updateTheAccountSettingsForm": "Update the account settings form",
+    "fixTheMobileSidebarOverflow": "Fix the mobile sidebar overflow",
+    "documentTheNewComponentVariants": "Document the new component variants",
+    "improveTheSearchAndFilteringExperience": "Improve the search and filtering experience",
+    "addKeyboardNavigationToTheDialog": "Add keyboard navigation to the dialog",
+    "reviewTheNotificationPreferences": "Review the notification preferences",
+    "updateTheProjectOnboardingGuide": "Update the project onboarding guide",
+    "polishTheAnalyticsChartLabels": "Polish the analytics chart labels",
+    "verifyTheResponsiveTableLayout": "Verify the responsive table layout",
+    "shadcnAdminTemplate": "Shadcn Admin Template",
+    "localUITemplatesForRoviet": "Local UI templates for Roviet.",
+    "nextJsShadcnUI": "Next.js + ShadcnUI",
+    "satnaing": "satnaing",
+    "p": "⇧⌘P",
+    "b": "⌘B",
+    "s": "⌘S",
+    "q": "⇧⌘Q",
+    "nameExampleCom": "name@example.com",
+    "symbol07ab59f4": "********",
+    "shadcn": "shadcn",
+    "john": "John",
+    "doe": "Doe",
+    "johnDoe": "john_doe",
+    "johnDoeGmailCom": "john.doe@gmail.com",
+    "pagePageOfTotal": "Page {page} of {total}",
+    "goToPagePage": "Go to page {page}",
+    "demoSignInForEmailNoSessionWasCreated": "Demo sign-in for {email}. No session was created.",
+    "demoRegistrationForEmailNoAccountWasCreated": "Demo registration for {email}. No account was created.",
+    "demoResetForEmailNoEmailWasSent": "Demo reset for {email}. No email was sent.",
+    "pleaseTypeWordToConfirm": "Please type \"{word}\" to confirm.",
+    "typeWordToConfirm": "Type \"{word}\" to confirm.",
+    "deletedCountTaskS": "Deleted {count} {count, plural, one {task} other {tasks}}",
+    "deletedCountUserS": "Deleted {count} {count, plural, one {user} other {users}}",
+    "deleteCountTaskS": "Delete {count} {count, plural, one {task} other {tasks}}",
+    "deleteCountUserS": "Delete {count} {count, plural, one {user} other {users}}",
+    "statusUpdatedToStatusForCountTaskS": "Status updated to \"{status}\" for {count} {count, plural, one {task} other {tasks}}.",
+    "priorityUpdatedToPriorityForCountTaskS": "Priority updated to \"{priority}\" for {count} {count, plural, one {task} other {tasks}}.",
+    "exportedCountTaskSToCSV": "Exported {count} {count, plural, one {task} other {tasks}} to CSV.",
+    "activatingUsers": "Activating users...",
+    "deactivatingUsers": "Deactivating users...",
+    "activatedCountUserS": "Activated {count} {count, plural, one {user} other {users}}",
+    "deactivatedCountUserS": "Deactivated {count} {count, plural, one {user} other {users}}",
+    "errorActivatingUsers": "Error activating users",
+    "errorDeactivatingUsers": "Error deactivating users",
+    "invitedCountUserS": "Invited {count} {count, plural, one {user} other {users}}",
+    "countSelected": "{count} selected",
+    "countSelectedBulkActionsToolbarIsAvailable": "{count} selected. Bulk actions toolbar is available.",
+    "bulkActionsForCountSelectedItems": "Bulk actions for {count} selected items",
+    "selectLabel": "Select {label}",
+    "labelOptionPreview": "{label} option preview",
+    "bioMustBeAtLeast4Characters": "Bio must be at least 4 characters.",
+    "bioMustNotBeLongerThan160Characters": "Bio must not be longer than 160 characters.",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "chooseTheMonth": "Choose the month",
+    "chooseTheYear": "Choose the year",
+    "selectedDay": "selected day",
+    "today": "today",
+    "percent": "percent",
+    "pleaseEnterAValidEmail": "Please enter a valid email.",
+    "enterYourEmailToPreviewPasswordResetNoEmailWillBeSent": "Enter your email to preview password reset. No email will be sent.",
+    "resetThemePreferenceToDefault": "Reset theme preference to default",
+    "resetSidebarStyleToDefault": "Reset sidebar style to default",
+    "resetLayoutOptionsToDefault": "Reset layout options to default",
+    "resetTextDirectionToDefault": "Reset text direction to default",
+    "system2": "system"
+  },
+  "errors": {
+    "UNKNOWN_ERROR": "Something went wrong. Please try again.",
+    "BACKEND_UNAVAILABLE": "The server is unavailable.",
+    "BACKEND_NOT_CONFIGURED": "The server is not configured."
+  },
+  "home": {
+    "title": "Roviet",
+    "description": "Roviet application base",
+    "getStarted": "To get started, edit the",
+    "file": "file.",
+    "lookingFor": "Looking for a starting point or more instructions? Head over to",
+    "templates": "Templates",
+    "or": "or the",
+    "learning": "Learning",
+    "center": "center.",
+    "deploy": "Deploy Now",
+    "documentation": "Documentation"
+  },
+  "publicSite": {
+    "retreats": "Journeys",
+    "experiences": "Experiences",
+    "contacts": "Contact",
+    "explore": "Explore",
+    "exploreRetreats": "Explore journeys",
+    "exploreRetreat": "View journey",
+    "from": "Your budget",
+    "priceOnRequest": "Enquire",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "navigation": "Main navigation",
+    "mobileNavigation": "Mobile navigation",
+    "skipToContent": "Skip to content",
+    "privacyPolicy": "Privacy policy",
+    "cookiePreferences": "Browser preferences",
+    "cookieDescription": "The website remembers your language and notice preferences on this device. Read our ",
+    "cookieMore": " for details.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "closeCookieNotice": "Close notice",
+    "viewExperience": "Explore {name}",
+    "experienceSetting": "Setting",
+    "experiencePace": "Your pace",
+    "name": "Full name",
+    "email": "Email",
+    "message": "Where would you like to go?",
+    "emailPlaceholder": "Your email address",
+    "submit": "Send a message",
+    "nameRequired": "Please enter your name.",
+    "emailInvalid": "Please enter a valid email address.",
+    "contactUnavailable": "This form cannot send messages yet. Please call 0947055644 or email haodev1307@gmail.com to discuss your journey.",
+    "retreatPhotos": "Journey inspiration gallery",
+    "retreatPhoto": "Journey photo {number}",
+    "choosePhoto": "Choose a photo",
+    "showPhoto": "Show photo {number}",
+    "home": "Home",
+    "getInTouch": "Plan with us",
+    "aboutRetreats": "About the journey",
+    "fullProgram": "Itinerary ideas",
+    "food": "Flavours & pauses",
+    "team": "Local character",
+    "location": "Destination",
+    "retreatNavigation": "Journey sections",
+    "included": "Ideas for your stay",
+    "notIncluded": "Details to discuss",
+    "special": "A sense of place",
+    "checkIn": "Check-in:",
+    "checkOut": "Check-out:",
+    "dailySchedule": "An example day",
+    "mealsProvided": "Meal ideas",
+    "dietsCatered": "Things to consider",
+    "meetingPlace": "Around the destination",
+    "nameTooLong": "Your name must not exceed {max} characters.",
+    "emailTooLong": "Your email must not exceed {max} characters.",
+    "messageTooLong": "Your message must not exceed {max} characters.",
+    "foodImageNote": "Vietnamese culinary inspiration; photographs are labelled with their location.",
+    "language": {
+      "label": "Language",
+      "vi": "Vietnamese",
+      "en": "English",
+      "switchTo": "Switch to {language}"
+    },
+    "hero": {
+      "headline": "Vietnam",
+      "eyebrow": "HAFO TRAVEL · THOUGHTFUL ESCAPES",
+      "description": "A slower pace. A deeper connection.<br></br>Discover Vietnam in your own way."
+    },
+    "categories": {
+      "headline": "One destination.<br></br>So many ways to feel it.",
+      "coast": "Days by the sea",
+      "coastDetail": "Relaxed & unhurried",
+      "nature": "Closer to nature",
+      "natureDetail": "Green hills & waterways",
+      "slow": "A quieter escape",
+      "slowDetail": "Stay & recharge"
+    },
+    "about": {
+      "label": "About Hafo Travel",
+      "headline": "Beautiful journeys,<br></br>beginning with a feeling.",
+      "description": "Hafo Travel brings thoughtful escape ideas<br></br>across the landscapes and cultures of Vietnam.<br></br>From the mountains to the islands, each journey<br></br>begins with time for what matters to you.",
+      "countries": "Regions<br></br>to discover",
+      "retreats": "Journey ideas<br></br>to inspire you",
+      "trust": "Discover a collection of Vietnam, from north to south.",
+      "nature": "Nature",
+      "culture": "Culture",
+      "rest": "Rest"
+    },
+    "featured": {
+      "headline": "<emphasis>Journeys</emphasis> to inspire",
+      "description": "Six ideas for discovering Vietnam.<br></br>Find a place that feels right for your pace.",
+      "seeAll": "View the collection",
+      "related": "Keep exploring"
+    },
+    "combine": {
+      "headline": "An escape at your own pace",
+      "stay": "<emphasis>+</emphasis> Stays",
+      "transfers": "<emphasis>+</emphasis> Discoveries",
+      "extras": "<emphasis>+</emphasis> Slow moments",
+      "description": "A place you want to see.<br></br>A pace you want to keep.<br></br>Start with the things<br></br>that matter to you.",
+      "step": "Step",
+      "choose": "Find your<br></br>inspiration",
+      "match": "Share your<br></br>travel ideas",
+      "add": "Discuss the<br></br>details",
+      "pay": "Choose what<br></br>feels right"
+    },
+    "destinations": {
+      "label": "Across Vietnam",
+      "headline": "One Vietnam, many perspectives",
+      "description": "From the northern mountains, through living heritage,<br></br>to unhurried days by the sea.",
+      "north": "The North",
+      "northDetail": "Mountains · Rivers · Heritage",
+      "central": "The Central Coast",
+      "centralDetail": "Old towns · Culture · Coast",
+      "south": "The South",
+      "southDetail": "Islands · Escapes · Stillness"
+    },
+    "howItWorks": {
+      "headline": "Begin a beautiful escape",
+      "description": "From a simple idea<br></br>to a journey with a personal touch.",
+      "goalsTitle": "<emphasis>Find</emphasis> inspiration",
+      "goalsDescription": "Explore landscapes, culture<br></br>and ideas for a slower stay.",
+      "matchesTitle": "<emphasis>Choose</emphasis> a place",
+      "matchesDescription": "Find a journey<br></br>that makes you want to go.",
+      "packageTitle": "<emphasis>Talk</emphasis> with Hafo",
+      "packageDescription": "Call or email<br></br>to share your travel ideas.",
+      "progressTitle": "<emphasis>Shape</emphasis> your idea",
+      "progressDescription": "Discuss itinerary, budget<br></br>and services before deciding."
+    },
+    "practitioners": {
+      "label": "Vietnam experiences",
+      "headline": "Go to feel it.<br></br>Stay to remember it.",
+      "expertsTitle": "Moments with a sense of place",
+      "expertsDescription": "A mountain road, an old street,<br></br>a quiet patch of green.<br></br>Find what makes a journey<br></br>meaningful to you.",
+      "network": "12 perspectives on Vietnam.<br></br>From nature to culture,<br></br>each experience opens<br></br>a different way to explore."
+    },
+    "experiencesPage": {
+      "headline": "Vietnam, one experience at a time",
+      "description": "12 perspectives to inspire your own journey.<br></br>Open a card and find something that makes you curious.",
+      "valuesTitle": "What makes a journey meaningful",
+      "valuesDescription": "Simple things we want to keep<br></br>at the heart of every journey idea.",
+      "honestyTitle": "Clarity",
+      "honestyDescription": "Discuss the details clearly before making a decision.",
+      "responsibilityTitle": "Local respect",
+      "responsibilityDescription": "Listen to local stories and respect local spaces.",
+      "kindnessTitle": "A slower pace",
+      "kindnessDescription": "Make more time for the things you love.",
+      "dedicationTitle": "Thoughtful details",
+      "dedicationDescription": "Beautiful journeys begin with small choices.",
+      "serviceTitle": "Connection",
+      "serviceDescription": "Let travel become time with the people beside you.",
+      "beautyTitle": "A sense of beauty",
+      "beautyDescription": "Find inspiration in landscapes and everyday life.",
+      "wellbeingTitle": "Time for yourself",
+      "wellbeingDescription": "Leave room to rest and recharge.",
+      "progressTitle": "Mindful discovery",
+      "progressDescription": "Bring your curiosity and leave with respect."
+    },
+    "contactsPage": {
+      "description": "A place you want to see, an escape you have in mind. Share it with Hafo Travel.",
+      "directContact": "Talk to us directly"
+    },
+    "footer": {
+      "contacts": "<emphasis>+</emphasis> Contact",
+      "copyright": "© {year} {name}. All rights reserved.",
+      "tagline": "A slower pace. A deeper connection.",
+      "experiences": "<emphasis>+</emphasis> Experiences"
+    },
+    "metadata": {
+      "description": "Hafo Travel — thoughtful escapes and travel inspiration across Vietnam, from Ha Giang and Ninh Binh to Hoi An, Da Lat and Phu Quoc.",
+      "experiencesDescription": "Explore 12 perspectives on Vietnam with Hafo Travel: nature, culture, old towns and coastal escapes.",
+      "contactsDescription": "Contact Hafo Travel at 0947055644 or haodev1307@gmail.com to discuss your Vietnam travel ideas.",
+      "privacyDescription": "Information about the form, browser preferences and contact channels on the Hafo Travel website.",
+      "termsDescription": "Information about using the Hafo Travel website and its travel inspiration content."
+    },
+    "legal": {
+      "updated": "Updated 9 November 2026",
+      "contents": "Contents",
+      "contact": "Contact Hafo Travel"
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "This page describes how the Hafo Travel website currently works and the choices available when you contact us.",
+      "sections": [
+        {
+          "title": "Information in the form",
+          "paragraphs": [
+            "The form contains your name, email and message. It currently validates information on your device and does not send it through a contact API. The form directs you to phone or email instead."
+          ]
+        },
+        {
+          "title": "When you contact us directly",
+          "paragraphs": [
+            "When you call or email, you choose to share information through that channel to discuss a journey. Share only what is needed for your enquiry; do not enter passwords, identity documents or payment details in this form."
+          ]
+        },
+        {
+          "title": "Preferences on your device",
+          "paragraphs": [
+            "The website uses a language preference and stores the notice choice in your browser. You can remove these using your browser site-data settings. The public website currently has no analytics or advertising integration."
+          ]
+        },
+        {
+          "title": "Links and photographs",
+          "paragraphs": [
+            "Phone and email links open the corresponding applications on your device. Photographs are served by this website, with sources and usage information recorded in the project documentation."
+          ]
+        },
+        {
+          "title": "Questions and updates",
+          "paragraphs": [
+            "For questions about information you have shared directly, contact haodev1307@gmail.com or 0947055644. This page will be updated when the website adds services or changes how information is handled."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Website terms",
+      "intro": "The information below explains the scope of the content and current features of the Hafo Travel website.",
+      "sections": [
+        {
+          "title": "Travel inspiration",
+          "paragraphs": [
+            "Journeys, itineraries and experiences on this website are inspiration. They do not confirm a booking, ticket, room or scheduled departure."
+          ]
+        },
+        {
+          "title": "Prices and specific services",
+          "paragraphs": [
+            "The website does not publish an official price list or departure calendar. Stays, transport, activities, budget and related conditions must be discussed and confirmed separately before you decide."
+          ]
+        },
+        {
+          "title": "Photographs and places",
+          "paragraphs": [
+            "Photographs introduce places and provide inspiration. Images of resorts, cruises or service venues do not by themselves confirm a partnership with Hafo Travel or a reservation at that venue."
+          ]
+        },
+        {
+          "title": "Contact channels",
+          "paragraphs": [
+            "You can call 0947055644 or email haodev1307@gmail.com. The website form cannot send messages yet, and online booking and payment are not available."
+          ]
+        },
+        {
+          "title": "Using the content",
+          "paragraphs": [
+            "Please respect the usage rights of the photographs, identity assets and content presented here. Image sources are recorded with the project for management and replacement."
+          ]
+        },
+        {
+          "title": "Changes and questions",
+          "paragraphs": [
+            "Website content may be updated as information becomes available. Contact Hafo Travel directly if you need to clarify a journey or information about using the website."
+          ]
+        }
+      ]
+    },
+    "experienceProfiles": {
+      "haGiang": {
+        "name": "Ha Giang",
+        "specialty": "Highland roads",
+        "location": "Ha Giang, Vietnam",
+        "setting": "Mountains & villages",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Ha Giang to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "saPa": {
+        "name": "Sa Pa",
+        "specialty": "Walk through a green season",
+        "location": "Sa Pa, Vietnam",
+        "setting": "Rice terraces",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Sa Pa to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "haNoi": {
+        "name": "Hanoi",
+        "specialty": "Old-town pauses",
+        "location": "Hanoi, Vietnam",
+        "setting": "City culture",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Hanoi to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "ninhBinh": {
+        "name": "Ninh Binh",
+        "specialty": "A slower rhythm on the river",
+        "location": "Ninh Binh, Vietnam",
+        "setting": "Rivers & limestone",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Ninh Binh to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "haLong": {
+        "name": "Ha Long",
+        "specialty": "Slow moments on the bay",
+        "location": "Ha Long, Vietnam",
+        "setting": "Sea & islands",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Ha Long to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "hue": {
+        "name": "Hue",
+        "specialty": "A moment with heritage",
+        "location": "Hue, Vietnam",
+        "setting": "Architecture & heritage",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Hue to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "daNang": {
+        "name": "Da Nang",
+        "specialty": "A day facing the sea",
+        "location": "Da Nang, Vietnam",
+        "setting": "Coastal city",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Da Nang to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "hoiAn": {
+        "name": "Hoi An",
+        "specialty": "Follow the lantern light",
+        "location": "Hoi An, Vietnam",
+        "setting": "Old town & culture",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Hoi An to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "quyNhon": {
+        "name": "Quy Nhon",
+        "specialty": "Find a quiet stretch of coast",
+        "location": "Quy Nhon, Vietnam",
+        "setting": "Coast & nature",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Quy Nhon to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "phuYen": {
+        "name": "Phu Yen",
+        "specialty": "A little coastal calm",
+        "location": "Phu Yen, Vietnam",
+        "setting": "Fishing life & water",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Phu Yen to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "daLat": {
+        "name": "Da Lat",
+        "specialty": "A morning among the pines",
+        "location": "Da Lat, Vietnam",
+        "setting": "Highlands & coffee",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Da Lat to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      },
+      "phuQuoc": {
+        "name": "Phu Quoc",
+        "specialty": "Days without a rush",
+        "location": "Phu Quoc, Vietnam",
+        "setting": "Island escapes",
+        "pace": "At your own pace",
+        "bio": [
+          "A perspective on Phu Quoc to begin your inspiration. Make time for the landscape, small details and local rhythms.",
+          "This is an exploration idea. Contact Hafo Travel to discuss your time and preferences."
+        ]
+      }
+    },
+    "retreatCards": {
+      "haGiang": {
+        "title": ["Ha Giang, beyond the mountain roads"],
+        "properties": [
+          {
+            "label": "Ha Giang, Vietnam",
+            "detail": ""
+          },
+          {
+            "label": "An itinerary idea",
+            "detail": ""
+          },
+          {
+            "label": "Travel at your own pace",
+            "detail": ""
+          },
+          {
+            "label": "Nature & culture",
+            "detail": ""
+          }
+        ]
+      },
+      "daLat": {
+        "title": ["Da Lat, a little room to breathe"],
+        "properties": [
+          {
+            "label": "Da Lat, Vietnam",
+            "detail": ""
+          },
+          {
+            "label": "An itinerary idea",
+            "detail": ""
+          },
+          {
+            "label": "Travel at your own pace",
+            "detail": ""
+          },
+          {
+            "label": "Nature & culture",
+            "detail": ""
+          }
+        ]
+      },
+      "hoiAn": {
+        "title": ["Hoi An, moments of living heritage"],
+        "properties": [
+          {
+            "label": "Hoi An, Vietnam",
+            "detail": ""
+          },
+          {
+            "label": "An itinerary idea",
+            "detail": ""
+          },
+          {
+            "label": "Travel at your own pace",
+            "detail": ""
+          },
+          {
+            "label": "Nature & culture",
+            "detail": ""
+          }
+        ]
+      },
+      "ninhBinh": {
+        "title": ["Ninh Binh, where rivers meet the mountains"],
+        "properties": [
+          {
+            "label": "Ninh Binh, Vietnam",
+            "detail": ""
+          },
+          {
+            "label": "An itinerary idea",
+            "detail": ""
+          },
+          {
+            "label": "Travel at your own pace",
+            "detail": ""
+          },
+          {
+            "label": "Nature & culture",
+            "detail": ""
+          }
+        ]
+      },
+      "haLong": {
+        "title": ["Ha Long, an unhurried escape on the bay"],
+        "properties": [
+          {
+            "label": "Ha Long, Vietnam",
+            "detail": ""
+          },
+          {
+            "label": "An itinerary idea",
+            "detail": ""
+          },
+          {
+            "label": "Travel at your own pace",
+            "detail": ""
+          },
+          {
+            "label": "Nature & culture",
+            "detail": ""
+          }
+        ]
+      },
+      "phuQuoc": {
+        "title": ["Phu Quoc, days by the sea"],
+        "properties": [
+          {
+            "label": "Phu Quoc, Vietnam",
+            "detail": ""
+          },
+          {
+            "label": "An itinerary idea",
+            "detail": ""
+          },
+          {
+            "label": "Travel at your own pace",
+            "detail": ""
+          },
+          {
+            "label": "Nature & culture",
+            "detail": ""
+          }
+        ]
+      }
+    },
+    "retreatContent": {
+      "haGiang": {
+        "title": "Ha Giang, beyond the mountain roads",
+        "description": "Slow down among limestone peaks, the Nho Que River and villages tucked into the hills.",
+        "headline": ["Ha Giang, beyond the mountain roads"],
+        "locationLabel": "Ha Giang, Vietnam",
+        "dates": "Dates discussed on enquiry",
+        "guests": "Couples · Families · Friends",
+        "about": [
+          "A journey for those who want to see another side of Vietnam. Winding roads reveal deep valleys, small homes and the open skies of the limestone plateau.",
+          "Make time for Dong Van, a boat ride on the Nho Que River and unhurried stops along the way. This is an itinerary idea; the route and duration are discussed before travel."
+        ],
+        "included": [
+          [
+            "Inspiration for a place to stay",
+            "Time to explore the landscape",
+            "Ideas for local flavours"
+          ],
+          [
+            "Space to rest at your own pace",
+            "Cultural moments along the way",
+            "A direct conversation with Hafo"
+          ]
+        ],
+        "special": [
+          "Slow down among limestone peaks, the Nho Que River and villages tucked into the hills.",
+          "A memorable journey does not need a long checklist. Choose experiences that feel right and leave time to enjoy them."
+        ],
+        "program": {
+          "checkIn": "Confirmed with your stay",
+          "checkOut": "Confirmed with your stay",
+          "description": [
+            "The schedule below is an idea for an experience day. Order, timing and services are discussed around your needs; this is not a confirmed programme."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Morning light over the plateau"
+          },
+          {
+            "time": "08:00",
+            "description": "Breakfast and a village walk"
+          },
+          {
+            "time": "10:00",
+            "description": "Explore the roads around Dong Van"
+          },
+          {
+            "time": "14:00",
+            "description": "An idea for time on the Nho Que River"
+          },
+          {
+            "time": "17:00",
+            "description": "Pause for mountain and valley views"
+          },
+          {
+            "time": "19:00",
+            "description": "Dinner and a quiet evening"
+          }
+        ],
+        "scheduleDescription": [
+          "You can leave more time to rest or discuss alternative stops. Every choice should suit the weather, current conditions and your travelling companions."
+        ],
+        "food": {
+          "description": [
+            "Make room for a meal, a small cafe and the flavours of Vietnam. The photographs below are Vietnamese culinary inspiration, rather than a menu or services included in this journey."
+          ],
+          "meals": [
+            "A leisurely breakfast",
+            "Lunch along the way",
+            "Dinner with your companions"
+          ],
+          "diets": [
+            "Discuss your preferences before travel",
+            "Share any food allergies",
+            "Confirm any dietary requirements"
+          ]
+        },
+        "team": [
+          {
+            "role": "Local inspiration",
+            "bio": [
+              "Small homes, winding paths and local stories give Ha Giang its character. Leave space in your itinerary to observe and listen."
+            ],
+            "name": "Life in the highlands"
+          }
+        ],
+        "meeting": {
+          "address": ["Ha Giang", "Vietnam"],
+          "description": [
+            "Pickup points, accommodation and specific addresses are confirmed when discussing your journey. The photograph introduces the destination surroundings."
+          ]
+        },
+        "excluded": [
+          ["Travel dates and duration", "Accommodation and transport"],
+          ["Budget and selected services", "Confirmation and change conditions"]
+        ]
+      },
+      "daLat": {
+        "title": "Da Lat, a little room to breathe",
+        "description": "Pine forests, morning mist and gentle pauses in the highlands.",
+        "headline": ["Da Lat, a little room to breathe"],
+        "locationLabel": "Da Lat, Vietnam",
+        "dates": "Dates discussed on enquiry",
+        "guests": "Couples · Families · Friends",
+        "about": [
+          "Da Lat makes room for slow mornings. Begin with coffee, walk beneath the pines and return to a quiet place to stay.",
+          "This stay idea brings together highland scenery, small cafes and time for yourself. Accommodation photographs are inspiration; specific stays and services are confirmed during consultation."
+        ],
+        "included": [
+          [
+            "Inspiration for a place to stay",
+            "Time to explore the landscape",
+            "Ideas for local flavours"
+          ],
+          [
+            "Space to rest at your own pace",
+            "Cultural moments along the way",
+            "A direct conversation with Hafo"
+          ]
+        ],
+        "special": [
+          "Pine forests, morning mist and gentle pauses in the highlands.",
+          "A memorable journey does not need a long checklist. Choose experiences that feel right and leave time to enjoy them."
+        ],
+        "program": {
+          "checkIn": "Confirmed with your stay",
+          "checkOut": "Confirmed with your stay",
+          "description": [
+            "The schedule below is an idea for an experience day. Order, timing and services are discussed around your needs; this is not a confirmed programme."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Morning mist among the pines"
+          },
+          {
+            "time": "08:00",
+            "description": "A light breakfast and coffee"
+          },
+          {
+            "time": "10:00",
+            "description": "A walk through green surroundings"
+          },
+          {
+            "time": "14:00",
+            "description": "Personal time at your stay"
+          },
+          {
+            "time": "17:00",
+            "description": "Find a view across the hills"
+          },
+          {
+            "time": "19:00",
+            "description": "Discover the flavours of Da Lat"
+          }
+        ],
+        "scheduleDescription": [
+          "You can leave more time to rest or discuss alternative stops. Every choice should suit the weather, current conditions and your travelling companions."
+        ],
+        "food": {
+          "description": [
+            "Make room for a meal, a small cafe and the flavours of Vietnam. The photographs below are Vietnamese culinary inspiration, rather than a menu or services included in this journey."
+          ],
+          "meals": [
+            "A leisurely breakfast",
+            "Lunch along the way",
+            "Dinner with your companions"
+          ],
+          "diets": [
+            "Discuss your preferences before travel",
+            "Share any food allergies",
+            "Confirm any dietary requirements"
+          ]
+        },
+        "team": [
+          {
+            "role": "Local inspiration",
+            "bio": [
+              "Sometimes the highlight is simply a quiet garden and a warm cup of coffee. Choose fewer stops and allow more time to enjoy them."
+            ],
+            "name": "Coffee and garden corners"
+          }
+        ],
+        "meeting": {
+          "address": ["Da Lat", "Vietnam"],
+          "description": [
+            "Pickup points, accommodation and specific addresses are confirmed when discussing your journey. The photograph introduces the destination surroundings."
+          ]
+        },
+        "excluded": [
+          ["Travel dates and duration", "Accommodation and transport"],
+          ["Budget and selected services", "Confirmation and change conditions"]
+        ]
+      },
+      "hoiAn": {
+        "title": "Hoi An, moments of living heritage",
+        "description": "Wander past tiled rooftops, green courtyards and lantern-lit streets by the river.",
+        "headline": ["Hoi An, moments of living heritage"],
+        "locationLabel": "Hoi An, Vietnam",
+        "dates": "Dates discussed on enquiry",
+        "guests": "Couples · Families · Friends",
+        "about": [
+          "Hoi An reveals itself in small details: yellow walls, shaded doorways and lanterns as evening arrives. Discover it at an unhurried pace.",
+          "This itinerary idea combines the old town, local culture and pauses by the river. Activities and stays are selected around your time and preferences."
+        ],
+        "included": [
+          [
+            "Inspiration for a place to stay",
+            "Time to explore the landscape",
+            "Ideas for local flavours"
+          ],
+          [
+            "Space to rest at your own pace",
+            "Cultural moments along the way",
+            "A direct conversation with Hafo"
+          ]
+        ],
+        "special": [
+          "Wander past tiled rooftops, green courtyards and lantern-lit streets by the river.",
+          "A memorable journey does not need a long checklist. Choose experiences that feel right and leave time to enjoy them."
+        ],
+        "program": {
+          "checkIn": "Confirmed with your stay",
+          "checkOut": "Confirmed with your stay",
+          "description": [
+            "The schedule below is an idea for an experience day. Order, timing and services are discussed around your needs; this is not a confirmed programme."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Walk the streets in the soft morning light"
+          },
+          {
+            "time": "08:00",
+            "description": "Pause for a local breakfast"
+          },
+          {
+            "time": "10:00",
+            "description": "Discover old-town architecture"
+          },
+          {
+            "time": "14:00",
+            "description": "Visit a courtyard and a small cafe"
+          },
+          {
+            "time": "17:00",
+            "description": "Watch the town along the river"
+          },
+          {
+            "time": "19:00",
+            "description": "An evening among the lanterns"
+          }
+        ],
+        "scheduleDescription": [
+          "You can leave more time to rest or discuss alternative stops. Every choice should suit the weather, current conditions and your travelling companions."
+        ],
+        "food": {
+          "description": [
+            "Make room for a meal, a small cafe and the flavours of Vietnam. The photographs below are Vietnamese culinary inspiration, rather than a menu or services included in this journey."
+          ],
+          "meals": [
+            "A leisurely breakfast",
+            "Lunch along the way",
+            "Dinner with your companions"
+          ],
+          "diets": [
+            "Discuss your preferences before travel",
+            "Share any food allergies",
+            "Confirm any dietary requirements"
+          ]
+        },
+        "team": [
+          {
+            "role": "Local inspiration",
+            "bio": [
+              "From an old roof to lantern light reflected on the water, Hoi An gives you reasons to pause. Be mindful of local homes and cultural spaces."
+            ],
+            "name": "Streets with stories to tell"
+          }
+        ],
+        "meeting": {
+          "address": ["Hoi An", "Vietnam"],
+          "description": [
+            "Pickup points, accommodation and specific addresses are confirmed when discussing your journey. The photograph introduces the destination surroundings."
+          ]
+        },
+        "excluded": [
+          ["Travel dates and duration", "Accommodation and transport"],
+          ["Budget and selected services", "Confirmation and change conditions"]
+        ]
+      },
+      "ninhBinh": {
+        "title": "Ninh Binh, where rivers meet the mountains",
+        "description": "Quiet waterways, green valleys and limestone peaks reflected in the river.",
+        "headline": ["Ninh Binh, where rivers meet the mountains"],
+        "locationLabel": "Ninh Binh, Vietnam",
+        "dates": "Dates discussed on enquiry",
+        "guests": "Couples · Families · Friends",
+        "about": [
+          "Ninh Binh feels both familiar and extraordinary. Limestone peaks, open fields and waterways set an easy rhythm for exploration.",
+          "Make time for Trang An, Tam Coc and small paths through the countryside. This is inspiration to discuss with Hafo Travel, rather than a scheduled departure on sale."
+        ],
+        "included": [
+          [
+            "Inspiration for a place to stay",
+            "Time to explore the landscape",
+            "Ideas for local flavours"
+          ],
+          [
+            "Space to rest at your own pace",
+            "Cultural moments along the way",
+            "A direct conversation with Hafo"
+          ]
+        ],
+        "special": [
+          "Quiet waterways, green valleys and limestone peaks reflected in the river.",
+          "A memorable journey does not need a long checklist. Choose experiences that feel right and leave time to enjoy them."
+        ],
+        "program": {
+          "checkIn": "Confirmed with your stay",
+          "checkOut": "Confirmed with your stay",
+          "description": [
+            "The schedule below is an idea for an experience day. Order, timing and services are discussed around your needs; this is not a confirmed programme."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Greet the day in the valley"
+          },
+          {
+            "time": "08:00",
+            "description": "Breakfast and time to get ready"
+          },
+          {
+            "time": "10:00",
+            "description": "An idea for a Trang An boat journey"
+          },
+          {
+            "time": "14:00",
+            "description": "Explore the landscape around Tam Coc"
+          },
+          {
+            "time": "17:00",
+            "description": "Watch the afternoon light on the water"
+          },
+          {
+            "time": "19:00",
+            "description": "Dinner and time to unwind"
+          }
+        ],
+        "scheduleDescription": [
+          "You can leave more time to rest or discuss alternative stops. Every choice should suit the weather, current conditions and your travelling companions."
+        ],
+        "food": {
+          "description": [
+            "Make room for a meal, a small cafe and the flavours of Vietnam. The photographs below are Vietnamese culinary inspiration, rather than a menu or services included in this journey."
+          ],
+          "meals": [
+            "A leisurely breakfast",
+            "Lunch along the way",
+            "Dinner with your companions"
+          ],
+          "diets": [
+            "Discuss your preferences before travel",
+            "Share any food allergies",
+            "Confirm any dietary requirements"
+          ]
+        },
+        "team": [
+          {
+            "role": "Local inspiration",
+            "bio": [
+              "Seeing the landscape from the water offers a different perspective on Ninh Binh. Quiet moments and natural sounds are part of what makes it memorable."
+            ],
+            "name": "A slower rhythm on the river"
+          }
+        ],
+        "meeting": {
+          "address": ["Ninh Binh", "Vietnam"],
+          "description": [
+            "Pickup points, accommodation and specific addresses are confirmed when discussing your journey. The photograph introduces the destination surroundings."
+          ]
+        },
+        "excluded": [
+          ["Travel dates and duration", "Accommodation and transport"],
+          ["Budget and selected services", "Confirmation and change conditions"]
+        ]
+      },
+      "haLong": {
+        "title": "Ha Long, an unhurried escape on the bay",
+        "description": "Calm water, limestone islands and a pause with the horizon in view.",
+        "headline": ["Ha Long, an unhurried escape on the bay"],
+        "locationLabel": "Ha Long, Vietnam",
+        "dates": "Dates discussed on enquiry",
+        "guests": "Couples · Families · Friends",
+        "about": [
+          "Ha Long invites a change of pace. See limestone islands from the water, spend time on deck and enjoy the openness of the bay.",
+          "Cruise and landscape photographs are inspiration. The vessel, route, cabin and services are discussed and confirmed separately before you decide."
+        ],
+        "included": [
+          [
+            "Inspiration for a place to stay",
+            "Time to explore the landscape",
+            "Ideas for local flavours"
+          ],
+          [
+            "Space to rest at your own pace",
+            "Cultural moments along the way",
+            "A direct conversation with Hafo"
+          ]
+        ],
+        "special": [
+          "Calm water, limestone islands and a pause with the horizon in view.",
+          "A memorable journey does not need a long checklist. Choose experiences that feel right and leave time to enjoy them."
+        ],
+        "program": {
+          "checkIn": "Confirmed with your stay",
+          "checkOut": "Confirmed with your stay",
+          "description": [
+            "The schedule below is an idea for an experience day. Order, timing and services are discussed around your needs; this is not a confirmed programme."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Morning light across the bay"
+          },
+          {
+            "time": "08:00",
+            "description": "Breakfast with an open view"
+          },
+          {
+            "time": "10:00",
+            "description": "Discover the landscape from the water"
+          },
+          {
+            "time": "14:00",
+            "description": "Time to relax along the way"
+          },
+          {
+            "time": "17:00",
+            "description": "Limestone islands in the afternoon light"
+          },
+          {
+            "time": "19:00",
+            "description": "Dinner and a quiet evening"
+          }
+        ],
+        "scheduleDescription": [
+          "You can leave more time to rest or discuss alternative stops. Every choice should suit the weather, current conditions and your travelling companions."
+        ],
+        "food": {
+          "description": [
+            "Make room for a meal, a small cafe and the flavours of Vietnam. The photographs below are Vietnamese culinary inspiration, rather than a menu or services included in this journey."
+          ],
+          "meals": [
+            "A leisurely breakfast",
+            "Lunch along the way",
+            "Dinner with your companions"
+          ],
+          "diets": [
+            "Discuss your preferences before travel",
+            "Share any food allergies",
+            "Confirm any dietary requirements"
+          ]
+        },
+        "team": [
+          {
+            "role": "Local inspiration",
+            "bio": [
+              "Among the islands and waterways, make time for simple things: the view, a book and a conversation with your travelling companion."
+            ],
+            "name": "Open skies above the water"
+          }
+        ],
+        "meeting": {
+          "address": ["Ha Long", "Vietnam"],
+          "description": [
+            "Pickup points, accommodation and specific addresses are confirmed when discussing your journey. The photograph introduces the destination surroundings."
+          ]
+        },
+        "excluded": [
+          ["Travel dates and duration", "Accommodation and transport"],
+          ["Budget and selected services", "Confirmation and change conditions"]
+        ]
+      },
+      "phuQuoc": {
+        "title": "Phu Quoc, days by the sea",
+        "description": "Blue water, palm shade and time that belongs entirely to you.",
+        "headline": ["Phu Quoc, days by the sea"],
+        "locationLabel": "Phu Quoc, Vietnam",
+        "dates": "Dates discussed on enquiry",
+        "guests": "Couples · Families · Friends",
+        "about": [
+          "A Phu Quoc escape can begin simply: bare feet on the sand, changing colours on the water and more time with the people you love.",
+          "From Khem Beach to green resort surroundings, this journey is shaped as inspiration for your pace. Resort photographs do not confirm a partnership or a reservation."
+        ],
+        "included": [
+          [
+            "Inspiration for a place to stay",
+            "Time to explore the landscape",
+            "Ideas for local flavours"
+          ],
+          [
+            "Space to rest at your own pace",
+            "Cultural moments along the way",
+            "A direct conversation with Hafo"
+          ]
+        ],
+        "special": [
+          "Blue water, palm shade and time that belongs entirely to you.",
+          "A memorable journey does not need a long checklist. Choose experiences that feel right and leave time to enjoy them."
+        ],
+        "program": {
+          "checkIn": "Confirmed with your stay",
+          "checkOut": "Confirmed with your stay",
+          "description": [
+            "The schedule below is an idea for an experience day. Order, timing and services are discussed around your needs; this is not a confirmed programme."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "A beach walk in the morning light"
+          },
+          {
+            "time": "08:00",
+            "description": "Breakfast and a slow start"
+          },
+          {
+            "time": "10:00",
+            "description": "Discover a favourite stretch of coast"
+          },
+          {
+            "time": "14:00",
+            "description": "Relax beneath the palms"
+          },
+          {
+            "time": "17:00",
+            "description": "Watch the sea as the day softens"
+          },
+          {
+            "time": "19:00",
+            "description": "Dinner with coastal flavours"
+          }
+        ],
+        "scheduleDescription": [
+          "You can leave more time to rest or discuss alternative stops. Every choice should suit the weather, current conditions and your travelling companions."
+        ],
+        "food": {
+          "description": [
+            "Make room for a meal, a small cafe and the flavours of Vietnam. The photographs below are Vietnamese culinary inspiration, rather than a menu or services included in this journey."
+          ],
+          "meals": [
+            "A leisurely breakfast",
+            "Lunch along the way",
+            "Dinner with your companions"
+          ],
+          "diets": [
+            "Discuss your preferences before travel",
+            "Share any food allergies",
+            "Confirm any dietary requirements"
+          ]
+        },
+        "team": [
+          {
+            "role": "Local inspiration",
+            "bio": [
+              "There is no need to fill every hour. Leave an afternoon for the beach, a book or time with family."
+            ],
+            "name": "Stay a little longer"
+          }
+        ],
+        "meeting": {
+          "address": ["Phu Quoc", "Vietnam"],
+          "description": [
+            "Pickup points, accommodation and specific addresses are confirmed when discussing your journey. The photograph introduces the destination surroundings."
+          ]
+        },
+        "excluded": [
+          ["Travel dates and duration", "Accommodation and transport"],
+          ["Budget and selected services", "Confirmation and change conditions"]
+        ]
+      }
+    }
+  }
+}

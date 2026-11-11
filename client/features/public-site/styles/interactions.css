@@ -1,0 +1,77 @@
+.public-site a:not([data-slot="button"]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 5px;
+}
+
+.public-site [id] {
+  scroll-margin-top: calc(
+    var(--hafo-header-height, 72px) + var(--hafo-nav-height, 0px) + 20px
+  );
+}
+
+.public-site .retreat-page-info,
+.public-site .legal-nav {
+  position: sticky;
+  top: calc(var(--hafo-header-height, 72px) + 20px);
+}
+
+.public-site .retreat-page-content__sidebar,
+.public-site .legal-content__sidebar {
+  align-self: stretch;
+}
+
+.public-site .retreat-page-info__link a.is-active,
+.public-site .legal-nav__link.is-active {
+  color: var(--foreground);
+}
+
+@media (max-width: 479px) {
+  .public-site .statistic__items,
+  .public-site .practitioners__list {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .public-site .statistic__items::-webkit-scrollbar,
+  .public-site .practitioners__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .public-site .statistic__items > .statistic-item,
+  .public-site .practitioners__list > .experience-card {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .public-site .retreat-page-info {
+    position: static;
+  }
+
+  .public-site .retreat-page-info__nav.mobile-visible {
+    position: sticky;
+    z-index: 10;
+    top: var(--hafo-header-height, 64px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--background);
+  }
+
+  .public-site .legal-nav {
+    position: static;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site *,
+  .public-site *::before,
+  .public-site *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

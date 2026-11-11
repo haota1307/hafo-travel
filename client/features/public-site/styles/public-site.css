@@ -1,0 +1,1009 @@
+@import "./fonts.css";
+@import "./measured.css";
+@import "./tokens.css";
+@import "./interactions.css";
+
+.public-site {
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  isolation: isolate;
+  overflow-x: clip;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--hafo-font);
+  font-size: var(--hafo-unit);
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: normal;
+  color-scheme: dark;
+}
+
+.public-site:has(.cookie.is-active) {
+  padding-bottom: var(--hafo-cookie-height, 0px);
+}
+
+.public-site .skip-link {
+  position: fixed;
+  top: -100px;
+  left: 20px;
+  z-index: 1200;
+  padding: 12px 20px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.public-site .skip-link:focus {
+  top: 12px;
+}
+
+.public-site .header__r > nav {
+  display: contents;
+}
+
+.public-site .header {
+  z-index: 1000;
+}
+
+.public-site .header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  height: 100%;
+  padding-right: 20px;
+}
+
+.public-site .public-language-switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.public-site .public-language-switch button {
+  min-width: 36px;
+  min-height: 40px;
+  padding-inline: 8px;
+}
+
+.public-site .public-language-switch [aria-pressed="true"] {
+  color: var(--brand-accent);
+}
+
+.public-site .header-menu-trigger {
+  width: calc(var(--hafo-unit) * 4.5);
+  height: calc(var(--hafo-unit) * 4.5);
+  border-radius: 0;
+}
+
+.public-site .header__l {
+  color: var(--foreground);
+}
+
+.public-site .header-nav__link[aria-current="page"] {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--brand-accent);
+  text-underline-offset: 6px;
+}
+
+.public-site .about-item__logo {
+  height: auto;
+}
+
+.public-site .combine-step__head {
+  display: block;
+}
+
+.public-site:not([data-public-page="/"]) .footer__visual {
+  display: none;
+}
+
+.public-site .public-button {
+  gap: 12px;
+  height: auto;
+  min-height: 44px;
+  padding: 12px 24px;
+}
+
+.public-site .featured-item__button .public-button {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.public-site .retreat-property-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+}
+
+.public-site .retreat-rating {
+  display: flex;
+  color: var(--brand-accent);
+}
+
+.public-site .retreat-rating svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.public-site .cookie[hidden] {
+  display: none;
+}
+
+.public-site .contact-form,
+.public-site .experience-bio {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.public-site .contact-form-row,
+.public-site .retreat-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.public-site [data-slot="sheet-overlay"] {
+  z-index: 1100;
+}
+
+.public-site [data-slot="sheet-content"],
+.public-site [data-slot="popover-positioner"] {
+  z-index: 1101;
+}
+
+.public-site .public-mobile-menu {
+  width: min(380px, 100vw);
+  max-width: 100%;
+  padding: 24px;
+}
+
+.public-site .public-mobile-menu .header-nav {
+  margin: 32px 0;
+  padding: 0;
+  gap: 24px;
+}
+
+.public-site .public-mobile-menu .header-nav__link {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.public-site .experience-trigger {
+  display: block;
+  width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+
+.public-site .experience-profile {
+  width: min(360px, calc(100vw - 32px));
+  max-height: 80dvh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.public-site .experience-bio {
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+.public-site .experience-stats {
+  display: grid;
+  gap: 12px;
+}
+
+.public-site .experience-stats > div,
+.public-site .experience-stats dd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.public-site .experience-stats svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+}
+
+.public-site .practitioners__list > .experience-card {
+  border-bottom: 1px solid var(--border);
+}
+
+.public-site .practitioners__list > .experience-card:nth-child(odd) {
+  border-right: 1px solid var(--border);
+}
+
+.public-site .retreat-gallery-track {
+  aspect-ratio: 1360 / 547;
+  display: grid;
+  grid-template-columns: 61fr 19.5fr 19.5fr;
+  grid-template-rows: 1fr 1fr;
+  gap: calc(var(--hafo-unit) * 2);
+}
+
+.public-site .retreat-gallery-item:first-child {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.public-site .retreat-gallery-item {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.public-site .retreat-gallery-item:nth-child(2) {
+  grid-column: 2 / 4;
+  grid-row: 1;
+}
+
+.public-site .retreat-gallery-item:nth-child(3) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.public-site .retreat-gallery-item:nth-child(4) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.public-site .retreat-page-intro__photo {
+  display: block;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.public-site .public-gallery-dots {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 24px;
+}
+
+.public-site .retreat-prose p + p {
+  margin-top: 1em;
+}
+
+.public-site .retreat-checklist,
+.public-site .retreat-summary-details {
+  display: grid;
+  gap: 12px;
+}
+
+.public-site .retreat-checklist li,
+.public-site .retreat-summary-details li,
+.public-site .retreat-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.public-site .retreat-checklist svg,
+.public-site .retreat-summary-details svg,
+.public-site .retreat-address svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+.public-site .retreat-check-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--muted-foreground);
+}
+
+.public-site .retreat-address address {
+  font-style: normal;
+}
+
+.public-site .retreat-price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.public-site .retreat-price span {
+  color: var(--muted-foreground);
+}
+
+.public-site .retreat-price strong {
+  font-size: 28px;
+}
+
+.public-site .retreat-section-link {
+  justify-content: flex-start;
+  color: var(--muted-foreground);
+}
+
+@media (max-width: 479px) {
+  .public-site .header__actions {
+    gap: 4px;
+    padding-right: calc(var(--hafo-unit) * 0.5);
+  }
+
+  .public-site .public-language-switch button {
+    min-width: 32px;
+    padding-inline: 6px;
+  }
+
+  .public-site .public-button-mobile {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .public-site .contact-form-row,
+  .public-site .retreat-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .public-site .public-gallery-dots {
+    display: flex;
+  }
+
+  .public-site .retreat-gallery-track {
+    display: flex;
+    aspect-ratio: auto;
+    gap: 0;
+  }
+
+  .public-site .retreat-gallery-item {
+    flex: 0 0 100%;
+    aspect-ratio: 335 / 320;
+  }
+
+  .public-site .practitioners__list .experience-card {
+    flex: 0 0 calc(var(--hafo-unit) * 18.75);
+  }
+
+  .public-site .practitioners__list .experience-card__visual {
+    aspect-ratio: 260 / 325;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 991px) {
+  .public-site .footer-top__link > .h3 {
+    display: block;
+  }
+}
+
+.public-site {
+  font-size: clamp(15px, var(--hafo-unit), 16px);
+  line-height: 1.55;
+  color-scheme: light;
+}
+
+.public-site .h1 {
+  letter-spacing: -0.065em;
+  font-size: clamp(100px, 12vw, 172px);
+  line-height: 1.06;
+  font-weight: 500;
+}
+.public-site .h2 {
+  font-size: clamp(32px, calc(var(--hafo-unit) * 3.5), 56px);
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+  font-weight: 500;
+}
+.public-site .h3 {
+  letter-spacing: -0.04em;
+  line-height: 1.16;
+  font-weight: 500;
+}
+.public-site .h4 {
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+  font-weight: 500;
+}
+.public-site .body-md,
+.public-site .body-md-regular {
+  font-size: clamp(14px, var(--hafo-unit), 16px);
+  line-height: 1.55;
+  letter-spacing: -0.015em;
+}
+.public-site .body-sm {
+  font-size: clamp(12px, calc(var(--hafo-unit) * 0.875), 14px);
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+.public-site .body-lg,
+.public-site .body-lg-semibold {
+  font-size: clamp(16px, calc(var(--hafo-unit) * 1.125), 18px);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+.public-site .body-xl {
+  font-size: clamp(18px, calc(var(--hafo-unit) * 1.5), 24px);
+  line-height: 1.5;
+  letter-spacing: -0.025em;
+}
+.public-site .body-xxl {
+  font-size: clamp(20px, calc(var(--hafo-unit) * 1.5), 24px);
+  line-height: 1.4;
+  letter-spacing: -0.035em;
+  font-weight: 400;
+}
+.public-site .button-sm {
+  font-size: clamp(13px, calc(var(--hafo-unit) * 0.875), 14px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.public-site .title-xs {
+  font-size: clamp(12px, calc(var(--hafo-unit) * 0.875), 14px);
+  line-height: 1.45;
+}
+.public-site .public-button {
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease;
+}
+.public-site .public-button:hover {
+  transform: translateY(-2px);
+}
+.public-site .logo-mini {
+  height: auto;
+  color: var(--brand-accent);
+  flex-shrink: 0;
+}
+.public-site .hafo-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 3;
+}
+
+.public-site .intro {
+  overflow: hidden;
+  width: 100%;
+  min-height: 560px;
+  color: #f7f5ef;
+}
+.public-site .intro > .container {
+  position: relative;
+  z-index: 3;
+}
+.public-site .intro-bg-part.intro-bg-part--1,
+.public-site .intro-bg-part.intro-bg-part--2 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  inset: 0;
+  pointer-events: none;
+}
+.public-site .intro-bg-part.intro-bg-part--1 {
+  z-index: 0;
+}
+.public-site .intro-bg-part.intro-bg-part--2 {
+  z-index: 2;
+  opacity: 0.55;
+  mask-image: linear-gradient(180deg, transparent 65%, #000 87%, transparent);
+}
+.public-site .intro-bg-dark {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    #09231c55,
+    #09231c50 55%,
+    #09231c50 78%,
+    var(--background)
+  );
+}
+.public-site .intro .public-button {
+  --primary: #f7f5ef;
+  --primary-foreground: #143c32;
+}
+.public-site .intro .intro__headline {
+  margin-bottom: 20px;
+}
+
+.public-site .header {
+  background: color-mix(in srgb, var(--background) 96%, transparent);
+  color: var(--foreground);
+}
+.public-site .header.header--on-hero:not(.is-active) {
+  --foreground: #f7f5ef;
+  --white-100: #f7f5ef;
+  --white-20: #f7f5ef40;
+  --secondary: #f7f5ef22;
+  --secondary-foreground: #f7f5ef;
+  --accent: #f7f5ef22;
+  --accent-foreground: #f7f5ef;
+  background: transparent;
+}
+.public-site .header__r {
+  background: transparent;
+}
+.public-site .header__l {
+  flex-shrink: 0;
+  min-width: 190px;
+}
+.public-site .header-logo__icon {
+  width: 32px;
+  height: 32px;
+}
+.public-site .header-logo__title {
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+}
+.public-site .header__l .header-logo__icon path {
+  fill: none;
+}
+.public-site .header__l:hover .header-logo__icon path {
+  fill: none;
+  stroke: var(--brand-accent);
+}
+.public-site .header__accent {
+  border-color: var(--white-20);
+}
+.public-site .header__accent .button-sm {
+  color: var(--foreground);
+}
+.public-site .public-language-switch [aria-pressed="true"] {
+  color: inherit;
+}
+.public-site .header-menu-trigger {
+  color: var(--foreground);
+}
+
+.public-site .about-section {
+  background: #eee8dc55;
+}
+.public-site .about__illustration {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+.public-site .hafo-brand-value {
+  font-size: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.public-site .about-item__logos {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.public-site .statistic-item__head {
+  min-height: 44px;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow: visible;
+}
+.public-site .featured-item__head {
+  gap: 20px;
+}
+.public-site .featured-item__cost {
+  flex-shrink: 0;
+}
+.public-site .featured-item__visual {
+  overflow: hidden;
+}
+.public-site .featured-item__illustration {
+  transition: transform 650ms cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.public-site .featured-item:hover .featured-item__illustration {
+  transform: scale(1.025);
+}
+.public-site .retreat-rating {
+  color: var(--brand-green);
+}
+.public-site .retreat-rating svg {
+  fill: none;
+  width: 16px;
+  height: 16px;
+}
+
+.public-site .combine {
+  position: relative;
+  isolation: isolate;
+  background-image: none;
+  overflow: hidden;
+}
+.public-site .hafo-combine-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.public-site .combine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, #09291fe0, #09291f60 50%, #09291fe8);
+}
+.public-site .combine__steps .body-xl {
+  font-size: calc(var(--hafo-unit) * 1.375);
+  line-height: 1.2;
+}
+.public-site .combine-step__head .h3 {
+  line-height: 1;
+}
+.public-site .combine-step__subtitle .title-xs {
+  font-size: calc(var(--hafo-unit) * 0.75);
+  line-height: 1.25;
+}
+.public-site .combine-step__body .body-lg {
+  font-size: calc(var(--hafo-unit) * 1.125);
+  line-height: 1.3;
+}
+.public-site .destination {
+  aspect-ratio: auto;
+  background-image: none;
+  background-color: #eee8dc66;
+}
+.public-site .destination-mobile {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.public-site .destination-mobile-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.public-site .destination-mobile-item:nth-child(2) {
+  padding-top: 64px;
+}
+.public-site .destination-mobile-item__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.public-site .destination-mobile-item__illustration {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 335 / 280;
+  object-fit: cover;
+}
+.public-site .destination__code {
+  color: var(--brand-accent);
+}
+.public-site .destination__dots {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.public-site .experience-card__visual {
+  overflow: hidden;
+}
+.public-site .experience-card__visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 35%, #0b251bd9);
+}
+.public-site .experience-card__head {
+  color: #f7f5ef;
+  gap: 6px;
+}
+.public-site .experience-stats > div {
+  align-items: flex-start;
+}
+.public-site .experience-stats dd {
+  text-align: right;
+  max-width: 65%;
+}
+.public-site .experience-profile {
+  padding: 24px;
+}
+.public-site .experience-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -4px;
+}
+
+.public-site .footer {
+  background: var(--background);
+  padding-top: 72px;
+}
+.public-site .footer__layer {
+  background: linear-gradient(180deg, #143c3200, #143c3280);
+}
+.public-site .footer-logo__title {
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+.public-site .footer-logo__icon {
+  width: 42px;
+  height: 42px;
+}
+.public-site .footer-made-by {
+  padding-right: 24px;
+}
+.public-site .footer-made-by__visual {
+  background-image: none;
+  padding: 0;
+}
+.public-site .footer-top__contact a {
+  overflow-wrap: anywhere;
+}
+.public-site .hafo-direct-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.public-site .hafo-direct-contact a {
+  font-size: 18px;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.public-site .hafo-direct-contact a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.public-site .contact-us__illustration {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.public-site .contact-form [data-slot="input"],
+.public-site .contact-form [data-slot="textarea"] {
+  background: var(--card);
+  font-size: 15px;
+}
+.public-site .retreat-price {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.public-site .retreat-price strong {
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+.public-site .hafo-food-photo {
+  min-width: 0;
+}
+.public-site .hafo-food-photo .retreat-page-content-item__photo {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+.public-site .hafo-food-photo figcaption {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.4;
+  margin-top: 8px;
+}
+.public-site .legal-intro__in {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 900px;
+}
+.public-site .legal-content {
+  padding-bottom: 80px;
+}
+.public-site .legal-content__section {
+  gap: 24px;
+}
+.public-site .legal-content__text {
+  padding-right: 48px;
+}
+.public-site .legal-content__section > a {
+  width: fit-content;
+}
+.public-site .cookie {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 -8px 32px #143c320a;
+}
+
+@media (min-width: 480px) and (max-width: 991px) {
+  .public-site .header__accent {
+    display: none;
+  }
+  .public-site .header__l {
+    min-width: 174px;
+  }
+  .public-site .header-nav {
+    gap: 20px;
+    padding-inline: 16px;
+  }
+  .public-site .header__actions {
+    padding-right: 10px;
+    gap: 8px;
+  }
+  .public-site .header-logo__title {
+    font-size: 21px;
+  }
+  .public-site .h4 {
+    font-size: clamp(24px, 3vw, 32px);
+  }
+  .public-site .featured-item__head {
+    flex-wrap: wrap;
+  }
+  .public-site .featured-item__cost {
+    align-items: flex-start;
+  }
+  .public-site .destination-mobile {
+    gap: 20px;
+  }
+  .public-site .destination-mobile-item:nth-child(2) {
+    padding-top: 40px;
+  }
+  .public-site .about__items {
+    gap: 20px;
+  }
+  .public-site .about__items .h3 {
+    font-size: 36px;
+  }
+  .public-site .about-item__logos {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .public-site .about-item .body-l {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .public-site .footer-top__contact .body-lg {
+    font-size: 15px;
+  }
+  .public-site .footer-top__link .h3 {
+    font-size: 28px;
+  }
+  .public-site .footer__l {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 479px) {
+  .public-site .h1 {
+    font-size: clamp(64px, 20.5vw, 96px);
+    letter-spacing: -0.065em;
+  }
+  .public-site .h2 {
+    font-size: 34px;
+    line-height: 1.16;
+  }
+  .public-site .h3 {
+    font-size: 34px;
+  }
+  .public-site .h4 {
+    font-size: 28px;
+  }
+  .public-site .intro {
+    min-height: 700px;
+    max-height: none;
+    padding: 170px 0 150px;
+    align-items: center;
+  }
+  .public-site .intro__text {
+    padding-bottom: 30px;
+  }
+  .public-site .hafo-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    margin-bottom: 24px;
+  }
+  .public-site .intro .body-xxl {
+    font-size: 18px;
+  }
+  .public-site .intro > .intro__button {
+    position: absolute;
+    bottom: 56px;
+    left: 24px;
+    right: 24px;
+  }
+  .public-site .header__l {
+    min-width: 0;
+    width: auto;
+    flex: 1;
+    padding-left: 18px;
+  }
+  .public-site .header-logo__title {
+    font-size: 21px;
+  }
+  .public-site .header-logo__icon {
+    width: 28px;
+    height: 28px;
+  }
+  .public-site .header-menu-trigger {
+    width: 50px;
+    height: 64px;
+  }
+  .public-site .header__actions {
+    gap: 0;
+    padding-right: 0;
+  }
+  .public-site .header__burger {
+    border-left: 1px solid var(--white-20);
+  }
+  .public-site .public-language-switch button {
+    min-width: 30px;
+    min-height: 44px;
+  }
+  .public-site .statistic-item {
+    flex: 0 0 85%;
+  }
+  .public-site .statistic-item__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .public-site .about-item__logos {
+    gap: 6px;
+  }
+  .public-site .hafo-brand-value {
+    font-size: 10px;
+    padding: 6px 9px;
+  }
+  .public-site .combine {
+    background-image: none;
+  }
+  .public-site .combine::before {
+    background: linear-gradient(180deg, #09291fe8, #09291f70 40%, #09291fed);
+  }
+  .public-site .combine__steps .body-xl {
+    font-size: calc(var(--hafo-unit) * 1.125);
+    line-height: 1.3;
+  }
+  .public-site .combine-step__subtitle .title-xs {
+    line-height: 1;
+  }
+  .public-site .combine-step__body .body-lg {
+    font-size: var(--hafo-unit);
+  }
+  .public-site .destination-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .public-site .destination-mobile-item:nth-child(2) {
+    padding-top: 32px;
+  }
+  .public-site .destination-mobile-item__illustration {
+    aspect-ratio: 335 / 240;
+  }
+  .public-site .destination__code {
+    display: none;
+  }
+  .public-site .footer {
+    padding-top: 48px;
+  }
+  .public-site .footer-made-by {
+    padding: 16px 24px;
+    text-align: center;
+  }
+  .public-site .retreat-page-content-item__photos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .public-site .legal-content__text {
+    padding-right: 0;
+    width: 100%;
+  }
+  .public-site .hafo-direct-contact a {
+    font-size: 17px;
+  }
+}
+
+.public-site .header-nav__link:hover,
+.public-site .header__accent .button-sm:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--brand-accent);
+  text-underline-offset: 6px;
+}

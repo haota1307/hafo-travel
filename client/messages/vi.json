@@ -1,0 +1,1645 @@
+{
+  "template": {
+    "123456789": "+123456789",
+    "comingSoon": "Sắp ra mắt!",
+    "thisPageHasNotBeenCreatedYet": "Trang này đang được xây dựng.",
+    "stayTunedThough": "Hãy quay lại sau nhé!",
+    "typeACommandOrSearch": "Nhập lệnh hoặc tìm kiếm...",
+    "noResultsFound": "Không tìm thấy kết quả.",
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Hệ thống",
+    "openThemeSettings": "Mở tùy chỉnh giao diện",
+    "themeSettings": "Tùy chỉnh giao diện",
+    "adjustTheAppearanceAndLayoutToSuitYourPreferences": "Điều chỉnh giao diện và bố cục theo sở thích của bạn.",
+    "resetAllSettingsToDefaultValues": "Khôi phục tất cả cài đặt mặc định",
+    "reset": "Đặt lại",
+    "theme": "Chế độ màu",
+    "selectThemePreference": "Chọn chế độ màu",
+    "chooseBetweenSystemPreferenceLightModeOrDarkMode": "Chọn theo hệ thống, chế độ sáng hoặc chế độ tối",
+    "sidebar": "Thanh bên",
+    "selectSidebarStyle": "Chọn kiểu thanh bên",
+    "inset": "Thụt vào",
+    "floating": "Nổi",
+    "chooseBetweenInsetFloatingOrStandardSidebarLayout": "Chọn thanh bên thụt vào, nổi hoặc tiêu chuẩn",
+    "layout": "Bố cục",
+    "selectLayoutStyle": "Chọn kiểu bố cục",
+    "default": "Mặc định",
+    "compact": "Thu gọn",
+    "fullLayout": "Toàn màn hình",
+    "chooseBetweenDefaultExpandedCompactIconOnlyOrFullLayoutMode": "Chọn bố cục mở rộng, thu gọn chỉ có biểu tượng hoặc toàn màn hình",
+    "direction": "Hướng hiển thị",
+    "selectSiteDirection": "Chọn hướng hiển thị",
+    "leftToRight": "Trái sang phải",
+    "rightToLeft": "Phải sang trái",
+    "chooseBetweenLeftToRightOrRightToLeftSiteDirection": "Chọn hướng hiển thị từ trái sang phải hoặc ngược lại",
+    "cancel": "Hủy",
+    "continue": "Tiếp tục",
+    "clearSelection": "Bỏ chọn",
+    "clearSelectionEscape": "Bỏ chọn (Escape)",
+    "selected": "đã chọn",
+    "asc": "Tăng dần",
+    "desc": "Giảm dần",
+    "hide": "Ẩn",
+    "clearFilters": "Xóa bộ lọc",
+    "page": "Trang",
+    "of": "/",
+    "rowsPerPage": "Số dòng mỗi trang",
+    "goToFirstPage": "Đến trang đầu",
+    "goToPreviousPage": "Đến trang trước",
+    "goToPage": "Đến trang",
+    "goToNextPage": "Đến trang sau",
+    "goToLastPage": "Đến trang cuối",
+    "filter": "Lọc...",
+    "view": "Hiển thị",
+    "toggleColumns": "Chọn cột hiển thị",
+    "pickADate": "Chọn ngày",
+    "toggleSidebar": "Đóng/mở thanh bên",
+    "enterprise": "Doanh nghiệp",
+    "startup": "Khởi nghiệp",
+    "general": "Chung",
+    "dashboard": "Tổng quan",
+    "tasks": "Công việc",
+    "chats": "Tin nhắn",
+    "users": "Người dùng",
+    "pages": "Trang mẫu",
+    "auth": "Xác thực",
+    "signIn": "Đăng nhập",
+    "signIn2Col": "Đăng nhập (2 cột)",
+    "signUp": "Đăng ký",
+    "forgotPassword": "Quên mật khẩu",
+    "otp": "Mã OTP",
+    "errors": "Trang lỗi",
+    "unauthorized": "Chưa xác thực",
+    "forbidden": "Không có quyền",
+    "notFound": "Không tìm thấy",
+    "internalServerError": "Lỗi máy chủ",
+    "maintenanceError": "Đang bảo trì",
+    "other": "Khác",
+    "settings": "Cài đặt",
+    "profile": "Hồ sơ",
+    "account": "Tài khoản",
+    "appearance": "Giao diện",
+    "notifications": "Thông báo",
+    "display": "Hiển thị",
+    "helpCenter": "Trung tâm trợ giúp",
+    "upgradeToPro": "Nâng cấp gói Pro",
+    "billing": "Thanh toán",
+    "signOut": "Đăng xuất",
+    "teams": "Nhóm",
+    "addTeam": "Thêm nhóm",
+    "toggleNavigationMenu": "Đóng/mở menu điều hướng",
+    "learnMore": "Tìm hiểu thêm",
+    "hidePassword": "Ẩn mật khẩu",
+    "showPassword": "Hiện mật khẩu",
+    "newTeam": "Nhóm mới",
+    "search": "Tìm kiếm",
+    "select": "Chọn",
+    "loading": "Đang tải...",
+    "previewTheSignInScreenThisTemplateDoesNotCreateASession": "Xem mẫu màn hình đăng nhập. Mẫu này không tạo phiên đăng nhập.",
+    "skipToMain": "Đến nội dung chính",
+    "toggleTheme": "Đổi chế độ màu",
+    "commandPalette": "Bảng lệnh",
+    "searchForACommandToRun": "Tìm lệnh cần thực hiện...",
+    "close": "Đóng",
+    "displaysTheMobileSidebar": "Hiển thị thanh bên trên thiết bị di động.",
+    "pleaseEnterYourEmail": "Vui lòng nhập email.",
+    "previewingPasswordReset": "Đang xem thử đặt lại mật khẩu...",
+    "error": "Có lỗi xảy ra",
+    "email": "Email",
+    "enterYourRegisteredEmailAnd": "Nhập email đã đăng ký để",
+    "weWillSendYouALinkToResetYourPassword": "nhận liên kết đặt lại mật khẩu.",
+    "donTHaveAnAccount": "Chưa có tài khoản?",
+    "signUp2": "Đăng ký",
+    "pleaseEnterThe6DigitCode": "Vui lòng nhập mã gồm 6 chữ số.",
+    "oneTimePassword": "Mật khẩu dùng một lần",
+    "verify": "Xác minh",
+    "twoFactorAuthentication": "Xác thực hai yếu tố",
+    "enterAnySixDigitsToPreviewVerification": "Nhập 6 chữ số bất kỳ để xem thử xác minh.",
+    "thisTemplateDoesNotSendAuthenticationCodes": "Mẫu này không gửi mã xác thực.",
+    "returnToThe": "Quay lại",
+    "signInPreview": "mẫu đăng nhập",
+    "pleaseEnterYourPassword": "Vui lòng nhập mật khẩu.",
+    "passwordMustBeAtLeast7CharactersLong": "Mật khẩu phải có ít nhất 7 ký tự.",
+    "signingIn": "Đang đăng nhập...",
+    "password": "Mật khẩu",
+    "forgotPassword2": "Quên mật khẩu?",
+    "signIn2": "Đăng nhập",
+    "enterYourEmailAndPasswordBelowToLogInto": "Nhập email và mật khẩu bên dưới để đăng nhập",
+    "yourAccountDonTHaveAnAccount": "tài khoản. Chưa có tài khoản?",
+    "templatePreviewOnlyFormSubmissionsDoNotCreateAnAccountOrStartASession": "Đây là giao diện mẫu. Gửi biểu mẫu không tạo tài khoản hoặc phiên đăng nhập.",
+    "pleaseConfirmYourPassword": "Vui lòng xác nhận mật khẩu.",
+    "passwordsDonTMatch": "Mật khẩu xác nhận không khớp.",
+    "creatingAccount": "Đang tạo tài khoản...",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "createAccount": "Tạo tài khoản",
+    "createAnAccount": "Tạo tài khoản",
+    "enterYourEmailAndPasswordToCreateAnAccount": "Nhập email và mật khẩu để tạo tài khoản.",
+    "alreadyHaveAnAccount": "Đã có tài khoản?",
+    "newMessage": "Tin nhắn mới",
+    "to": "Đến:",
+    "searchPeople": "Tìm người dùng...",
+    "noPeopleFound": "Không tìm thấy người dùng.",
+    "chat": "Nhắn tin",
+    "inbox": "Hộp thư",
+    "searchChat": "Tìm cuộc trò chuyện...",
+    "you": "Bạn",
+    "chatTextBox": "Ô nhập tin nhắn",
+    "typeYourMessages": "Nhập tin nhắn...",
+    "send": "Gửi",
+    "yourMessages": "Tin nhắn của bạn",
+    "sendAMessageToStartAChat": "Gửi tin nhắn để bắt đầu trò chuyện.",
+    "sendMessage": "Gửi tin nhắn",
+    "mon": "T2",
+    "tue": "T3",
+    "wed": "T4",
+    "thu": "T5",
+    "fri": "T6",
+    "sat": "T7",
+    "sun": "CN",
+    "trafficOverview": "Tổng quan lượt truy cập",
+    "weeklyClicksAndUniqueVisitors": "Lượt nhấp và khách truy cập duy nhất theo tuần",
+    "totalClicks": "Tổng lượt nhấp",
+    "124VsLastWeek": "+12,4% so với tuần trước",
+    "uniqueVisitors": "Khách truy cập duy nhất",
+    "58VsLastWeek": "+5,8% so với tuần trước",
+    "bounceRate": "Tỷ lệ thoát",
+    "32VsLastWeek": "-3,2% so với tuần trước",
+    "avgSession": "Thời gian phiên trung bình",
+    "3m24s": "3 phút 24 giây",
+    "18sVsLastWeek": "+18 giây so với tuần trước",
+    "referrers": "Nguồn truy cập",
+    "topSourcesDrivingTraffic": "Các nguồn mang lại nhiều lượt truy cập nhất",
+    "direct": "Trực tiếp",
+    "blog": "Blog",
+    "devices": "Thiết bị",
+    "howUsersAccessYourApp": "Thiết bị người dùng truy cập ứng dụng",
+    "desktop": "Máy tính",
+    "mobile": "Điện thoại",
+    "tablet": "Máy tính bảng",
+    "jan": "Th1",
+    "feb": "Th2",
+    "mar": "Th3",
+    "apr": "Th4",
+    "may": "Th5",
+    "jun": "Th6",
+    "jul": "Th7",
+    "aug": "Th8",
+    "sep": "Th9",
+    "oct": "Th10",
+    "nov": "Th11",
+    "dec": "Th12",
+    "download": "Tải xuống",
+    "overview": "Tổng quan",
+    "analytics": "Phân tích",
+    "reports": "Báo cáo",
+    "totalRevenue": "Tổng doanh thu",
+    "201FromLastMonth": "+20,1% so với tháng trước",
+    "subscriptions": "Lượt đăng ký",
+    "1801FromLastMonth": "+180,1% so với tháng trước",
+    "sales": "Doanh số",
+    "19FromLastMonth": "+19% so với tháng trước",
+    "activeNow": "Đang hoạt động",
+    "201SinceLastHour": "+201 so với giờ trước",
+    "recentSales": "Giao dịch gần đây",
+    "youMade265SalesThisMonth": "Bạn có 265 giao dịch trong tháng này.",
+    "customers": "Khách hàng",
+    "products": "Sản phẩm",
+    "accessForbidden": "Không có quyền truy cập",
+    "youDonTHaveNecessaryPermission": "Bạn không có quyền cần thiết",
+    "toViewThisResource": "để xem tài nguyên này.",
+    "goBack": "Quay lại",
+    "backToHome": "Về trang tổng quan",
+    "oopsSomethingWentWrong": "Đã xảy ra lỗi",
+    "weApologizeForTheInconvenience": "Rất tiếc vì sự bất tiện này.",
+    "pleaseTryAgainLater": "Vui lòng thử lại sau.",
+    "websiteIsUnderMaintenance": "Website đang bảo trì!",
+    "theSiteIsNotAvailableAtTheMoment": "Website hiện tạm thời không khả dụng.",
+    "weLlBeBackOnlineShortly": "Chúng tôi sẽ sớm hoạt động trở lại.",
+    "oopsPageNotFound": "Không tìm thấy trang!",
+    "itSeemsLikeThePageYouReLookingFor": "Trang bạn đang tìm kiếm",
+    "doesNotExistOrMightHaveBeenRemoved": "không tồn tại hoặc đã bị xóa.",
+    "unauthorizedAccess": "Truy cập chưa xác thực",
+    "pleaseLogInWithTheAppropriateCredentials": "Vui lòng đăng nhập bằng tài khoản phù hợp",
+    "toAccessThisResource": "để truy cập tài nguyên này.",
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "pleaseEnterYourName": "Vui lòng nhập tên.",
+    "nameMustBeAtLeast2Characters": "Tên phải có ít nhất 2 ký tự.",
+    "nameMustNotBeLongerThan30Characters": "Tên không được dài quá 30 ký tự.",
+    "pleaseSelectYourDateOfBirth": "Vui lòng chọn ngày sinh.",
+    "pleaseSelectALanguage": "Vui lòng chọn ngôn ngữ.",
+    "name": "Họ tên",
+    "yourName": "Họ tên của bạn",
+    "thisIsTheNameThatWillBeDisplayedOnYourProfileAndInEmails": "Tên này sẽ hiển thị trên hồ sơ và trong email của bạn.",
+    "dateOfBirth": "Ngày sinh",
+    "yourDateOfBirthIsUsedToCalculateYourAge": "Ngày sinh được dùng để tính tuổi của bạn.",
+    "language": "Ngôn ngữ",
+    "changeLanguage": "Đổi ngôn ngữ",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "searchLanguage": "Tìm ngôn ngữ...",
+    "noLanguageFound": "Không tìm thấy ngôn ngữ.",
+    "thisIsTheLanguageThatWillBeUsedInTheDashboard": "Ngôn ngữ này được dùng trong giao diện quản trị.",
+    "updateAccount": "Cập nhật tài khoản",
+    "updateYourAccountSettingsSetYourPreferredLanguageAndTimezone": "Cập nhật thông tin tài khoản và chọn ngôn ngữ phù hợp.",
+    "font": "Phông chữ",
+    "setTheFontYouWantToUseInTheDashboard": "Chọn phông chữ cho giao diện quản trị.",
+    "selectTheThemeForTheDashboard": "Chọn chế độ màu cho giao diện quản trị.",
+    "updatePreferences": "Lưu tùy chọn",
+    "customizeTheAppearanceOfTheAppAutomaticallySwitchBetweenDayAndNightThemes": "Tùy chỉnh giao diện ứng dụng và chuyển đổi giữa chế độ sáng, tối.",
+    "recents": "Gần đây",
+    "applications": "Ứng dụng",
+    "downloads": "Tải xuống",
+    "documents": "Tài liệu",
+    "youHaveToSelectAtLeastOneItem": "Bạn cần chọn ít nhất một mục.",
+    "selectTheItemsYouWantToDisplayInTheSidebar": "Chọn các mục muốn hiển thị trên thanh bên.",
+    "updateDisplay": "Cập nhật hiển thị",
+    "turnItemsOnOrOffToControlWhatSDisplayedInTheApp": "Bật hoặc tắt các mục hiển thị trong ứng dụng.",
+    "manageYourAccountSettingsAndSetEMailPreferences": "Quản lý tài khoản và tùy chọn email.",
+    "configureHowYouReceiveNotifications": "Thiết lập cách nhận thông báo.",
+    "pleaseSelectANotificationType": "Vui lòng chọn loại thông báo.",
+    "notifyMeAbout": "Thông báo cho tôi về...",
+    "allNewMessages": "Tất cả tin nhắn mới",
+    "directMessagesAndMentions": "Tin nhắn trực tiếp và lượt nhắc tên",
+    "nothing": "Không nhận thông báo",
+    "emailNotifications": "Thông báo qua email",
+    "communicationEmails": "Email liên lạc",
+    "receiveEmailsAboutYourAccountActivity": "Nhận email về hoạt động tài khoản.",
+    "marketingEmails": "Email tiếp thị",
+    "receiveEmailsAboutNewProductsFeaturesAndMore": "Nhận email về sản phẩm, tính năng mới và các nội dung khác.",
+    "socialEmails": "Email tương tác",
+    "receiveEmailsForFriendRequestsFollowsAndMore": "Nhận email về lời mời kết bạn, lượt theo dõi và tương tác khác.",
+    "securityEmails": "Email bảo mật",
+    "receiveEmailsAboutYourAccountActivityAndSecurity": "Nhận email về hoạt động và bảo mật tài khoản.",
+    "useDifferentSettingsForMyMobileDevices": "Dùng cài đặt riêng cho thiết bị di động",
+    "youCanManageYourMobileNotificationsInThe": "Bạn có thể quản lý thông báo trên điện thoại tại",
+    "mobileSettings": "cài đặt di động",
+    "page2": ".",
+    "updateNotifications": "Cập nhật thông báo",
+    "thisIsHowOthersWillSeeYouOnTheSite": "Thông tin này sẽ hiển thị với người khác trên website.",
+    "pleaseEnterYourUsername": "Vui lòng nhập tên đăng nhập.",
+    "usernameMustBeAtLeast2Characters": "Tên đăng nhập phải có ít nhất 2 ký tự.",
+    "usernameMustNotBeLongerThan30Characters": "Tên đăng nhập không được dài quá 30 ký tự.",
+    "pleaseSelectAnEmailToDisplay": "Vui lòng chọn email để hiển thị.",
+    "pleaseEnterAValidURL": "Vui lòng nhập URL hợp lệ.",
+    "username": "Tên đăng nhập",
+    "thisIsYourPublicDisplayNameItCanBeYourRealNameOrAPseudonymYouCanOnlyChangeThisOnceEvery30Days": "Đây là tên hiển thị công khai, có thể là tên thật hoặc biệt danh. Bạn chỉ có thể đổi tên mỗi 30 ngày.",
+    "selectAVerifiedEmailToDisplay": "Chọn email đã xác minh để hiển thị",
+    "youCanManageVerifiedEmailAddressesInYour": "Bạn có thể quản lý các email đã xác minh trong",
+    "emailSettings": "cài đặt email",
+    "bio": "Giới thiệu",
+    "tellUsALittleBitAboutYourself": "Giới thiệu đôi nét về bạn",
+    "youCan": "Bạn có thể",
+    "mention": "@nhắc tên",
+    "otherUsersAndOrganizationsToLinkToThem": "người dùng và tổ chức khác để liên kết đến họ.",
+    "urls": "Liên kết",
+    "addLinksToYourWebsiteBlogOrSocialMediaProfiles": "Thêm liên kết website, blog hoặc hồ sơ mạng xã hội.",
+    "addURL": "Thêm liên kết",
+    "updateProfile": "Cập nhật hồ sơ",
+    "updatingStatus": "Đang cập nhật trạng thái...",
+    "updatingPriority": "Đang cập nhật độ ưu tiên...",
+    "exportingTasks": "Đang xuất công việc...",
+    "updateStatus": "Cập nhật trạng thái",
+    "updatePriority": "Cập nhật độ ưu tiên",
+    "exportTasks": "Xuất công việc",
+    "deleteSelectedTasks": "Xóa công việc đã chọn",
+    "openMenu": "Mở menu",
+    "edit": "Chỉnh sửa",
+    "makeACopy": "Tạo bản sao",
+    "favorite": "Yêu thích",
+    "labels": "Nhãn",
+    "delete": "Xóa",
+    "selectAll": "Chọn tất cả",
+    "selectRow": "Chọn dòng",
+    "task": "Công việc",
+    "title": "Tiêu đề",
+    "status": "Trạng thái",
+    "priority": "Độ ưu tiên",
+    "theFollowingTaskHasBeenDeleted": "Đã xóa công việc sau:",
+    "youAreAboutToDeleteATaskWithTheID": "Bạn sắp xóa công việc có mã",
+    "thisActionCannotBeUndone": "Thao tác này không thể hoàn tác.",
+    "pleaseUploadAFile": "Vui lòng chọn tệp.",
+    "pleaseUploadCsvFormat": "Vui lòng chọn tệp định dạng CSV.",
+    "youHaveImportedTheFollowingFile": "Bạn đã chọn tệp sau:",
+    "importTasks": "Nhập công việc",
+    "importTasksQuicklyFromACSVFile": "Nhập nhanh công việc từ tệp CSV.",
+    "file": "Tệp",
+    "import": "Nhập",
+    "deletingTasks": "Đang xóa công việc...",
+    "areYouSureYouWantToDeleteTheSelectedTasks": "Bạn có chắc muốn xóa các công việc đã chọn?",
+    "confirmByTyping": "Xác nhận bằng cách nhập \"",
+    "warning": "Cảnh báo!",
+    "pleaseBeCarefulThisOperationCanNotBeRolledBack": "Hãy cân nhắc kỹ, thao tác này không thể hoàn tác.",
+    "titleIsRequired": "Vui lòng nhập tiêu đề.",
+    "pleaseSelectAStatus": "Vui lòng chọn trạng thái.",
+    "pleaseSelectALabel": "Vui lòng chọn nhãn.",
+    "pleaseChooseAPriority": "Vui lòng chọn độ ưu tiên.",
+    "update": "Cập nhật",
+    "create": "Tạo",
+    "updateTheTaskByProvidingNecessaryInfo": "Nhập thông tin cần thiết để cập nhật công việc.",
+    "addANewTaskByProvidingNecessaryInfo": "Nhập thông tin cần thiết để thêm công việc.",
+    "clickSaveWhenYouReDone": "Nhấn lưu khi hoàn tất.",
+    "enterATitle": "Nhập tiêu đề",
+    "selectDropdown": "Chọn một mục",
+    "inProgress": "Đang thực hiện",
+    "inProgress2": "Đang thực hiện",
+    "backlog": "Chờ xử lý",
+    "todo": "Cần làm",
+    "canceled": "Đã hủy",
+    "done": "Hoàn thành",
+    "label": "Nhãn",
+    "documentation": "Tài liệu",
+    "feature": "Tính năng",
+    "bug": "Lỗi",
+    "high": "Cao",
+    "medium": "Trung bình",
+    "low": "Thấp",
+    "saveChanges": "Lưu thay đổi",
+    "filterByTitleOrID": "Lọc theo tiêu đề hoặc mã...",
+    "noResults": "Không có kết quả.",
+    "critical": "Khẩn cấp",
+    "hereSAListOfYourTasksForThisMonth": "Danh sách công việc của bạn trong tháng này!",
+    "invitingUsers": "Đang mời người dùng...",
+    "errorInvitingUsers": "Không thể mời người dùng",
+    "inviteSelectedUsers": "Mời người dùng đã chọn",
+    "activateSelectedUsers": "Kích hoạt người dùng đã chọn",
+    "deactivateSelectedUsers": "Vô hiệu hóa người dùng đã chọn",
+    "deleteSelectedUsers": "Xóa người dùng đã chọn",
+    "firstNameIsRequired": "Vui lòng nhập tên.",
+    "lastNameIsRequired": "Vui lòng nhập họ.",
+    "usernameIsRequired": "Vui lòng nhập tên đăng nhập.",
+    "phoneNumberIsRequired": "Vui lòng nhập số điện thoại.",
+    "emailIsRequired": "Vui lòng nhập email.",
+    "roleIsRequired": "Vui lòng chọn vai trò.",
+    "passwordIsRequired": "Vui lòng nhập mật khẩu.",
+    "passwordMustBeAtLeast8CharactersLong": "Mật khẩu phải có ít nhất 8 ký tự.",
+    "passwordMustContainAtLeastOneLowercaseLetter": "Mật khẩu phải có ít nhất một chữ cái thường.",
+    "passwordMustContainAtLeastOneNumber": "Mật khẩu phải có ít nhất một chữ số.",
+    "editUser": "Sửa người dùng",
+    "addNewUser": "Thêm người dùng mới",
+    "updateTheUserHere": "Cập nhật thông tin người dùng tại đây.",
+    "createNewUserHere": "Thêm người dùng mới tại đây.",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "phoneNumber": "Số điện thoại",
+    "role": "Vai trò",
+    "selectARole": "Chọn vai trò",
+    "eGS3cur3PSsw0rd": "Ví dụ: S3cur3P@ssw0rd",
+    "theFollowingUserHasBeenDeleted": "Đã xóa người dùng sau:",
+    "deleteUser": "Xóa người dùng",
+    "areYouSureYouWantToDelete": "Bạn có chắc muốn xóa",
+    "thisActionWillPermanentlyRemoveTheUserWithTheRoleOf": "Thao tác này sẽ xóa vĩnh viễn người dùng có vai trò",
+    "fromTheSystemThisCannotBeUndone": "khỏi hệ thống và không thể hoàn tác.",
+    "username2": "Tên đăng nhập:",
+    "enterUsernameToConfirmDeletion": "Nhập tên đăng nhập để xác nhận xóa.",
+    "pleaseEnterAnEmailToInvite": "Vui lòng nhập email người được mời.",
+    "inviteUser": "Mời người dùng",
+    "inviteNewUserToJoinYourTeamBySendingThemAnEmailInvitationAssignARoleToDefineTheirAccessLevel": "Mời người dùng vào nhóm bằng email. Chọn vai trò để xác định quyền truy cập của họ.",
+    "egJohnDoeGmailCom": "Ví dụ: john.doe@gmail.com",
+    "descriptionOptional": "Mô tả (không bắt buộc)",
+    "addAPersonalNoteToYourInvitationOptional": "Thêm lời nhắn vào lời mời (không bắt buộc)",
+    "invite": "Mời",
+    "deletingUsers": "Đang xóa người dùng...",
+    "areYouSureYouWantToDeleteTheSelectedUsers": "Bạn có chắc muốn xóa các người dùng đã chọn?",
+    "addUser": "Thêm người dùng",
+    "filterUsers": "Lọc người dùng...",
+    "active": "Hoạt động",
+    "inactive": "Không hoạt động",
+    "invited": "Đã mời",
+    "suspended": "Tạm khóa",
+    "superadmin": "Quản trị cao nhất",
+    "admin": "Quản trị viên",
+    "manager": "Quản lý",
+    "cashier": "Thu ngân",
+    "userList": "Danh sách người dùng",
+    "manageYourUsersAndTheirRolesHere": "Quản lý người dùng và vai trò tại đây.",
+    "youSubmittedTheFollowingValues": "Bạn đã gửi các thông tin sau:",
+    "loadingTasks": "Đang tải công việc...",
+    "loadingUsers": "Đang tải người dùng...",
+    "invalidEmailAddress": "Địa chỉ email không hợp lệ",
+    "invalidURL": "URL không hợp lệ",
+    "active2": "Hoạt động",
+    "inactive2": "Không hoạt động",
+    "invited2": "Đã mời",
+    "suspended2": "Tạm khóa",
+    "superadmin2": "Quản trị cao nhất",
+    "admin2": "Quản trị viên",
+    "manager2": "Quản lý",
+    "cashier2": "Thu ngân",
+    "todo2": "Cần làm",
+    "inProgress3": "Đang thực hiện",
+    "done2": "Hoàn thành",
+    "canceled2": "Đã hủy",
+    "backlog2": "Chờ xử lý",
+    "low2": "Thấp",
+    "medium2": "Trung bình",
+    "high2": "Cao",
+    "critical2": "Khẩn cấp",
+    "task2": "công việc",
+    "user": "người dùng",
+    "fullname": "Họ tên",
+    "phonenumber": "Số điện thoại",
+    "username3": "Tên đăng nhập",
+    "email2": "Email",
+    "status2": "Trạng thái",
+    "role2": "Vai trò",
+    "title2": "Tiêu đề",
+    "priority2": "Độ ưu tiên",
+    "reviewTheDashboardLayoutAndNavigation": "Rà soát bố cục và điều hướng trang tổng quan",
+    "updateTheAccountSettingsForm": "Cập nhật biểu mẫu cài đặt tài khoản",
+    "fixTheMobileSidebarOverflow": "Sửa lỗi tràn thanh bên trên điện thoại",
+    "documentTheNewComponentVariants": "Viết tài liệu cho các biến thể component mới",
+    "improveTheSearchAndFilteringExperience": "Cải thiện trải nghiệm tìm kiếm và lọc",
+    "addKeyboardNavigationToTheDialog": "Thêm điều hướng bàn phím cho hộp thoại",
+    "reviewTheNotificationPreferences": "Rà soát tùy chọn thông báo",
+    "updateTheProjectOnboardingGuide": "Cập nhật hướng dẫn làm quen dự án",
+    "polishTheAnalyticsChartLabels": "Hoàn thiện nhãn biểu đồ phân tích",
+    "verifyTheResponsiveTableLayout": "Kiểm tra bố cục bảng trên các kích thước màn hình",
+    "shadcnAdminTemplate": "Mẫu giao diện Shadcn Admin",
+    "localUITemplatesForRoviet": "Bộ giao diện mẫu cho Roviet.",
+    "nextJsShadcnUI": "Next.js + ShadcnUI",
+    "satnaing": "satnaing",
+    "p": "⇧⌘P",
+    "b": "⌘B",
+    "s": "⌘S",
+    "q": "⇧⌘Q",
+    "nameExampleCom": "name@example.com",
+    "symbol07ab59f4": "********",
+    "shadcn": "shadcn",
+    "john": "John",
+    "doe": "Doe",
+    "johnDoe": "john_doe",
+    "johnDoeGmailCom": "john.doe@gmail.com",
+    "pagePageOfTotal": "Trang {page} / {total}",
+    "goToPagePage": "Đến trang {page}",
+    "demoSignInForEmailNoSessionWasCreated": "Đăng nhập mẫu cho {email}. Không có phiên đăng nhập nào được tạo.",
+    "demoRegistrationForEmailNoAccountWasCreated": "Đăng ký mẫu cho {email}. Không có tài khoản nào được tạo.",
+    "demoResetForEmailNoEmailWasSent": "Đặt lại mật khẩu mẫu cho {email}. Không có email nào được gửi.",
+    "pleaseTypeWordToConfirm": "Vui lòng nhập \"{word}\" để xác nhận.",
+    "typeWordToConfirm": "Nhập \"{word}\" để xác nhận.",
+    "deletedCountTaskS": "Đã xóa {count} công việc",
+    "deletedCountUserS": "Đã xóa {count} người dùng",
+    "deleteCountTaskS": "Xóa {count} công việc",
+    "deleteCountUserS": "Xóa {count} người dùng",
+    "statusUpdatedToStatusForCountTaskS": "Đã đổi trạng thái thành \"{status}\" cho {count} công việc.",
+    "priorityUpdatedToPriorityForCountTaskS": "Đã đổi độ ưu tiên thành \"{priority}\" cho {count} công việc.",
+    "exportedCountTaskSToCSV": "Đã xuất {count} công việc sang CSV.",
+    "activatingUsers": "Đang kích hoạt người dùng...",
+    "deactivatingUsers": "Đang vô hiệu hóa người dùng...",
+    "activatedCountUserS": "Đã kích hoạt {count} người dùng",
+    "deactivatedCountUserS": "Đã vô hiệu hóa {count} người dùng",
+    "errorActivatingUsers": "Không thể kích hoạt người dùng",
+    "errorDeactivatingUsers": "Không thể vô hiệu hóa người dùng",
+    "invitedCountUserS": "Đã mời {count} người dùng",
+    "countSelected": "Đã chọn {count}",
+    "countSelectedBulkActionsToolbarIsAvailable": "Đã chọn {count} mục. Thanh thao tác hàng loạt đã sẵn sàng.",
+    "bulkActionsForCountSelectedItems": "Thao tác hàng loạt cho {count} mục đã chọn",
+    "selectLabel": "Chọn {label}",
+    "labelOptionPreview": "Xem trước tùy chọn {label}",
+    "bioMustBeAtLeast4Characters": "Giới thiệu phải có ít nhất 4 ký tự.",
+    "bioMustNotBeLongerThan160Characters": "Giới thiệu không được dài quá 160 ký tự.",
+    "previousMonth": "Tháng trước",
+    "nextMonth": "Tháng sau",
+    "chooseTheMonth": "Chọn tháng",
+    "chooseTheYear": "Chọn năm",
+    "selectedDay": "ngày được chọn",
+    "today": "hôm nay",
+    "percent": "phần trăm",
+    "pleaseEnterAValidEmail": "Vui lòng nhập email hợp lệ.",
+    "enterYourEmailToPreviewPasswordResetNoEmailWillBeSent": "Nhập email để xem thử đặt lại mật khẩu. Hệ thống không gửi email.",
+    "resetThemePreferenceToDefault": "Khôi phục chế độ màu mặc định",
+    "resetSidebarStyleToDefault": "Khôi phục kiểu thanh bên mặc định",
+    "resetLayoutOptionsToDefault": "Khôi phục bố cục mặc định",
+    "resetTextDirectionToDefault": "Khôi phục hướng hiển thị mặc định",
+    "system2": "Hệ thống"
+  },
+  "errors": {
+    "UNKNOWN_ERROR": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "BACKEND_UNAVAILABLE": "Không thể kết nối máy chủ.",
+    "BACKEND_NOT_CONFIGURED": "Máy chủ chưa được cấu hình."
+  },
+  "home": {
+    "title": "Roviet",
+    "description": "Nền tảng ứng dụng Roviet",
+    "getStarted": "Để bắt đầu, chỉnh sửa tệp",
+    "file": ".",
+    "lookingFor": "Bạn cần mẫu khởi đầu hoặc hướng dẫn? Tham khảo",
+    "templates": "Mẫu giao diện",
+    "or": "hoặc",
+    "learning": "Học Next.js",
+    "center": ".",
+    "deploy": "Triển khai ngay",
+    "documentation": "Tài liệu"
+  },
+  "publicSite": {
+    "retreats": "Hành trình",
+    "experiences": "Trải nghiệm",
+    "contacts": "Liên hệ",
+    "explore": "Khám phá",
+    "exploreRetreats": "Khám phá hành trình",
+    "exploreRetreat": "Xem chi tiết",
+    "from": "Ngân sách",
+    "priceOnRequest": "Liên hệ tư vấn",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu",
+    "navigation": "Điều hướng chính",
+    "mobileNavigation": "Điều hướng trên điện thoại",
+    "skipToContent": "Chuyển đến nội dung",
+    "privacyPolicy": "Chính sách bảo mật",
+    "cookiePreferences": "Tùy chọn lưu trên thiết bị",
+    "cookieDescription": "Website lưu ngôn ngữ và lựa chọn thông báo của bạn trên thiết bị. Xem ",
+    "cookieMore": " để tìm hiểu thêm.",
+    "accept": "Đồng ý",
+    "decline": "Từ chối",
+    "closeCookieNotice": "Đóng thông báo",
+    "viewExperience": "Khám phá {name}",
+    "experienceSetting": "Không gian",
+    "experiencePace": "Nhịp trải nghiệm",
+    "name": "Họ và tên",
+    "email": "Email",
+    "message": "Bạn muốn đi đâu?",
+    "emailPlaceholder": "Địa chỉ email của bạn",
+    "submit": "Gửi lời nhắn",
+    "nameRequired": "Vui lòng nhập họ tên.",
+    "emailInvalid": "Vui lòng nhập email hợp lệ.",
+    "contactUnavailable": "Biểu mẫu chưa hỗ trợ gửi lời nhắn. Bạn vui lòng gọi 0947055644 hoặc gửi email tới haodev1307@gmail.com để trao đổi hành trình.",
+    "retreatPhotos": "Ảnh gợi cảm hứng hành trình",
+    "retreatPhoto": "Ảnh hành trình {number}",
+    "choosePhoto": "Chọn ảnh",
+    "showPhoto": "Xem ảnh {number}",
+    "home": "Trang chủ",
+    "getInTouch": "Nhận tư vấn",
+    "aboutRetreats": "Về hành trình",
+    "fullProgram": "Gợi ý lịch trình",
+    "food": "Hương vị & khoảng dừng",
+    "team": "Dấu ấn địa phương",
+    "location": "Điểm đến",
+    "retreatNavigation": "Nội dung hành trình",
+    "included": "Gợi ý cho kỳ nghỉ",
+    "notIncluded": "Thông tin cần trao đổi",
+    "special": "Điều làm nên khác biệt",
+    "checkIn": "Nhận phòng:",
+    "checkOut": "Trả phòng:",
+    "dailySchedule": "Một ngày gợi ý",
+    "mealsProvided": "Gợi ý bữa ăn",
+    "dietsCatered": "Lưu ý khi lựa chọn",
+    "meetingPlace": "Không gian điểm đến",
+    "nameTooLong": "Họ tên không vượt quá {max} ký tự.",
+    "emailTooLong": "Email không vượt quá {max} ký tự.",
+    "messageTooLong": "Lời nhắn không vượt quá {max} ký tự.",
+    "foodImageNote": "Ảnh gợi cảm hứng ẩm thực Việt Nam; địa điểm chụp được ghi theo từng ảnh.",
+    "language": {
+      "label": "Ngôn ngữ",
+      "vi": "Tiếng Việt",
+      "en": "Tiếng Anh",
+      "switchTo": "Chuyển sang {language}"
+    },
+    "hero": {
+      "headline": "Việt Nam",
+      "eyebrow": "HAFO TRAVEL · NHỮNG KỲ NGHỈ TINH TẾ",
+      "description": "Đi chậm lại, cảm nhận nhiều hơn.<br></br>Khám phá vẻ đẹp Việt Nam theo cách của bạn."
+    },
+    "categories": {
+      "headline": "Một điểm đến.<br></br>Nhiều cách để tận hưởng.",
+      "coast": "Những ngày bên biển",
+      "coastDetail": "Thảnh thơi & riêng tư",
+      "nature": "Chạm vào thiên nhiên",
+      "natureDetail": "Núi xanh & mặt nước",
+      "slow": "Nghỉ dưỡng an yên",
+      "slowDetail": "Ở lại & tái tạo"
+    },
+    "about": {
+      "label": "Về Hafo Travel",
+      "headline": "Những chuyến đi đẹp,<br></br>bắt đầu từ cảm nhận.",
+      "description": "Hafo Travel gợi mở những kỳ nghỉ tinh tế<br></br>giữa cảnh quan và văn hóa Việt Nam.<br></br>Từ miền núi đến biển đảo, mỗi hành trình<br></br>là một khoảng thời gian dành riêng cho bạn.",
+      "countries": "Miền đất<br></br>để khám phá",
+      "retreats": "Hành trình<br></br>gợi cảm hứng",
+      "trust": "Khám phá bộ sưu tập Việt Nam, từ Bắc vào Nam.",
+      "nature": "Thiên nhiên",
+      "culture": "Văn hóa",
+      "rest": "Nghỉ dưỡng"
+    },
+    "featured": {
+      "headline": "<emphasis>Hành trình</emphasis> chọn lọc",
+      "description": "Sáu ý tưởng khám phá Việt Nam.<br></br>Tìm một nơi phù hợp với nhịp điệu của bạn.",
+      "seeAll": "Xem bộ sưu tập",
+      "related": "Tiếp nối cảm hứng"
+    },
+    "combine": {
+      "headline": "Kỳ nghỉ theo nhịp của bạn",
+      "stay": "<emphasis>+</emphasis> Lưu trú",
+      "transfers": "<emphasis>+</emphasis> Khám phá",
+      "extras": "<emphasis>+</emphasis> Khoảng nghỉ",
+      "description": "Một nơi muốn đến.<br></br>Một nhịp điệu muốn giữ.<br></br>Cùng Hafo Travel bắt đầu<br></br>từ những điều bạn yêu thích.",
+      "step": "Bước",
+      "choose": "Tìm cảm hứng<br></br>hành trình",
+      "match": "Chia sẻ<br></br>mong muốn",
+      "add": "Trao đổi<br></br>chi tiết",
+      "pay": "Chọn kỳ nghỉ<br></br>phù hợp"
+    },
+    "destinations": {
+      "label": "Khắp Việt Nam",
+      "headline": "Một Việt Nam, nhiều sắc thái",
+      "description": "Từ núi phía Bắc, qua miền di sản<br></br>đến những ngày thảnh thơi bên biển.",
+      "north": "Miền Bắc",
+      "northDetail": "Núi xanh · Non nước · Di sản",
+      "central": "Miền Trung",
+      "centralDetail": "Phố cổ · Văn hóa · Biển xanh",
+      "south": "Phía Nam",
+      "southDetail": "Biển đảo · Nghỉ dưỡng · Bình yên"
+    },
+    "howItWorks": {
+      "headline": "Bắt đầu một kỳ nghỉ đẹp",
+      "description": "Từ một ý tưởng nhỏ<br></br>đến hành trình mang dấu ấn riêng.",
+      "goalsTitle": "<emphasis>Tìm</emphasis> cảm hứng",
+      "goalsDescription": "Khám phá cảnh quan, văn hóa<br></br>và những gợi ý nghỉ dưỡng.",
+      "matchesTitle": "<emphasis>Chọn</emphasis> điểm đến",
+      "matchesDescription": "Lưu lại hành trình<br></br>khiến bạn muốn lên đường.",
+      "packageTitle": "<emphasis>Trao đổi</emphasis> cùng Hafo",
+      "packageDescription": "Gọi điện hoặc gửi email<br></br>để chia sẻ nhu cầu của bạn.",
+      "progressTitle": "<emphasis>Hoàn thiện</emphasis> ý tưởng",
+      "progressDescription": "Làm rõ lịch trình, ngân sách<br></br>và dịch vụ trước khi quyết định."
+    },
+    "practitioners": {
+      "label": "Trải nghiệm Việt Nam",
+      "headline": "Đi để cảm nhận.<br></br>Ở lại để nhớ lâu.",
+      "expertsTitle": "Những khoảnh khắc có chiều sâu",
+      "expertsDescription": "Một cung đường, một góc phố,<br></br>một khoảng xanh yên tĩnh.<br></br>Tìm điều khiến chuyến đi<br></br>trở nên đáng nhớ với bạn.",
+      "network": "12 góc nhìn Việt Nam.<br></br>Từ thiên nhiên đến văn hóa,<br></br>mỗi trải nghiệm mở ra<br></br>một cách khám phá mới."
+    },
+    "experiencesPage": {
+      "headline": "Việt Nam, qua từng trải nghiệm",
+      "description": "12 góc nhìn để bắt đầu hành trình của riêng bạn.<br></br>Mở từng thẻ và tìm một điều khiến bạn muốn khám phá.",
+      "valuesTitle": "Điều làm nên một chuyến đi đẹp",
+      "valuesDescription": "Những điều giản dị chúng tôi muốn giữ<br></br>trong mỗi ý tưởng hành trình.",
+      "honestyTitle": "Rõ ràng",
+      "honestyDescription": "Thông tin được trao đổi rõ ràng trước mỗi quyết định.",
+      "responsibilityTitle": "Trân trọng địa phương",
+      "responsibilityDescription": "Lắng nghe câu chuyện và tôn trọng không gian bản địa.",
+      "kindnessTitle": "Tận hưởng chậm",
+      "kindnessDescription": "Dành thêm thời gian cho những điều bạn yêu thích.",
+      "dedicationTitle": "Chú ý chi tiết",
+      "dedicationDescription": "Một hành trình đẹp bắt đầu từ những lựa chọn nhỏ.",
+      "serviceTitle": "Kết nối",
+      "serviceDescription": "Để chuyến đi trở thành thời gian bên người đồng hành.",
+      "beautyTitle": "Cảm nhận cái đẹp",
+      "beautyDescription": "Tìm cảm hứng trong cảnh quan và đời sống thường ngày.",
+      "wellbeingTitle": "Khoảng nghỉ riêng",
+      "wellbeingDescription": "Giữ một khoảng trống để nghỉ ngơi và tái tạo năng lượng.",
+      "progressTitle": "Khám phá có ý thức",
+      "progressDescription": "Mang theo sự tò mò và để lại sự tôn trọng."
+    },
+    "contactsPage": {
+      "description": "Một nơi bạn muốn đến, một kỳ nghỉ bạn đang nghĩ tới. Hãy chia sẻ cùng Hafo Travel.",
+      "directContact": "Trao đổi trực tiếp"
+    },
+    "footer": {
+      "contacts": "<emphasis>+</emphasis> Liên hệ",
+      "copyright": "© {year} {name}. Bảo lưu mọi quyền.",
+      "tagline": "Đi chậm lại. Cảm nhận nhiều hơn.",
+      "experiences": "<emphasis>+</emphasis> Trải nghiệm"
+    },
+    "metadata": {
+      "description": "Hafo Travel — cảm hứng nghỉ dưỡng và khám phá Việt Nam. Từ Hà Giang, Ninh Bình đến Hội An, Đà Lạt và Phú Quốc.",
+      "experiencesDescription": "Khám phá 12 góc nhìn Việt Nam cùng Hafo Travel: thiên nhiên, văn hóa, phố cổ và những khoảng nghỉ bên biển.",
+      "contactsDescription": "Liên hệ Hafo Travel qua 0947055644 hoặc haodev1307@gmail.com để trao đổi ý tưởng hành trình Việt Nam.",
+      "privacyDescription": "Thông tin về biểu mẫu, lựa chọn lưu trên thiết bị và kênh liên hệ của website Hafo Travel.",
+      "termsDescription": "Thông tin sử dụng website và nội dung gợi ý hành trình của Hafo Travel."
+    },
+    "legal": {
+      "updated": "Cập nhật ngày 09/11/2026",
+      "contents": "Nội dung",
+      "contact": "Trao đổi cùng Hafo Travel"
+    },
+    "privacy": {
+      "title": "Chính sách bảo mật",
+      "intro": "Trang này mô tả cách hoạt động hiện tại của website Hafo Travel và các lựa chọn của bạn khi liên hệ.",
+      "sections": [
+        {
+          "title": "Thông tin trên biểu mẫu",
+          "paragraphs": [
+            "Biểu mẫu gồm họ tên, email và lời nhắn. Hiện tại, biểu mẫu chỉ kiểm tra dữ liệu trên thiết bị và chưa gửi nội dung qua API liên hệ. Thông báo sau khi kiểm tra sẽ hướng dẫn bạn dùng điện thoại hoặc email."
+          ]
+        },
+        {
+          "title": "Khi bạn chủ động liên hệ",
+          "paragraphs": [
+            "Nếu gọi điện hoặc gửi email, bạn chủ động chia sẻ thông tin qua kênh đó để trao đổi về hành trình. Chỉ gửi thông tin cần thiết cho nhu cầu tư vấn; không gửi mật khẩu, giấy tờ hoặc thông tin thanh toán qua biểu mẫu này."
+          ]
+        },
+        {
+          "title": "Lựa chọn trên thiết bị",
+          "paragraphs": [
+            "Website sử dụng lựa chọn ngôn ngữ và lưu trạng thái thông báo trong trình duyệt. Bạn có thể xóa các lựa chọn này bằng phần cài đặt dữ liệu website của trình duyệt. Cụm trang public hiện không tích hợp mã phân tích hoặc quảng cáo."
+          ]
+        },
+        {
+          "title": "Liên kết và nội dung ảnh",
+          "paragraphs": [
+            "Điện thoại và email mở ứng dụng tương ứng trên thiết bị. Ảnh được phục vụ từ website; nguồn và thông tin sử dụng ảnh được lưu trong tài liệu dự án."
+          ]
+        },
+        {
+          "title": "Trao đổi và cập nhật",
+          "paragraphs": [
+            "Để trao đổi về thông tin đã cung cấp trực tiếp, liên hệ haodev1307@gmail.com hoặc 0947055644. Nội dung trang này sẽ được cập nhật khi website bổ sung dịch vụ hoặc thay đổi cách xử lý thông tin."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Điều khoản sử dụng",
+      "intro": "Các thông tin dưới đây giúp bạn hiểu phạm vi nội dung và chức năng hiện tại của website Hafo Travel.",
+      "sections": [
+        {
+          "title": "Nội dung gợi cảm hứng",
+          "paragraphs": [
+            "Các hành trình, lịch trình và trải nghiệm trên website là ý tưởng tham khảo. Nội dung này không phải xác nhận đặt dịch vụ, vé, phòng hay lịch khởi hành."
+          ]
+        },
+        {
+          "title": "Giá và dịch vụ cụ thể",
+          "paragraphs": [
+            "Website chưa công bố bảng giá và lịch khởi hành chính thức. Nơi lưu trú, phương tiện, hoạt động, ngân sách và các điều kiện liên quan cần được trao đổi, xác nhận riêng trước khi bạn quyết định."
+          ]
+        },
+        {
+          "title": "Hình ảnh và địa điểm",
+          "paragraphs": [
+            "Ảnh dùng để giới thiệu cảnh quan và tạo cảm hứng. Ảnh resort, du thuyền hoặc không gian dịch vụ không tự xác nhận rằng Hafo Travel là đối tác hoặc đã đặt được dịch vụ tại địa điểm đó."
+          ]
+        },
+        {
+          "title": "Kênh liên hệ",
+          "paragraphs": [
+            "Bạn có thể gọi 0947055644 hoặc gửi email tới haodev1307@gmail.com. Biểu mẫu trên website hiện chưa hỗ trợ gửi lời nhắn; website chưa có chức năng đặt chỗ hoặc thanh toán trực tuyến."
+          ]
+        },
+        {
+          "title": "Sử dụng nội dung",
+          "paragraphs": [
+            "Vui lòng tôn trọng quyền sử dụng đối với hình ảnh, nhận diện và nội dung được giới thiệu. Thông tin nguồn ảnh được lưu cùng dự án để phục vụ việc quản lý và thay thế."
+          ]
+        },
+        {
+          "title": "Thay đổi và câu hỏi",
+          "paragraphs": [
+            "Nội dung website có thể được cập nhật khi có thông tin mới. Nếu cần làm rõ một hành trình hoặc thông tin sử dụng website, hãy liên hệ trực tiếp với Hafo Travel."
+          ]
+        }
+      ]
+    },
+    "experienceProfiles": {
+      "haGiang": {
+        "name": "Hà Giang",
+        "specialty": "Những cung đường cao nguyên",
+        "location": "Hà Giang, Việt Nam",
+        "setting": "Núi & bản làng",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Hà Giang để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "saPa": {
+        "name": "Sa Pa",
+        "specialty": "Bước giữa mùa xanh",
+        "location": "Sa Pa, Việt Nam",
+        "setting": "Ruộng bậc thang",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Sa Pa để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "haNoi": {
+        "name": "Hà Nội",
+        "specialty": "Những khoảng dừng phố cũ",
+        "location": "Hà Nội, Việt Nam",
+        "setting": "Văn hóa đô thị",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Hà Nội để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "ninhBinh": {
+        "name": "Ninh Bình",
+        "specialty": "Một nhịp chèo thật chậm",
+        "location": "Ninh Bình, Việt Nam",
+        "setting": "Sông & núi đá",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Ninh Bình để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "haLong": {
+        "name": "Hạ Long",
+        "specialty": "Thảnh thơi giữa lòng vịnh",
+        "location": "Hạ Long, Việt Nam",
+        "setting": "Biển & đảo",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Hạ Long để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "hue": {
+        "name": "Huế",
+        "specialty": "Chạm vào nét xưa",
+        "location": "Huế, Việt Nam",
+        "setting": "Kiến trúc & di sản",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Huế để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "daNang": {
+        "name": "Đà Nẵng",
+        "specialty": "Một ngày hướng ra biển",
+        "location": "Đà Nẵng, Việt Nam",
+        "setting": "Thành phố biển",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Đà Nẵng để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "hoiAn": {
+        "name": "Hội An",
+        "specialty": "Theo ánh đèn phố Hội",
+        "location": "Hội An, Việt Nam",
+        "setting": "Phố cổ & văn hóa",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Hội An để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "quyNhon": {
+        "name": "Quy Nhơn",
+        "specialty": "Tìm một khoảng biển riêng",
+        "location": "Quy Nhơn, Việt Nam",
+        "setting": "Bờ biển & thiên nhiên",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Quy Nhơn để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "phuYen": {
+        "name": "Phú Yên",
+        "specialty": "Bình yên từ miền biển",
+        "location": "Phú Yên, Việt Nam",
+        "setting": "Làng chài & mặt nước",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Phú Yên để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "daLat": {
+        "name": "Đà Lạt",
+        "specialty": "Một sáng bên rừng thông",
+        "location": "Đà Lạt, Việt Nam",
+        "setting": "Cao nguyên & cà phê",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Đà Lạt để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      },
+      "phuQuoc": {
+        "name": "Phú Quốc",
+        "specialty": "Những ngày không vội",
+        "location": "Phú Quốc, Việt Nam",
+        "setting": "Nghỉ dưỡng biển đảo",
+        "pace": "Theo nhịp của bạn",
+        "bio": [
+          "Một góc nhìn về Phú Quốc để bạn bắt đầu tìm cảm hứng. Dành thời gian cho cảnh quan, những chi tiết nhỏ và nhịp sống địa phương.",
+          "Đây là gợi ý khám phá. Liên hệ Hafo Travel để trao đổi thời gian và nhu cầu của bạn."
+        ]
+      }
+    },
+    "retreatCards": {
+      "haGiang": {
+        "title": ["Hà Giang, những cung đường xanh"],
+        "properties": [
+          {
+            "label": "Hà Giang, Việt Nam",
+            "detail": ""
+          },
+          {
+            "label": "Lịch trình gợi ý",
+            "detail": ""
+          },
+          {
+            "label": "Đi theo nhịp của bạn",
+            "detail": ""
+          },
+          {
+            "label": "Thiên nhiên & văn hóa",
+            "detail": ""
+          }
+        ]
+      },
+      "daLat": {
+        "title": ["Đà Lạt, một khoảng bình yên"],
+        "properties": [
+          {
+            "label": "Đà Lạt, Việt Nam",
+            "detail": ""
+          },
+          {
+            "label": "Lịch trình gợi ý",
+            "detail": ""
+          },
+          {
+            "label": "Đi theo nhịp của bạn",
+            "detail": ""
+          },
+          {
+            "label": "Thiên nhiên & văn hóa",
+            "detail": ""
+          }
+        ]
+      },
+      "hoiAn": {
+        "title": ["Hội An, chạm vào miền di sản"],
+        "properties": [
+          {
+            "label": "Hội An, Việt Nam",
+            "detail": ""
+          },
+          {
+            "label": "Lịch trình gợi ý",
+            "detail": ""
+          },
+          {
+            "label": "Đi theo nhịp của bạn",
+            "detail": ""
+          },
+          {
+            "label": "Thiên nhiên & văn hóa",
+            "detail": ""
+          }
+        ]
+      },
+      "ninhBinh": {
+        "title": ["Ninh Bình, giữa miền non nước"],
+        "properties": [
+          {
+            "label": "Ninh Bình, Việt Nam",
+            "detail": ""
+          },
+          {
+            "label": "Lịch trình gợi ý",
+            "detail": ""
+          },
+          {
+            "label": "Đi theo nhịp của bạn",
+            "detail": ""
+          },
+          {
+            "label": "Thiên nhiên & văn hóa",
+            "detail": ""
+          }
+        ]
+      },
+      "haLong": {
+        "title": ["Hạ Long, thảnh thơi giữa vịnh"],
+        "properties": [
+          {
+            "label": "Hạ Long, Việt Nam",
+            "detail": ""
+          },
+          {
+            "label": "Lịch trình gợi ý",
+            "detail": ""
+          },
+          {
+            "label": "Đi theo nhịp của bạn",
+            "detail": ""
+          },
+          {
+            "label": "Thiên nhiên & văn hóa",
+            "detail": ""
+          }
+        ]
+      },
+      "phuQuoc": {
+        "title": ["Phú Quốc, những ngày bên biển"],
+        "properties": [
+          {
+            "label": "Phú Quốc, Việt Nam",
+            "detail": ""
+          },
+          {
+            "label": "Lịch trình gợi ý",
+            "detail": ""
+          },
+          {
+            "label": "Đi theo nhịp của bạn",
+            "detail": ""
+          },
+          {
+            "label": "Thiên nhiên & văn hóa",
+            "detail": ""
+          }
+        ]
+      }
+    },
+    "retreatContent": {
+      "haGiang": {
+        "title": "Hà Giang, những cung đường xanh",
+        "description": "Chậm lại giữa cao nguyên đá, dòng Nho Quế và những bản làng nép bên sườn núi.",
+        "headline": ["Hà Giang, những cung đường xanh"],
+        "locationLabel": "Hà Giang, Việt Nam",
+        "dates": "Thời gian trao đổi khi tư vấn",
+        "guests": "Cặp đôi · Gia đình · Nhóm bạn",
+        "about": [
+          "Một hành trình dành cho những ai muốn nhìn Việt Nam từ một góc khác. Những con đường uốn theo triền núi mở ra thung lũng, mái nhà nhỏ và khoảng trời rộng của cao nguyên đá.",
+          "Dành thời gian cho Đồng Văn, một buổi đi thuyền trên sông Nho Quế và những khoảng dừng để ngắm cảnh. Đây là ý tưởng hành trình; cung đường và thời lượng sẽ được trao đổi trước chuyến đi."
+        ],
+        "included": [
+          [
+            "Cảm hứng lựa chọn nơi lưu trú",
+            "Thời gian khám phá cảnh quan",
+            "Gợi ý hương vị địa phương"
+          ],
+          [
+            "Khoảng nghỉ theo nhu cầu",
+            "Những điểm dừng văn hóa",
+            "Trao đổi trực tiếp cùng Hafo"
+          ]
+        ],
+        "special": [
+          "Chậm lại giữa cao nguyên đá, dòng Nho Quế và những bản làng nép bên sườn núi.",
+          "Không cần đi thật nhiều để có một chuyến đi đáng nhớ. Hãy chọn những trải nghiệm phù hợp và dành thời gian cảm nhận."
+        ],
+        "program": {
+          "checkIn": "Theo nơi lưu trú",
+          "checkOut": "Theo nơi lưu trú",
+          "description": [
+            "Lịch dưới đây là ý tưởng cho một ngày trải nghiệm. Thứ tự, thời gian và dịch vụ cụ thể được trao đổi theo nhu cầu; chưa phải chương trình đã xác nhận."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Đón ánh sáng trên cao nguyên"
+          },
+          {
+            "time": "08:00",
+            "description": "Ăn sáng và dạo quanh bản làng"
+          },
+          {
+            "time": "10:00",
+            "description": "Khám phá những cung đường Đồng Văn"
+          },
+          {
+            "time": "14:00",
+            "description": "Gợi ý trải nghiệm sông Nho Quế"
+          },
+          {
+            "time": "17:00",
+            "description": "Dừng chân ngắm núi và thung lũng"
+          },
+          {
+            "time": "19:00",
+            "description": "Bữa tối và nghỉ ngơi"
+          }
+        ],
+        "scheduleDescription": [
+          "Bạn có thể dành thêm thời gian nghỉ hoặc thay đổi các điểm dừng khi trao đổi lịch trình. Mỗi lựa chọn cần phù hợp với thời tiết, điều kiện thực tế và người đồng hành."
+        ],
+        "food": {
+          "description": [
+            "Dành một khoảng dừng cho bữa ăn, quán nhỏ và hương vị Việt. Bộ ảnh bên dưới là tư liệu gợi cảm hứng ẩm thực Việt Nam, không phải thực đơn hoặc dịch vụ đã bao gồm trong hành trình."
+          ],
+          "meals": [
+            "Bữa sáng thong thả",
+            "Bữa trưa theo nhịp khám phá",
+            "Bữa tối cùng người đồng hành"
+          ],
+          "diets": [
+            "Trao đổi khẩu vị trước chuyến đi",
+            "Thông báo thực phẩm dị ứng",
+            "Xác nhận lựa chọn ăn riêng"
+          ]
+        },
+        "team": [
+          {
+            "role": "Cảm hứng địa phương",
+            "bio": [
+              "Những ngôi nhà nhỏ, con đường quanh co và câu chuyện của người bản địa tạo nên một Hà Giang rất riêng. Hãy dành khoảng trống trong lịch trình để quan sát và lắng nghe."
+            ],
+            "name": "Nhịp sống cao nguyên"
+          }
+        ],
+        "meeting": {
+          "address": ["Hà Giang", "Việt Nam"],
+          "description": [
+            "Điểm đón, nơi lưu trú và địa chỉ cụ thể sẽ được xác nhận khi trao đổi hành trình. Hình ảnh giới thiệu không gian của điểm đến."
+          ]
+        },
+        "excluded": [
+          ["Thời gian và thời lượng chuyến đi", "Nơi lưu trú và phương tiện"],
+          ["Ngân sách và dịch vụ lựa chọn", "Điều kiện xác nhận và thay đổi"]
+        ]
+      },
+      "daLat": {
+        "title": "Đà Lạt, một khoảng bình yên",
+        "description": "Rừng thông, sương sớm và những khoảng nghỉ dịu dàng giữa cao nguyên.",
+        "headline": ["Đà Lạt, một khoảng bình yên"],
+        "locationLabel": "Đà Lạt, Việt Nam",
+        "dates": "Thời gian trao đổi khi tư vấn",
+        "guests": "Cặp đôi · Gia đình · Nhóm bạn",
+        "about": [
+          "Đà Lạt dành chỗ cho những buổi sáng không vội. Bắt đầu bằng một tách cà phê, dạo dưới tán thông rồi trở về một không gian lưu trú yên tĩnh.",
+          "Ý tưởng nghỉ dưỡng kết hợp cảnh quan cao nguyên, những quán nhỏ và thời gian riêng. Hình ảnh nơi lưu trú mang tính tham khảo; địa điểm và dịch vụ cụ thể được xác nhận khi tư vấn."
+        ],
+        "included": [
+          [
+            "Cảm hứng lựa chọn nơi lưu trú",
+            "Thời gian khám phá cảnh quan",
+            "Gợi ý hương vị địa phương"
+          ],
+          [
+            "Khoảng nghỉ theo nhu cầu",
+            "Những điểm dừng văn hóa",
+            "Trao đổi trực tiếp cùng Hafo"
+          ]
+        ],
+        "special": [
+          "Rừng thông, sương sớm và những khoảng nghỉ dịu dàng giữa cao nguyên.",
+          "Không cần đi thật nhiều để có một chuyến đi đáng nhớ. Hãy chọn những trải nghiệm phù hợp và dành thời gian cảm nhận."
+        ],
+        "program": {
+          "checkIn": "Theo nơi lưu trú",
+          "checkOut": "Theo nơi lưu trú",
+          "description": [
+            "Lịch dưới đây là ý tưởng cho một ngày trải nghiệm. Thứ tự, thời gian và dịch vụ cụ thể được trao đổi theo nhu cầu; chưa phải chương trình đã xác nhận."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Đón sương sớm bên rừng thông"
+          },
+          {
+            "time": "08:00",
+            "description": "Bữa sáng nhẹ và cà phê"
+          },
+          {
+            "time": "10:00",
+            "description": "Dạo bộ trong không gian xanh"
+          },
+          {
+            "time": "14:00",
+            "description": "Thời gian riêng tại nơi lưu trú"
+          },
+          {
+            "time": "17:00",
+            "description": "Tìm một góc ngắm đồi xa"
+          },
+          {
+            "time": "19:00",
+            "description": "Khám phá hương vị Đà Lạt"
+          }
+        ],
+        "scheduleDescription": [
+          "Bạn có thể dành thêm thời gian nghỉ hoặc thay đổi các điểm dừng khi trao đổi lịch trình. Mỗi lựa chọn cần phù hợp với thời tiết, điều kiện thực tế và người đồng hành."
+        ],
+        "food": {
+          "description": [
+            "Dành một khoảng dừng cho bữa ăn, quán nhỏ và hương vị Việt. Bộ ảnh bên dưới là tư liệu gợi cảm hứng ẩm thực Việt Nam, không phải thực đơn hoặc dịch vụ đã bao gồm trong hành trình."
+          ],
+          "meals": [
+            "Bữa sáng thong thả",
+            "Bữa trưa theo nhịp khám phá",
+            "Bữa tối cùng người đồng hành"
+          ],
+          "diets": [
+            "Trao đổi khẩu vị trước chuyến đi",
+            "Thông báo thực phẩm dị ứng",
+            "Xác nhận lựa chọn ăn riêng"
+          ]
+        },
+        "team": [
+          {
+            "role": "Cảm hứng địa phương",
+            "bio": [
+              "Đôi khi, điểm nhấn của chuyến đi chỉ là một khu vườn yên tĩnh và tách cà phê còn ấm. Chọn ít điểm dừng hơn để có thêm thời gian tận hưởng."
+            ],
+            "name": "Cà phê và những khu vườn"
+          }
+        ],
+        "meeting": {
+          "address": ["Đà Lạt", "Việt Nam"],
+          "description": [
+            "Điểm đón, nơi lưu trú và địa chỉ cụ thể sẽ được xác nhận khi trao đổi hành trình. Hình ảnh giới thiệu không gian của điểm đến."
+          ]
+        },
+        "excluded": [
+          ["Thời gian và thời lượng chuyến đi", "Nơi lưu trú và phương tiện"],
+          ["Ngân sách và dịch vụ lựa chọn", "Điều kiện xác nhận và thay đổi"]
+        ]
+      },
+      "hoiAn": {
+        "title": "Hội An, chạm vào miền di sản",
+        "description": "Dạo qua những mái ngói, khoảng sân xanh và phố đèn lồng bên sông.",
+        "headline": ["Hội An, chạm vào miền di sản"],
+        "locationLabel": "Hội An, Việt Nam",
+        "dates": "Thời gian trao đổi khi tư vấn",
+        "guests": "Cặp đôi · Gia đình · Nhóm bạn",
+        "about": [
+          "Hội An đẹp trong những chi tiết nhỏ: sắc vàng trên tường cũ, bóng cây trước hiên và ánh đèn lồng khi phố lên đèn. Hãy khám phá bằng bước chân chậm rãi.",
+          "Gợi ý hành trình kết hợp phố cổ, văn hóa địa phương và những khoảng nghỉ bên sông. Các hoạt động và nơi lưu trú được lựa chọn theo thời gian và mong muốn của bạn."
+        ],
+        "included": [
+          [
+            "Cảm hứng lựa chọn nơi lưu trú",
+            "Thời gian khám phá cảnh quan",
+            "Gợi ý hương vị địa phương"
+          ],
+          [
+            "Khoảng nghỉ theo nhu cầu",
+            "Những điểm dừng văn hóa",
+            "Trao đổi trực tiếp cùng Hafo"
+          ]
+        ],
+        "special": [
+          "Dạo qua những mái ngói, khoảng sân xanh và phố đèn lồng bên sông.",
+          "Không cần đi thật nhiều để có một chuyến đi đáng nhớ. Hãy chọn những trải nghiệm phù hợp và dành thời gian cảm nhận."
+        ],
+        "program": {
+          "checkIn": "Theo nơi lưu trú",
+          "checkOut": "Theo nơi lưu trú",
+          "description": [
+            "Lịch dưới đây là ý tưởng cho một ngày trải nghiệm. Thứ tự, thời gian và dịch vụ cụ thể được trao đổi theo nhu cầu; chưa phải chương trình đã xác nhận."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Dạo phố khi nắng còn dịu"
+          },
+          {
+            "time": "08:00",
+            "description": "Dừng chân với bữa sáng địa phương"
+          },
+          {
+            "time": "10:00",
+            "description": "Khám phá kiến trúc phố cổ"
+          },
+          {
+            "time": "14:00",
+            "description": "Ghé một khoảng sân và quán nhỏ"
+          },
+          {
+            "time": "17:00",
+            "description": "Ngắm phố bên dòng sông"
+          },
+          {
+            "time": "19:00",
+            "description": "Dạo phố đèn lồng"
+          }
+        ],
+        "scheduleDescription": [
+          "Bạn có thể dành thêm thời gian nghỉ hoặc thay đổi các điểm dừng khi trao đổi lịch trình. Mỗi lựa chọn cần phù hợp với thời tiết, điều kiện thực tế và người đồng hành."
+        ],
+        "food": {
+          "description": [
+            "Dành một khoảng dừng cho bữa ăn, quán nhỏ và hương vị Việt. Bộ ảnh bên dưới là tư liệu gợi cảm hứng ẩm thực Việt Nam, không phải thực đơn hoặc dịch vụ đã bao gồm trong hành trình."
+          ],
+          "meals": [
+            "Bữa sáng thong thả",
+            "Bữa trưa theo nhịp khám phá",
+            "Bữa tối cùng người đồng hành"
+          ],
+          "diets": [
+            "Trao đổi khẩu vị trước chuyến đi",
+            "Thông báo thực phẩm dị ứng",
+            "Xác nhận lựa chọn ăn riêng"
+          ]
+        },
+        "team": [
+          {
+            "role": "Cảm hứng địa phương",
+            "bio": [
+              "Từ một mái nhà cũ đến ánh đèn phản chiếu trên mặt nước, Hội An luôn có điều để bạn dừng lại. Giữ sự tôn trọng với không gian sinh hoạt và văn hóa địa phương."
+            ],
+            "name": "Những góc phố có câu chuyện"
+          }
+        ],
+        "meeting": {
+          "address": ["Hội An", "Việt Nam"],
+          "description": [
+            "Điểm đón, nơi lưu trú và địa chỉ cụ thể sẽ được xác nhận khi trao đổi hành trình. Hình ảnh giới thiệu không gian của điểm đến."
+          ]
+        },
+        "excluded": [
+          ["Thời gian và thời lượng chuyến đi", "Nơi lưu trú và phương tiện"],
+          ["Ngân sách và dịch vụ lựa chọn", "Điều kiện xác nhận và thay đổi"]
+        ]
+      },
+      "ninhBinh": {
+        "title": "Ninh Bình, giữa miền non nước",
+        "description": "Một nhịp chèo, một khoảng xanh và những dãy núi đá vôi soi bóng xuống dòng nước.",
+        "headline": ["Ninh Bình, giữa miền non nước"],
+        "locationLabel": "Ninh Bình, Việt Nam",
+        "dates": "Thời gian trao đổi khi tư vấn",
+        "guests": "Cặp đôi · Gia đình · Nhóm bạn",
+        "about": [
+          "Ninh Bình mở ra một khung cảnh vừa gần gũi vừa khác biệt. Những dãy núi đá vôi, đồng ruộng và dòng nước tạo nên nhịp khám phá nhẹ nhàng.",
+          "Dành thời gian cho Tràng An, Tam Cốc và những con đường nhỏ giữa thiên nhiên. Lịch trình là gợi ý để bạn trao đổi cùng Hafo Travel, không phải lịch khởi hành đã mở bán."
+        ],
+        "included": [
+          [
+            "Cảm hứng lựa chọn nơi lưu trú",
+            "Thời gian khám phá cảnh quan",
+            "Gợi ý hương vị địa phương"
+          ],
+          [
+            "Khoảng nghỉ theo nhu cầu",
+            "Những điểm dừng văn hóa",
+            "Trao đổi trực tiếp cùng Hafo"
+          ]
+        ],
+        "special": [
+          "Một nhịp chèo, một khoảng xanh và những dãy núi đá vôi soi bóng xuống dòng nước.",
+          "Không cần đi thật nhiều để có một chuyến đi đáng nhớ. Hãy chọn những trải nghiệm phù hợp và dành thời gian cảm nhận."
+        ],
+        "program": {
+          "checkIn": "Theo nơi lưu trú",
+          "checkOut": "Theo nơi lưu trú",
+          "description": [
+            "Lịch dưới đây là ý tưởng cho một ngày trải nghiệm. Thứ tự, thời gian và dịch vụ cụ thể được trao đổi theo nhu cầu; chưa phải chương trình đã xác nhận."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Đón ngày mới giữa thung lũng"
+          },
+          {
+            "time": "08:00",
+            "description": "Ăn sáng và chuẩn bị cho ngày khám phá"
+          },
+          {
+            "time": "10:00",
+            "description": "Gợi ý trải nghiệm thuyền Tràng An"
+          },
+          {
+            "time": "14:00",
+            "description": "Dạo giữa cảnh quan Tam Cốc"
+          },
+          {
+            "time": "17:00",
+            "description": "Ngắm ánh chiều trên mặt nước"
+          },
+          {
+            "time": "19:00",
+            "description": "Bữa tối và thời gian thư giãn"
+          }
+        ],
+        "scheduleDescription": [
+          "Bạn có thể dành thêm thời gian nghỉ hoặc thay đổi các điểm dừng khi trao đổi lịch trình. Mỗi lựa chọn cần phù hợp với thời tiết, điều kiện thực tế và người đồng hành."
+        ],
+        "food": {
+          "description": [
+            "Dành một khoảng dừng cho bữa ăn, quán nhỏ và hương vị Việt. Bộ ảnh bên dưới là tư liệu gợi cảm hứng ẩm thực Việt Nam, không phải thực đơn hoặc dịch vụ đã bao gồm trong hành trình."
+          ],
+          "meals": [
+            "Bữa sáng thong thả",
+            "Bữa trưa theo nhịp khám phá",
+            "Bữa tối cùng người đồng hành"
+          ],
+          "diets": [
+            "Trao đổi khẩu vị trước chuyến đi",
+            "Thông báo thực phẩm dị ứng",
+            "Xác nhận lựa chọn ăn riêng"
+          ]
+        },
+        "team": [
+          {
+            "role": "Cảm hứng địa phương",
+            "bio": [
+              "Nhìn cảnh quan từ mặt nước mang lại một cảm nhận khác về Ninh Bình. Những khoảng lặng và âm thanh tự nhiên là một phần đáng nhớ của trải nghiệm."
+            ],
+            "name": "Một nhịp chèo thật chậm"
+          }
+        ],
+        "meeting": {
+          "address": ["Ninh Bình", "Việt Nam"],
+          "description": [
+            "Điểm đón, nơi lưu trú và địa chỉ cụ thể sẽ được xác nhận khi trao đổi hành trình. Hình ảnh giới thiệu không gian của điểm đến."
+          ]
+        },
+        "excluded": [
+          ["Thời gian và thời lượng chuyến đi", "Nơi lưu trú và phương tiện"],
+          ["Ngân sách và dịch vụ lựa chọn", "Điều kiện xác nhận và thay đổi"]
+        ]
+      },
+      "haLong": {
+        "title": "Hạ Long, thảnh thơi giữa vịnh",
+        "description": "Mặt nước êm, những đảo đá vôi và một khoảng nghỉ hướng ra chân trời.",
+        "headline": ["Hạ Long, thảnh thơi giữa vịnh"],
+        "locationLabel": "Hạ Long, Việt Nam",
+        "dates": "Thời gian trao đổi khi tư vấn",
+        "guests": "Cặp đôi · Gia đình · Nhóm bạn",
+        "about": [
+          "Hạ Long phù hợp với những ngày muốn đổi nhịp. Ngắm các đảo đá vôi từ mặt nước, dành thời gian trên boong và cảm nhận không gian rộng mở của vịnh.",
+          "Ảnh du thuyền và cảnh quan là tư liệu gợi cảm hứng. Tàu, tuyến đi, phòng và dịch vụ sẽ được trao đổi, xác nhận riêng trước khi bạn quyết định."
+        ],
+        "included": [
+          [
+            "Cảm hứng lựa chọn nơi lưu trú",
+            "Thời gian khám phá cảnh quan",
+            "Gợi ý hương vị địa phương"
+          ],
+          [
+            "Khoảng nghỉ theo nhu cầu",
+            "Những điểm dừng văn hóa",
+            "Trao đổi trực tiếp cùng Hafo"
+          ]
+        ],
+        "special": [
+          "Mặt nước êm, những đảo đá vôi và một khoảng nghỉ hướng ra chân trời.",
+          "Không cần đi thật nhiều để có một chuyến đi đáng nhớ. Hãy chọn những trải nghiệm phù hợp và dành thời gian cảm nhận."
+        ],
+        "program": {
+          "checkIn": "Theo nơi lưu trú",
+          "checkOut": "Theo nơi lưu trú",
+          "description": [
+            "Lịch dưới đây là ý tưởng cho một ngày trải nghiệm. Thứ tự, thời gian và dịch vụ cụ thể được trao đổi theo nhu cầu; chưa phải chương trình đã xác nhận."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Ngắm ánh sáng sớm trên vịnh"
+          },
+          {
+            "time": "08:00",
+            "description": "Bữa sáng với tầm nhìn rộng mở"
+          },
+          {
+            "time": "10:00",
+            "description": "Khám phá cảnh quan từ mặt nước"
+          },
+          {
+            "time": "14:00",
+            "description": "Thời gian thư giãn trên hành trình"
+          },
+          {
+            "time": "17:00",
+            "description": "Ngắm các đảo đá vôi lúc chiều"
+          },
+          {
+            "time": "19:00",
+            "description": "Bữa tối và một buổi tối yên tĩnh"
+          }
+        ],
+        "scheduleDescription": [
+          "Bạn có thể dành thêm thời gian nghỉ hoặc thay đổi các điểm dừng khi trao đổi lịch trình. Mỗi lựa chọn cần phù hợp với thời tiết, điều kiện thực tế và người đồng hành."
+        ],
+        "food": {
+          "description": [
+            "Dành một khoảng dừng cho bữa ăn, quán nhỏ và hương vị Việt. Bộ ảnh bên dưới là tư liệu gợi cảm hứng ẩm thực Việt Nam, không phải thực đơn hoặc dịch vụ đã bao gồm trong hành trình."
+          ],
+          "meals": [
+            "Bữa sáng thong thả",
+            "Bữa trưa theo nhịp khám phá",
+            "Bữa tối cùng người đồng hành"
+          ],
+          "diets": [
+            "Trao đổi khẩu vị trước chuyến đi",
+            "Thông báo thực phẩm dị ứng",
+            "Xác nhận lựa chọn ăn riêng"
+          ]
+        },
+        "team": [
+          {
+            "role": "Cảm hứng địa phương",
+            "bio": [
+              "Giữa các đảo đá và mặt nước, hãy dành thời gian cho những điều thật đơn giản: ngắm cảnh, đọc sách và trò chuyện cùng người đồng hành."
+            ],
+            "name": "Khoảng trời trên mặt nước"
+          }
+        ],
+        "meeting": {
+          "address": ["Hạ Long", "Việt Nam"],
+          "description": [
+            "Điểm đón, nơi lưu trú và địa chỉ cụ thể sẽ được xác nhận khi trao đổi hành trình. Hình ảnh giới thiệu không gian của điểm đến."
+          ]
+        },
+        "excluded": [
+          ["Thời gian và thời lượng chuyến đi", "Nơi lưu trú và phương tiện"],
+          ["Ngân sách và dịch vụ lựa chọn", "Điều kiện xác nhận và thay đổi"]
+        ]
+      },
+      "phuQuoc": {
+        "title": "Phú Quốc, những ngày bên biển",
+        "description": "Biển xanh, bóng dừa và những khoảng nghỉ chỉ dành cho bạn.",
+        "headline": ["Phú Quốc, những ngày bên biển"],
+        "locationLabel": "Phú Quốc, Việt Nam",
+        "dates": "Thời gian trao đổi khi tư vấn",
+        "guests": "Cặp đôi · Gia đình · Nhóm bạn",
+        "about": [
+          "Một kỳ nghỉ ở Phú Quốc có thể bắt đầu rất đơn giản: đi chân trần trên cát, nhìn mặt biển đổi màu và dành thêm thời gian cho người thân.",
+          "Từ Bãi Khem đến những không gian nghỉ dưỡng nhiều cây xanh, hành trình được gợi mở theo nhịp của bạn. Hình ảnh resort mang tính tham khảo, không xác nhận quan hệ đối tác hay đặt phòng."
+        ],
+        "included": [
+          [
+            "Cảm hứng lựa chọn nơi lưu trú",
+            "Thời gian khám phá cảnh quan",
+            "Gợi ý hương vị địa phương"
+          ],
+          [
+            "Khoảng nghỉ theo nhu cầu",
+            "Những điểm dừng văn hóa",
+            "Trao đổi trực tiếp cùng Hafo"
+          ]
+        ],
+        "special": [
+          "Biển xanh, bóng dừa và những khoảng nghỉ chỉ dành cho bạn.",
+          "Không cần đi thật nhiều để có một chuyến đi đáng nhớ. Hãy chọn những trải nghiệm phù hợp và dành thời gian cảm nhận."
+        ],
+        "program": {
+          "checkIn": "Theo nơi lưu trú",
+          "checkOut": "Theo nơi lưu trú",
+          "description": [
+            "Lịch dưới đây là ý tưởng cho một ngày trải nghiệm. Thứ tự, thời gian và dịch vụ cụ thể được trao đổi theo nhu cầu; chưa phải chương trình đã xác nhận."
+          ]
+        },
+        "schedule": [
+          {
+            "time": "06:30",
+            "description": "Dạo biển trong ánh sáng sớm"
+          },
+          {
+            "time": "08:00",
+            "description": "Bữa sáng và thời gian nghỉ ngơi"
+          },
+          {
+            "time": "10:00",
+            "description": "Khám phá một góc biển yêu thích"
+          },
+          {
+            "time": "14:00",
+            "description": "Thư giãn dưới bóng cây"
+          },
+          {
+            "time": "17:00",
+            "description": "Ngắm biển khi ngày dịu lại"
+          },
+          {
+            "time": "19:00",
+            "description": "Bữa tối với hương vị miền biển"
+          }
+        ],
+        "scheduleDescription": [
+          "Bạn có thể dành thêm thời gian nghỉ hoặc thay đổi các điểm dừng khi trao đổi lịch trình. Mỗi lựa chọn cần phù hợp với thời tiết, điều kiện thực tế và người đồng hành."
+        ],
+        "food": {
+          "description": [
+            "Dành một khoảng dừng cho bữa ăn, quán nhỏ và hương vị Việt. Bộ ảnh bên dưới là tư liệu gợi cảm hứng ẩm thực Việt Nam, không phải thực đơn hoặc dịch vụ đã bao gồm trong hành trình."
+          ],
+          "meals": [
+            "Bữa sáng thong thả",
+            "Bữa trưa theo nhịp khám phá",
+            "Bữa tối cùng người đồng hành"
+          ],
+          "diets": [
+            "Trao đổi khẩu vị trước chuyến đi",
+            "Thông báo thực phẩm dị ứng",
+            "Xác nhận lựa chọn ăn riêng"
+          ]
+        },
+        "team": [
+          {
+            "role": "Cảm hứng địa phương",
+            "bio": [
+              "Không cần lấp đầy từng giờ. Chừa một buổi chiều cho bãi biển, một cuốn sách hoặc khoảng thời gian bên gia đình."
+            ],
+            "name": "Ở lại thêm một chút"
+          }
+        ],
+        "meeting": {
+          "address": ["Phú Quốc", "Việt Nam"],
+          "description": [
+            "Điểm đón, nơi lưu trú và địa chỉ cụ thể sẽ được xác nhận khi trao đổi hành trình. Hình ảnh giới thiệu không gian của điểm đến."
+          ]
+        },
+        "excluded": [
+          ["Thời gian và thời lượng chuyến đi", "Nơi lưu trú và phương tiện"],
+          ["Ngân sách và dịch vụ lựa chọn", "Điều kiện xác nhận và thay đổi"]
+        ]
+      }
+    }
+  }
+}

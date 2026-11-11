@@ -1,0 +1,24 @@
+{
+  "collection": "role",
+  "data": [
+    {
+      "_id": {
+        "$oid": "68a3f2f1b3e811435a8ad004"
+      },
+      "name": "administrator",
+      "description": "admin role with all permissions",
+      "permissions": [
+        "user.create",
+        "user.get_by_id",
+        "user.get_all",
+        "user.update",
+        "user.delete",
+        "role.create",
+        "role.get_by_id",
+        "role.get_all",
+        "role.update",
+        "role.delete"
+      ]
+    }
+  ]
+}

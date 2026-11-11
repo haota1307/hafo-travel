@@ -1,0 +1,76 @@
+name: backend-provider
+
+networks:
+  backend-nw:
+    driver: bridge
+    name: backend_network
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - backend-nw
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./docker/backend_data/mongodb_data:/data/db
+    restart: unless-stopped
+
+  postgres:
+    profiles: [postgres]
+    image: postgres:17
+    ports:
+      - 5432:5432
+    networks:
+      - backend-nw
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: backend_app
+    volumes:
+      - ./docker/backend_data/postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  pgAdmin:
+    profiles: [postgres]
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    depends_on:
+      - postgres
+    networks:
+      - backend-nw
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - ./docker/backend_data/pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.0
+    ports:
+      - "8180:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    restart: unless-stopped
+    volumes:
+      - ./docker/backend_data/keycloak_data:/opt/keycloak/data
+    networks:
+      - backend-nw
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - backend-nw
+    volumes:
+      - ./docker/backend_data/redis_data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    restart: unless-stopped
