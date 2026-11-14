@@ -1,6 +1,6 @@
 # Tổng quan dự án Hafo Travel
 
-Trạng thái: **hiện trạng từ source + định hướng đã xác nhận + đề xuất sản phẩm**. Ngày đối chiếu: 11/11/2026.
+Trạng thái: **hiện trạng từ source + định hướng đã xác nhận + đề xuất sản phẩm**. Ngày đối chiếu nền: 11/11/2026; cập nhật RBAC: 14/11/2026.
 
 ## 1. Định hướng
 
@@ -19,24 +19,25 @@ Không dùng số lượng service hoặc số công nghệ làm tiêu chí hoà
 
 ## 3. Hiện trạng có căn cứ
 
-| Hạng mục        | Quan sát từ source                                                        | Giới hạn                                                                  |
-| --------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Frontend public | Next.js, nội dung vi/en, trang hành trình, liên hệ và các trang thông tin | Nội dung giới thiệu không chứng minh tồn kho hoặc khả năng đặt tour       |
-| Giá hành trình  | Các dữ liệu retreat hiện dùng `price: null`                               | Không được coi là miễn phí hoặc tự gán giá bán                            |
-| Form liên hệ    | Có validation; submit chuyển sang thông báo chưa khả dụng                 | Chưa gửi yêu cầu tới API liên hệ                                          |
-| Template admin  | Có bộ màn hình mẫu độc lập                                                | Không coi các bảng và nút demo là nghiệp vụ thật                          |
-| BFF             | Có controller đăng nhập và tạo user, chuyển tiếp gRPC                     | Chưa có API booking/payment/AI trong các module hiện tại                  |
-| Authorizer      | Tích hợp Keycloak, đăng nhập và xác thực; phục vụ gRPC theo contract v1   | Chỉ có RPC auth/user; chưa có RPC booking/payment/AI                      |
-| User-access     | Tạo/tra cứu user, lưu MongoDB; có nền role                                | Role CRUD chưa hoàn chỉnh                                                 |
-| Hạ tầng         | Compose có MongoDB, Redis, Keycloak; PostgreSQL thuộc profile tùy chọn    | Chưa thấy Kafka hoặc vector store trong cấu hình provider hiện có         |
-| Auth frontend   | Có HTTP wrapper và proxy backend                                          | Proxy hiện không forward cookie/Authorization; UI chưa tích hợp auth thật |
-| Kiểm thử        | Có các suite backend/frontend trong repository                            | Chưa chạy trong lần biên soạn này; không khẳng định đang pass             |
+| Hạng mục        | Quan sát từ source                                                                      | Giới hạn                                                                               |
+| --------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Frontend public | Next.js, nội dung vi/en, trang hành trình, liên hệ và các trang thông tin               | Nội dung giới thiệu không chứng minh tồn kho hoặc khả năng đặt tour                    |
+| Giá hành trình  | Các dữ liệu retreat hiện dùng `price: null`                                             | Không được coi là miễn phí hoặc tự gán giá bán                                         |
+| Form liên hệ    | Có validation; submit chuyển sang thông báo chưa khả dụng                               | Chưa gửi yêu cầu tới API liên hệ                                                       |
+| Template admin  | Có bộ màn hình mẫu độc lập                                                              | Không coi các bảng và nút demo là nghiệp vụ thật                                       |
+| BFF             | Login, hồ sơ hiện tại, tạo user, gán role và CRUD role; thực thi RBAC, chuyển tiếp gRPC | Chưa có API booking/payment/AI trong các module hiện tại                               |
+| Authorizer      | Tích hợp Keycloak, đăng nhập và xác thực; phục vụ gRPC theo contract v1                 | Chỉ có RPC auth/user; chưa có RPC booking/payment/AI                                   |
+| User-access     | Tạo/tra cứu user, gán role và CRUD role động trong MongoDB                              | Quyền nghiệp vụ booking/payment/AI chưa triển khai; gRPC cần ranh giới service tin cậy |
+| Hạ tầng         | Compose có MongoDB, Redis, Keycloak; PostgreSQL thuộc profile tùy chọn                  | Chưa thấy Kafka hoặc vector store trong cấu hình provider hiện có                      |
+| Auth frontend   | Có HTTP wrapper và proxy backend                                                        | Proxy hiện không forward cookie/Authorization; UI chưa tích hợp auth thật              |
+| Kiểm thử        | Có các suite backend/frontend trong repository                                          | Chưa chạy trong lần biên soạn này; không khẳng định đang pass                          |
 
 ## 4. Nguồn đối chiếu trong repository
 
 - [Cấu trúc backend](../server/instructions/architecture.md), [quy ước backend](../server/instructions/coding.md).
 - [Controller đăng nhập BFF](../server/apps/bff/src/app/modules/authorizer/controllers/authorizer.controller.ts).
 - [Controller user BFF](../server/apps/bff/src/app/modules/user/controllers/user.controller.ts).
+- [RBAC hiện tại](../server/instructions/rbac.md): mô hình quyền, API quản trị, cache và khởi tạo admin.
 - [User service](../server/apps/user-access/src/app/modules/user/services/user.service.ts): tạo tài khoản Keycloak rồi lưu MongoDB; không có transaction chung.
 - [Proxy Next.js](../client/app/api/backend/[[...path]]/route.ts): danh sách header được chuyển tiếp hiện tại.
 - [Form liên hệ](../client/features/public-site/components/contact-form.tsx).

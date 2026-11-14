@@ -1,16 +1,17 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { PERMISSION } from '@common/constants/enum/role.enum';
+
 import { BaseSchema, createSchema } from './base.schema';
-import { PERMISSION, ROLE } from '@common/constants/enum/role.enum';
 
 @Schema({
   timestamps: true,
   collection: 'role',
 })
 export class Role extends BaseSchema {
-  @Prop({ type: String, enum: ROLE, required: true })
-  name: ROLE;
+  @Prop({ type: String, required: true, unique: true })
+  name: string;
 
   @Prop({ type: String })
   description: string;

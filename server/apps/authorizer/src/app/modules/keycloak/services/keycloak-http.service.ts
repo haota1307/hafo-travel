@@ -1,10 +1,10 @@
-import axios, { AxiosInstance } from 'axios';
-import { ConfigService } from '@nestjs/config';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios, { AxiosInstance } from 'axios';
 
 import {
   CreateKeycloakUserRequest,

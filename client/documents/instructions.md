@@ -70,7 +70,7 @@ Server không dùng React Query hook. Component không gọi fetch trực tiếp
 
 Backend BFF trả `{ statusCode, message, data, code, processId, duration }` khi thành công, với `code: Success`. `message` là `string | string[]`; HTTP status lấy từ response HTTP. RPC nội bộ dùng gRPC/protobuf; BFF map về dữ liệu HTTP và bọc `ResponseDto` một lần. Frontend tiếp tục dùng HTTP.
 
-Endpoint hiện có: `POST /authorizer/login` trả `data: { accessToken, refreshToken }`; `POST /user` trả chuỗi tạo thành công. Chưa có `GET /` hoặc API booking/liên hệ. `http.post<{ accessToken: string; refreshToken: string }>("/authorizer/login", credentials)` là transport, chưa phải tích hợp đăng nhập trong UI.
+Endpoint hiện có: `POST /authorizer/login` public trả `data: { accessToken, refreshToken }`; `GET /user/me` yêu cầu token và trả `{ user, permissions }`; `POST /user` cần cả `user.create` và `user.assign_roles`. User có đúng một role; tạo user và `PATCH /user/:userId/roles` đều yêu cầu `roles: [roleId]`. Đổi role dùng ID user Keycloak; CRUD `/role` và `GET /role/permissions` yêu cầu quyền tương ứng. Không xóa role đang được gán, lỗi 409. Contract đầy đủ ở [RBAC backend](../../server/instructions/rbac.md). Chưa có `GET /` hoặc API booking/liên hệ. `http.post<{ accessToken: string; refreshToken: string }>("/authorizer/login", credentials)` là transport, chưa phải tích hợp đăng nhập trong UI.
 
 ### Lỗi và form
 
@@ -170,7 +170,7 @@ export function useGetItems(query: Query) {
 
 ## Auth và database
 
-Frontend chưa tích hợp auth thật; login trong template chỉ mô phỏng. Backend đã có đăng nhập/xác thực JWT qua Keycloak, guards và dữ liệu user/role MongoDB; PostgreSQL/TypeORM là nền tùy chọn. Không xem proxy hoặc ẩn nút là authorization. Proxy hiện không forward cookie/Authorization nên chưa hỗ trợ gọi API bảo vệ từ browser. Khi triển khai UI đăng nhập cần xác định session, truyền thông tin xác thực và refresh theo contract riêng; ưu tiên cookie HTTP-only, không lưu token localStorage. Không tự đổi phạm vi quyền hoặc bổ sung auth trong refactor clean code.
+Frontend chưa tích hợp auth thật; login trong template chỉ mô phỏng. Backend có đăng nhập/xác thực JWT qua Keycloak và RBAC user → đúng một role → permissions trong MongoDB. API BFF yêu cầu token mặc định; đổi role hoặc sửa permission cập nhật quyền ở lần kiểm tra tiếp theo kể cả khi JWT được cache. PostgreSQL/TypeORM là nền tùy chọn. Không xem proxy hoặc ẩn nút là authorization. Proxy hiện không forward cookie/Authorization nên chưa hỗ trợ gọi API bảo vệ từ browser. Khi triển khai UI đăng nhập cần xác định session, truyền thông tin xác thực và refresh theo contract riêng; ưu tiên cookie HTTP-only, không lưu token localStorage. Không tự đổi phạm vi quyền hoặc bổ sung auth trong refactor clean code.
 
 ## Kiểm tra và cập nhật tài liệu
 

@@ -1,7 +1,8 @@
-import { parseToken } from './string.util';
 import { MetadataKeys } from '@common/constants/common.constants';
 import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
 import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
+
+import { parseToken } from './string.util';
 
 export function getAccessToken(
   request: RequestContext,

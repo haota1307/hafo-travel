@@ -1,11 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { GrpcOptions } from '@nestjs/microservices';
+
 import {
   GRPC_SERVICES,
   grpcServerOptions,
 } from '@common/configuration/grpc.config';
 import { GrpcLoggingInterceptor } from '@common/interceptors/grpc-logging.interceptor';
+
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {

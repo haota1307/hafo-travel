@@ -1,9 +1,11 @@
-import { BadRequestException, type ExecutionContext } from '@nestjs/common';
 import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
+import { BadRequestException, type ExecutionContext } from '@nestjs/common';
 import { firstValueFrom, of } from 'rxjs';
+
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
 import { normalizeError, toGrpcError } from '@common/utils/error.util';
 import { requestGrpcData, PROCESS_ID_METADATA } from '@common/utils/rpc.util';
+
 import { HttpResponseInterceptor } from '../src/lib/http-response.interceptor';
 
 describe('gRPC and HTTP response boundaries', () => {

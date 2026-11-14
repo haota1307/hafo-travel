@@ -7,6 +7,7 @@ export enum PERMISSION {
   USER_GET_BY_ID = 'user.get_by_id',
   USER_GET_ALL = 'user.get_all',
   USER_UPDATE = 'user.update',
+  USER_ASSIGN_ROLES = 'user.assign_roles',
   USER_DELETE = 'user.delete',
   ROLE_CREATE = 'role.create',
   ROLE_GET_BY_ID = 'role.get_by_id',

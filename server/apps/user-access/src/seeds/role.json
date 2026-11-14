@@ -12,6 +12,7 @@
         "user.get_by_id",
         "user.get_all",
         "user.update",
+        "user.assign_roles",
         "user.delete",
         "role.create",
         "role.get_by_id",

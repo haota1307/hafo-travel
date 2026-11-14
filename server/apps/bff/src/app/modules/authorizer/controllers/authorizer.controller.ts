@@ -1,5 +1,3 @@
-import { requestGrpc } from '@common/utils/rpc.util';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -8,17 +6,21 @@ import {
   Post,
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+
+import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import { Authorization } from '@common/decorators/authorizer.decorator';
+import { ProcessId } from '@common/decorators/process-id.decorator';
 import {
   LoginRequestDto,
   LoginResponseDto,
 } from '@common/interfaces/gateway/authorizer';
-import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import { ResponseDto } from '@common/interfaces/gateway/response.interface';
 import {
   AUTHORIZER_SERVICE_NAME,
   type AuthorizerServiceClient,
 } from '@common/interfaces/grpc/authorizer/v1/authorizer';
-import { ProcessId } from '@common/decorators/process-id.decorator';
-import { ResponseDto } from '@common/interfaces/gateway/response.interface';
+import { requestGrpc } from '@common/utils/rpc.util';
 
 @ApiTags('Authorizer')
 @Controller('authorizer')
@@ -37,6 +39,7 @@ export class AuthorizerController implements OnModuleInit {
   }
 
   @Post('login')
+  @Authorization({ secured: false })
   @ApiOkResponse({ type: ResponseDto<LoginResponseDto> })
   @ApiOperation({ summary: 'Login with username and password' })
   login(@Body() body: LoginRequestDto, @ProcessId() processId: string) {

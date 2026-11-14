@@ -19,7 +19,7 @@ pnpm dev
 - Demo: /vi/template, /en/template.
 - Locale mặc định vi; URL cũ /template điều hướng theo ngôn ngữ đã chọn.
 - Theme/font/layout của demo dùng chung giữa hai locale; popup nằm trong scope của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
-- `/api/backend/*` proxy tới BFF `/api/*`; endpoint hiện có là `POST /authorizer/login` và `POST /user`. Chưa có endpoint gốc `GET /`.
+- `/api/backend/*` proxy tới BFF `/api/*`. Backend có login, hồ sơ hiện tại, tạo user, gán role và CRUD role theo [RBAC](../server/instructions/rbac.md); chỉ login public. Proxy chưa forward Authorization nên chưa dùng được API bảo vệ từ browser. Chưa có endpoint gốc `GET /`.
 - HTTP wrapper nhận envelope `{ statusCode, message, data, processId, duration }` và unwrap thành `{ status, payload: data }`. Validation backend trả `message: string[]` không có field/path; chưa có contract phân trang.
 
 ```powershell

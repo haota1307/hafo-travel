@@ -1,5 +1,5 @@
-import { Model, Types } from 'mongoose';
 import { Prop, Schema } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 
 import { BaseSchema, createSchema } from './base.schema';
 import { Role } from './role.schema';
@@ -21,7 +21,15 @@ export class User extends BaseSchema {
   @Prop({ type: String })
   userId: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Role' }], default: [] })
+  @Prop({
+    type: [{ type: Types.ObjectId, ref: 'Role' }],
+    required: true,
+    validate: {
+      validator: (roles: Types.ObjectId[]) =>
+        Array.isArray(roles) && roles.length === 1,
+      message: 'Exactly one role is required',
+    },
+  })
   roles: Types.ObjectId[];
 }
 

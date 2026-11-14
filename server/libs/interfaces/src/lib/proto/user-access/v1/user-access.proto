@@ -5,6 +5,12 @@ package useraccess.v1;
 service UserAccessService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse);
+  rpc SetUserRoles(SetUserRolesRequest) returns (GetUserByIdResponse);
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+  rpc GetRole(RoleIdRequest) returns (RoleResponse);
+  rpc CreateRole(CreateRoleRequest) returns (RoleResponse);
+  rpc UpdateRole(UpdateRoleRequest) returns (RoleResponse);
+  rpc DeleteRole(RoleIdRequest) returns (DeleteRoleResponse);
 }
 
 message CreateUserRequest {
@@ -45,4 +51,40 @@ message RoleProfile {
   repeated string permissions = 4;
   string created_at = 5;
   string updated_at = 6;
+}
+
+message SetUserRolesRequest {
+  string user_id = 1;
+  repeated string roles = 2;
+}
+
+message ListRolesRequest {}
+
+message ListRolesResponse {
+  repeated RoleProfile roles = 1;
+}
+
+message RoleIdRequest {
+  string id = 1;
+}
+
+message CreateRoleRequest {
+  string name = 1;
+  string description = 2;
+  repeated string permissions = 3;
+}
+
+message UpdateRoleRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  repeated string permissions = 4;
+}
+
+message RoleResponse {
+  RoleProfile role = 1;
+}
+
+message DeleteRoleResponse {
+  string message = 1;
 }

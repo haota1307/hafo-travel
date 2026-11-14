@@ -1,3 +1,4 @@
+import type { Metadata } from '@grpc/grpc-js';
 import {
   type CallHandler,
   type ExecutionContext,
@@ -7,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { catchError, type Observable, tap } from 'rxjs';
-import type { Metadata } from '@grpc/grpc-js';
+
 import { normalizeError, toGrpcError } from '@common/utils/error.util';
 import { PROCESS_ID_METADATA } from '@common/utils/rpc.util';
 

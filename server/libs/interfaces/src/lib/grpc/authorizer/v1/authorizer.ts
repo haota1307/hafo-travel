@@ -1,5 +1,6 @@
 import type { Metadata } from '@grpc/grpc-js';
 import { Observable } from 'rxjs';
+
 import { UserProfile } from '../../user-access/v1/user-access';
 
 export const protobufPackage = 'authorizer.v1';
@@ -79,3 +80,9 @@ export interface AuthorizerServiceController {
 }
 
 export const AUTHORIZER_SERVICE_NAME = 'AuthorizerService';
+
+export const AUTHORIZER_SERVICE_METHODS = {
+  LOGIN: 'Login',
+  VERIFY_USER_TOKEN: 'VerifyUserToken',
+  CREATE_KEYCLOAK_USER: 'CreateKeycloakUser',
+} as const;

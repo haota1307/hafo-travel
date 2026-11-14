@@ -7,6 +7,7 @@
 - ESLint kiểm tra dấu ngoặc và dòng trống giữa các bước; Prettier theo cấu hình server. Tách dòng giữa các method, function và khai báo độc lập.
 - Controller nhận input và gọi service/client gRPC. Service điều phối nghiệp vụ; repository truy vấn database; mapper chuyển dữ liệu rõ từng trường.
 - Dùng alias `@common/...` cho shared code, import tương đối trong module. Không import controller/service/repository của app khác vào runtime.
+- Sắp xếp import theo nhóm: Node.js (`node:...`) → package ngoài → alias `@common/...` → đường dẫn tương đối. Mỗi nhóm cách nhau một dòng trống, các import trong nhóm xếp tăng dần theo đường dẫn. Giữ nguyên `import type` và import có side effect theo yêu cầu khởi tạo. File gRPC sinh tự động theo generator, không sửa tay.
 - Kiểm tra header Location trước khi đọc ID user từ Keycloak; config bắt buộc dùng getOrThrow. Không dùng any để né lỗi kiểu.
 - Tên file theo mẫu controller/service/repository/mapper/util đang có. Không tạo base class, helper hoặc module rỗng trước khi có nhu cầu.
 
@@ -15,7 +16,7 @@
 - RPC nội bộ dùng gRPC. Browser, webhook và API bên ngoài dùng HTTP qua BFF; sự kiện bất đồng bộ dự kiến dùng Kafka, chưa có broker/consumer trong source.
 - Nguồn contract: `libs/interfaces/src/lib/proto/<service>/v1/*.proto`. Package hiện có: `authorizer.v1` và `useraccess.v1`.
 - Sau khi sửa proto, chạy `pnpm proto:generate`. Buf/ts-proto sinh message, client/controller interfaces và constants tại `libs/interfaces/src/lib/grpc/`. Commit proto cùng output; không sửa tay file sinh.
-- Generator giữ phần contract, bỏ helper decorator không dùng và comment, rồi chạy formatter. Controller dùng `@GrpcMethod(SERVICE_NAME, 'MethodName')`; không thêm lại message pattern/envelope TCP.
+- Generator giữ phần contract, bỏ helper decorator không dùng và comment, sinh `<SERVICE>_METHODS` từ tên RPC trong proto rồi chạy formatter. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`; không viết tay tên RPC hoặc thêm lại message pattern/envelope TCP. Config dùng `protobufFileName` từ output sinh thay vì lặp đường dẫn proto.
 - Không đổi hoặc tái sử dụng field number đã phát hành. Khi bỏ field phải reserve tên/number; thay đổi không tương thích cần package/version mới.
 - HTTP DTO thuộc `gateway/`; request/response nội bộ lấy từ type sinh. Không alias transport contract sang DTO HTTP hoặc gửi Mongoose document qua service boundary.
 - UserProfile/RoleProfile chứa ID chuỗi và thời gian ISO. userProfileMapper chuyển schema sang protobuf rõ từng trường; lookup không tìm thấy trả response thiếu user.
@@ -39,7 +40,7 @@
 - normalizeError đọc trailer khi có; nếu không có thì map UNAUTHENTICATED → 401, PERMISSION_DENIED → 403, NOT_FOUND → 404, UNAVAILABLE → 503, DEADLINE_EXCEEDED → 504; lỗi chưa xác định → 500.
 - Log chỉ metadata, method, status và thời gian; không body, password, token, JWT claim hoặc query chứa credentials.
 - Validation HTTP trả 400 với message: string[], chưa có field/path hay contract phân trang. Frontend unwrap data.
-- Giữ policy auth hiện có. Endpoint tạo user chưa gắn secured/permission; role CRUD chưa hoàn chỉnh. Proxy frontend chưa forward cookie/Authorization.
+- BFF mặc định yêu cầu xác thực; endpoint public phải khai báo rõ. User/role API kiểm tra permission theo [RBAC](rbac.md); tạo user yêu cầu đồng thời `user.create` và `user.assign_roles` bằng decorator. User có đúng một role; tạo/thay role nhận mảng `roles` đúng một phần tử. Proxy frontend chưa forward cookie/Authorization.
 
 ## Config và bootstrap
 

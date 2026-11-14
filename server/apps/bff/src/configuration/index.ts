@@ -1,11 +1,10 @@
-import { GrpcConfiguration } from '@common/configuration/grpc.config';
-import { createConfiguration } from '@common/configuration/create-configuration';
-import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
-import { BaseConfiguration } from '@common/configuration/base.config';
 import { AppConfiguration } from '@common/configuration/app.config';
-
+import { BaseConfiguration } from '@common/configuration/base.config';
+import { createConfiguration } from '@common/configuration/create-configuration';
+import { GrpcConfiguration } from '@common/configuration/grpc.config';
 import { RedisConfiguration } from '@common/configuration/redis.config';
 class Configuration extends BaseConfiguration {
   @ValidateNested()

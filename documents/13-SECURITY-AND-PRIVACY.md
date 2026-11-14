@@ -4,9 +4,9 @@ Trạng thái: **yêu cầu thiết kế đề xuất + các khoảng trống hi
 
 ## 1. Hiện trạng cần lưu ý
 
-Frontend chưa có auth thật; proxy hiện chỉ chuyển các header được liệt kê trong source, không chuyển cookie/Authorization. BFF tạo user hiện chưa có decorator xác thực/phân quyền. Các thông tin này có căn cứ tại [tài liệu hiện trạng](01-PROJECT-OVERVIEW.md); chưa được sửa trong nhiệm vụ viết tài liệu.
+Frontend chưa có auth thật; proxy hiện chỉ chuyển các header được liệt kê trong source, không chuyển cookie/Authorization. BFF đã yêu cầu xác thực mặc định và áp dụng RBAC cho user/role; login public. Tạo user cần đồng thời `user.create` và `user.assign_roles`. User có đúng một role; không xóa role đang được gán. Xem [RBAC hiện tại](../server/instructions/rbac.md) và [tài liệu hiện trạng](01-PROJECT-OVERVIEW.md).
 
-Đăng nhập/xác thực backend có Keycloak và guard nhưng không đồng nghĩa mọi route được bảo vệ. Tạo user qua Keycloak rồi lưu MongoDB có thể lỗi một phần; cần quy trình reconciliation riêng nếu mở đăng ký thật. Không tự coi đây là transaction atomic.
+Đăng nhập/xác thực backend có Keycloak và guard; gRPC chưa có TLS/workload identity hoặc kiểm tra quyền caller, cần bổ sung trước khi vượt ranh giới service tin cậy. Tạo user qua Keycloak rồi lưu MongoDB có thể lỗi một phần; cần quy trình reconciliation riêng nếu mở đăng ký thật. Không tự coi đây là transaction atomic.
 
 ## 2. Ranh giới tin cậy
 

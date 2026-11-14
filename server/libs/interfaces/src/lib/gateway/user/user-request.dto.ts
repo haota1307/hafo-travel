@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsEmail,
+  IsMongoId,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
 export class CreateUserRequestDto {
   @ApiProperty()
@@ -17,8 +25,10 @@ export class CreateUserRequestDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ type: [String] })
-  @IsString({ each: true })
+  @ApiProperty({ type: [String], minItems: 1, maxItems: 1 })
+  @IsMongoId({ each: true })
+  @ArrayMinSize(1)
+  @ArrayMaxSize(1)
   @IsArray()
   roles: string[];
 
@@ -26,4 +36,13 @@ export class CreateUserRequestDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+}
+
+export class SetUserRolesRequestDto {
+  @ApiProperty({ type: [String], minItems: 1, maxItems: 1 })
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(1)
+  @IsMongoId({ each: true })
+  roles: string[];
 }

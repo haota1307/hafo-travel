@@ -1,3 +1,6 @@
+import { createHash } from 'node:crypto';
+
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Injectable,
   type CanActivate,
@@ -7,54 +10,73 @@ import {
   Inject,
   type OnModuleInit,
 } from '@nestjs/common';
-import { createHash } from 'node:crypto';
 import { Reflector } from '@nestjs/core';
 import type { ClientGrpc } from '@nestjs/microservices';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import type { JwtPayload } from 'jsonwebtoken';
-import { MetadataKeys } from '@common/constants/common.constants';
-import { getAccessToken, setUserData } from '@common/utils/request.util';
-import { requestGrpcData } from '@common/utils/rpc.util';
+
 import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import { MetadataKeys } from '@common/constants/common.constants';
+import { Permissions } from '@common/decorators/permission.decorator';
+import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
+import type { RequestContext } from '@common/interfaces/gateway/request-context.interface';
 import {
   AUTHORIZER_SERVICE_NAME,
   type AuthorizerServiceClient,
 } from '@common/interfaces/grpc/authorizer/v1/authorizer';
-import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
-import type { RequestContext } from '@common/interfaces/gateway/request-context.interface';
+import {
+  USER_ACCESS_SERVICE_NAME,
+  type UserAccessServiceClient,
+} from '@common/interfaces/grpc/user-access/v1/user-access';
+import { getAccessToken, setUserData } from '@common/utils/request.util';
+import { requestGrpcData } from '@common/utils/rpc.util';
 
 @Injectable()
 export class UserGuard implements CanActivate, OnModuleInit {
   private readonly logger = new Logger(UserGuard.name);
   private authorizer: AuthorizerServiceClient;
+  private users: UserAccessServiceClient;
 
   constructor(
     private readonly reflector: Reflector,
     @Inject(GRPC_SERVICES.AUTHORIZER_SERVICE)
     private readonly authorizerClient: ClientGrpc,
+    @Inject(GRPC_SERVICES.USER_ACCESS_SERVICE)
+    private readonly userAccessClient: ClientGrpc,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   onModuleInit() {
+    this.users = this.userAccessClient.getService<UserAccessServiceClient>(
+      USER_ACCESS_SERVICE_NAME,
+    );
     this.authorizer = this.authorizerClient.getService<AuthorizerServiceClient>(
       AUTHORIZER_SERVICE_NAME,
     );
   }
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {
+    const permissions = this.reflector.getAllAndOverride(Permissions, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     const options = this.reflector.getAllAndOverride<{ secured: boolean }>(
       MetadataKeys.SECURED,
       [context.getHandler(), context.getClass()],
     );
 
-    return options?.secured
+    return options?.secured !== false || Boolean(permissions?.length)
       ? this.verifyToken(context.switchToHttp().getRequest<RequestContext>())
       : true;
   }
 
   private async verifyToken(request: RequestContext): Promise<boolean> {
     const token = getAccessToken(request);
+
+    if (!token) {
+      throw new UnauthorizedException('Authentication is required');
+    }
+
     const cacheKey = this.generateTokenCacheKey(token);
     let cached: AuthorizeResponse | undefined;
 
@@ -65,7 +87,34 @@ export class UserGuard implements CanActivate, OnModuleInit {
     }
 
     if (cached?.valid && this.cacheTtl(cached) > 0) {
-      setUserData(request, cached);
+      const subject = cached.MetadataKeys.jwt?.sub;
+
+      if (typeof subject !== 'string' || !subject) {
+        throw new UnauthorizedException('Invalid token subject');
+      }
+
+      const { user } = await requestGrpcData(
+        this.users.getUserById,
+        { userId: subject },
+        { processId: request.processId },
+      );
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      const current = new AuthorizeResponse({
+        valid: true,
+        MetadataKeys: {
+          jwt: cached.MetadataKeys.jwt,
+          user,
+          userId: user.id,
+          permissions: [
+            ...new Set(user.roles.flatMap((role) => role.permissions)),
+          ],
+        },
+      });
+      setUserData(request, current);
 
       return true;
     }

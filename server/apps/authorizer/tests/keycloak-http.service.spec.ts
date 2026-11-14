@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from 'axios';
-import { ConfigService } from '@nestjs/config';
 import { InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios, { AxiosInstance } from 'axios';
+
 import { KeycloakHttpService } from '../src/app/modules/keycloak/services/keycloak-http.service';
 
 describe('Keycloak user creation response', () => {

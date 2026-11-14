@@ -1,9 +1,10 @@
-import { MetadataKeys } from '@common/constants/common.constants';
 import {
   createParamDecorator,
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+
+import { MetadataKeys } from '@common/constants/common.constants';
 import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
 
 export const UserData = createParamDecorator(

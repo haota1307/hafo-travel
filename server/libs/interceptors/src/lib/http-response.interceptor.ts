@@ -5,10 +5,11 @@ import {
   type NestInterceptor,
 } from '@nestjs/common';
 import { map, type Observable } from 'rxjs';
+
 import { MetadataKeys } from '@common/constants/common.constants';
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
-import { ResponseDto } from '@common/interfaces/gateway/response.interface';
 import type { RequestContext } from '@common/interfaces/gateway/request-context.interface';
+import { ResponseDto } from '@common/interfaces/gateway/response.interface';
 
 @Injectable()
 export class HttpResponseInterceptor implements NestInterceptor<

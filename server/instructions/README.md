@@ -8,6 +8,7 @@
 2. Đọc [quy ước triển khai](coding.md) khi thêm hoặc refactor code.
 3. Đọc [quy ước test và kiểm chứng](testing.md) khi thay đổi test, cấu hình hoặc xác nhận kết quả.
 4. Xem [README backend](../README.md) để cài đặt và chạy local. Phiên bản thực tế lấy từ `package.json` và `pnpm-lock.yaml`.
+5. Đọc [xác thực và RBAC](rbac.md) khi thay đổi user, role, permission hoặc truy cập endpoint.
 
 ## Nguyên tắc không suy diễn
 
@@ -22,9 +23,9 @@
 
 ## Giới hạn hiện trạng cần biết
 
-- BFF tạo người dùng hiện chưa gắn decorator xác thực/phân quyền. Không mặc định đây là chính sách đúng cho nghiệp vụ mới; không tự đổi chính sách trong refactor.
-- Module role chưa có API CRUD hoàn chỉnh.
-- Authorizer có RPC Login, VerifyUserToken, CreateKeycloakUser; User-access có CreateUser/GetUserById. Contract đã có nhưng vẫn cần kiểm chứng Keycloak/MongoDB thật.
+- BFF mặc định yêu cầu xác thực; login được khai báo public. User/role API áp dụng permission theo [RBAC](rbac.md).
+- Role có CRUD và user có API thay role; quyền ứng dụng nằm trong MongoDB, Keycloak phụ trách danh tính.
+- Authorizer có RPC Login, VerifyUserToken, CreateKeycloakUser; User-access có tạo/tra cứu user, gán role và CRUD role. Contract đã có nhưng vẫn cần kiểm chứng Keycloak/MongoDB thật.
 - Tạo user gọi Keycloak rồi lưu MongoDB; không có transaction chung giữa hai hệ thống. Không mô tả luồng này là atomic.
 - TypeORM/BaseEntity là phần nền dùng lại; không có nghĩa các service hiện đang lưu user bằng PostgreSQL.
 - Build/lint/test local không chứng minh tích hợp MongoDB, Redis hoặc Keycloak thật đã hoạt động.

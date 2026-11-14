@@ -1,4 +1,5 @@
 import type { JwtPayload } from 'jsonwebtoken';
+
 import type { UserProfile } from '../grpc/user-access/v1/user-access';
 
 export class AuthorizedMetadata {

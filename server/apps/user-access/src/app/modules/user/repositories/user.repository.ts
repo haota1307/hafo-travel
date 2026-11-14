@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
+
+import { Role } from '@common/schemas/role.schema';
 import {
   User,
   type UserModel,
   UserModelName,
 } from '@common/schemas/user.schema';
-import { Role } from '@common/schemas/role.schema';
 
 @Injectable()
 export class UserRepository {
@@ -30,6 +32,17 @@ export class UserRepository {
 
   getByEmail(email: string) {
     return this.userModel.findOne({ email }).exec();
+  }
+
+  setRoles(userId: string, roles: Types.ObjectId[]) {
+    return this.userModel
+      .findOneAndUpdate(
+        { userId },
+        { $set: { roles } },
+        { new: true, runValidators: true },
+      )
+      .populate<{ roles: Role[] }>('roles')
+      .exec();
   }
 
   async exists(email: string): Promise<boolean> {

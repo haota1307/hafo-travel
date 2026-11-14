@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule } from '@nestjs/microservices';
 
-import { KeycloakModule } from '../keycloak/keycloak.module';
-import { AuthorizerService } from './services/authorizer.service';
-import { AuthorizerController } from './controllers/authorizer.controller';
 import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
+
+import { KeycloakModule } from '../keycloak/keycloak.module';
+import { AuthorizerController } from './controllers/authorizer.controller';
+import { AuthorizerService } from './services/authorizer.service';
 
 @Module({
   imports: [

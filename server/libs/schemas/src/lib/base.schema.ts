@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common';
-import { Types, Schema } from 'mongoose';
 import { Prop, SchemaFactory, Virtual } from '@nestjs/mongoose';
+import { Types, Schema } from 'mongoose';
 
 export class BaseSchema {
   _id: Types.ObjectId;

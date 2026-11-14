@@ -111,7 +111,7 @@ Không bắt buộc Kubernetes, service mesh, nhiều vùng triển khai hoặc 
 ## 8. Các giới hạn cần làm rõ trước tích hợp
 
 - Frontend session/refresh và chuyển tiếp auth chưa có contract hoàn chỉnh; Q-11.
-- Endpoint tạo user hiện chưa gắn decorator bảo vệ; không dùng làm mẫu chính sách cho endpoint mới.
+- BFF đã áp dụng RBAC user → đúng một role → permissions, gồm bảo vệ tạo user, quản lý role và đổi role; xem [RBAC hiện tại](../server/instructions/rbac.md). Quyền cho Booking/Payment/AI chưa triển khai.
 - Dịch vụ nội bộ cần xác thực workload/identity, không tin header do client gửi thẳng; Q-12.
 - Dependency/adapter Kafka và LLM cần kiểm tra tương thích với phiên bản đang cài tại lúc triển khai; Q-13/Q-14.
 - Bộ nhớ, CPU, ngân sách và nơi deploy chưa chốt; không đưa cam kết scale hoặc availability.

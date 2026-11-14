@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ClientsModule } from '@nestjs/microservices';
+
+import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
 import { UserController } from './controllers/user.controller';
-import { ClientsModule } from '@nestjs/microservices';
-import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
 @Module({
   imports: [

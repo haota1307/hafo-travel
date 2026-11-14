@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
-import { User } from '@common/schemas/user.schema';
 import type { CreateUserRequest } from '@common/interfaces/grpc/user-access/v1/user-access';
+import { User } from '@common/schemas/user.schema';
 
 export const createUserRequestMapper = (
   data: CreateUserRequest,

@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { ClientGrpc } from '@nestjs/microservices';
-import JwksRsa, { type JwksClient } from 'jwks-rsa';
 import { decode, type JwtPayload, verify } from 'jsonwebtoken';
-import { requestGrpcData, type GrpcCallContext } from '@common/utils/rpc.util';
+import JwksRsa, { type JwksClient } from 'jwks-rsa';
+
+import { GRPC_SERVICES } from '@common/configuration/grpc.config';
 import {
   type LoginRequest,
   type VerifyUserTokenResponse,
@@ -19,7 +20,8 @@ import {
   type UserAccessServiceClient,
   type UserProfile,
 } from '@common/interfaces/grpc/user-access/v1/user-access';
-import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import { requestGrpcData, type GrpcCallContext } from '@common/utils/rpc.util';
+
 import { KeycloakHttpService } from '../../keycloak/services/keycloak-http.service';
 
 @Injectable()
@@ -85,7 +87,9 @@ export class AuthorizerService implements OnModuleInit {
         valid: true,
         metadata: {
           jwtJson: JSON.stringify(payload),
-          permissions: user.roles.flatMap((role) => role.permissions),
+          permissions: [
+            ...new Set(user.roles.flatMap((role) => role.permissions)),
+          ],
           user,
           userId: user.id,
         },

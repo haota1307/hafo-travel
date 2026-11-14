@@ -55,8 +55,8 @@ Chỉ tạo các thư mục có nhu cầu. BFF có thể chỉ cần controller 
 
 ## Quyền truy cập và dữ liệu
 
-`UserGuard` đọc `Authorization`; metadata method ưu tiên class. `PermissionGuard` đọc `Permissions`. Khi thêm endpoint, xác định rõ public/secured và permission theo yêu cầu, đồng thời kiểm tra cả hai guard; enum permission không tự bảo vệ endpoint.
+`UserGuard` đọc `Authorization` và yêu cầu xác thực mặc định; metadata method ưu tiên class, permission vẫn buộc xác thực. `PermissionGuard` đọc `Permissions`. Khi thêm endpoint, xác định rõ public/secured và permission theo yêu cầu, đồng thời kiểm tra cả hai guard; enum permission không tự bảo vệ endpoint. Mô hình user → đúng một role → permissions và API quản trị nằm trong [RBAC](rbac.md). Dùng cache JWT vẫn phải đọc user/role hiện tại để áp dụng thu hồi quyền.
 
 Schema user/role nằm tại `libs/schemas/src/lib/`. Mapper user chọn rõ từng trường và chuyển role ID sang `Types.ObjectId`; không đưa password vào dữ liệu MongoDB hoặc response. Role seed tại `apps/user-access/src/seeds/role.json` không tự tạo tài khoản quản trị Keycloak.
 
-Authorizer/User-access chỉ listen gRPC trên cổng mặc định 5100/5101; BFF giữ HTTP. Client target host tách khỏi GRPC_BIND_HOST để container bind 0.0.0.0 và gọi service khác bằng DNS riêng. Proto v1 là contract nội bộ, không trả Mongoose document qua service boundary. HTTP/frontend và policy quyền được giữ nguyên.
+Authorizer/User-access chỉ listen gRPC trên cổng mặc định 5100/5101; BFF giữ HTTP và thực thi RBAC. Client target host tách khỏi GRPC_BIND_HOST để container bind 0.0.0.0 và gọi service khác bằng DNS riêng. Proto v1 là contract nội bộ, không trả Mongoose document qua service boundary. gRPC chưa có workload identity/phân quyền caller; phải giới hạn mạng cho service tin cậy. Frontend chưa tích hợp session thật.

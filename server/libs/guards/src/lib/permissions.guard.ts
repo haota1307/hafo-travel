@@ -1,4 +1,3 @@
-import { Reflector } from '@nestjs/core';
 import {
   CanActivate,
   ExecutionContext,
@@ -6,11 +5,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-import { PERMISSION } from '@common/constants/enum/role.enum';
 import { MetadataKeys } from '@common/constants/common.constants';
-import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
+import { PERMISSION } from '@common/constants/enum/role.enum';
 import { Permissions } from '@common/decorators/permission.decorator';
+import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {

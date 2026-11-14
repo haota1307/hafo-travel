@@ -1,10 +1,9 @@
-import { createConfiguration } from '@common/configuration/create-configuration';
-import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
 import { AppConfiguration } from '@common/configuration/app.config';
-
 import { BaseConfiguration } from '@common/configuration/base.config';
+import { createConfiguration } from '@common/configuration/create-configuration';
 import { GrpcConfiguration } from '@common/configuration/grpc.config';
 import { KeycloakConfiguration } from '@common/configuration/keycloak.config';
 class Configuration extends BaseConfiguration {

@@ -1,6 +1,7 @@
 import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
+
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
 
 const ERROR_METADATA = 'rpc-error-bin';

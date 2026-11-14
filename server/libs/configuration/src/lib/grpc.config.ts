@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   Transport,
@@ -7,8 +8,16 @@ import {
   type GrpcOptions,
 } from '@nestjs/microservices';
 import { IsNotEmpty, IsObject } from 'class-validator';
-import { AUTHORIZER_V1_PACKAGE_NAME } from '@common/interfaces/grpc/authorizer/v1/authorizer';
-import { USERACCESS_V1_PACKAGE_NAME } from '@common/interfaces/grpc/user-access/v1/user-access';
+
+import {
+  AUTHORIZER_V1_PACKAGE_NAME,
+  protobufFileName as authorizerProtoFile,
+} from '@common/interfaces/grpc/authorizer/v1/authorizer';
+import {
+  USERACCESS_V1_PACKAGE_NAME,
+  protobufFileName as userAccessProtoFile,
+} from '@common/interfaces/grpc/user-access/v1/user-access';
+
 import { envNumber } from './env-number';
 
 export enum GRPC_SERVICES {
@@ -19,13 +28,13 @@ export enum GRPC_SERVICES {
 const definitions = {
   [GRPC_SERVICES.AUTHORIZER_SERVICE]: {
     package: AUTHORIZER_V1_PACKAGE_NAME,
-    file: 'authorizer/v1/authorizer.proto',
+    file: authorizerProtoFile,
     prefix: 'AUTHORIZER_SERVICE',
     port: 5100,
   },
   [GRPC_SERVICES.USER_ACCESS_SERVICE]: {
     package: USERACCESS_V1_PACKAGE_NAME,
-    file: 'user-access/v1/user-access.proto',
+    file: userAccessProtoFile,
     prefix: 'USER_ACCESS_SERVICE',
     port: 5101,
   },

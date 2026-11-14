@@ -6,6 +6,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { catchError, Observable } from 'rxjs';
+
 import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
 import { ResponseDto } from '@common/interfaces/gateway/response.interface';
 import { normalizeError } from '@common/utils/error.util';

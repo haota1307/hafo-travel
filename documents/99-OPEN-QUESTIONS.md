@@ -47,15 +47,15 @@ Không triển khai phép tính tiền, chính sách hủy hoặc hành vi tạo
 
 ## 4. Khoảng trống hiện trạng không được bỏ qua
 
-| ID     | Hiện trạng từ source/tài liệu nội bộ                          | Điều cần làm rõ khi triển khai                                                 |
-| ------ | ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| GAP-01 | Proxy chưa forward auth, UI login chưa thật                   | Hoàn chỉnh Q-11 trước API booking riêng tư                                     |
-| GAP-02 | Endpoint tạo user chưa gắn decorator bảo vệ                   | Quyết định public registration hay thao tác admin; không tự đổi trong refactor |
-| GAP-03 | Tạo Keycloak user rồi lưu MongoDB không atomic                | Đối soát/khắc phục partial failure                                             |
-| GAP-04 | Role CRUD chưa hoàn chỉnh                                     | Không coi tính năng đã có từ enum/proto                                        |
-| GAP-05 | Giá retreat null, form liên hệ chưa gửi API                   | Không dùng dữ liệu hiện tại làm catalog thương mại đã sẵn sàng                 |
-| GAP-06 | Chưa có Kafka/booking/payment/AI runtime trong phần đối chiếu | Tất cả contract mới vẫn là đề xuất                                             |
-| GAP-07 | Chưa kiểm toán lịch sử Git về secret                          | Kiểm tra trước khi công khai; không suy ra lịch sử sạch chỉ từ working tree    |
+| ID     | Hiện trạng từ source/tài liệu nội bộ                          | Điều cần làm rõ khi triển khai                                                                                            |
+| ------ | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| GAP-01 | Proxy chưa forward auth, UI login chưa thật                   | Hoàn chỉnh Q-11 trước API booking riêng tư                                                                                |
+| GAP-02 | Đã bảo vệ tạo user bằng RBAC ngày 14/11/2026                  | API hiện dành cho người có `user.create`; public registration chưa triển khai; xem [RBAC](../server/instructions/rbac.md) |
+| GAP-03 | Tạo Keycloak user rồi lưu MongoDB không atomic                | Đối soát/khắc phục partial failure                                                                                        |
+| GAP-04 | Đã có CRUD role và API gán/thu hồi role ngày 14/11/2026       | Quyền sản phẩm Booking/Payment/AI vẫn cần chốt riêng; xem [RBAC](../server/instructions/rbac.md)                          |
+| GAP-05 | Giá retreat null, form liên hệ chưa gửi API                   | Không dùng dữ liệu hiện tại làm catalog thương mại đã sẵn sàng                                                            |
+| GAP-06 | Chưa có Kafka/booking/payment/AI runtime trong phần đối chiếu | Tất cả contract mới vẫn là đề xuất                                                                                        |
+| GAP-07 | Chưa kiểm toán lịch sử Git về secret                          | Kiểm tra trước khi công khai; không suy ra lịch sử sạch chỉ từ working tree                                               |
 
 ## 5. Cách chốt và cập nhật
 
