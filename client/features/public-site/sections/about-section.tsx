@@ -93,13 +93,13 @@ export function AboutSection() {
                       data-animation="about-item-footer-logos"
                       className="about-item__logos"
                     >
-                      <span className="hafo-brand-value">
+                      <span className="site-brand-value">
                         {t("about.nature")}
                       </span>
-                      <span className="hafo-brand-value">
+                      <span className="site-brand-value">
                         {t("about.culture")}
                       </span>
-                      <span className="hafo-brand-value">
+                      <span className="site-brand-value">
                         {t("about.rest")}
                       </span>
                     </div>

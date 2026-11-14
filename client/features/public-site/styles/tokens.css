@@ -9,10 +9,10 @@
   --white-20: #143c3238;
   --white-10: #143c321f;
   --icon-grey-40: #6d7d70;
-  --hafo-background: #f7f5ef;
-  --hafo-font: "Hafo Inter", sans-serif;
-  --hafo-unit: calc(100vw / 90);
-  --background: var(--hafo-background);
+  --site-background: #f7f5ef;
+  --site-font: "Public Inter", sans-serif;
+  --site-unit: calc(100vw / 90);
+  --background: var(--site-background);
   --foreground: var(--white-100);
   --card: #fffdf8;
   --card-foreground: var(--foreground);
@@ -30,11 +30,11 @@
   --input: var(--white-20);
   --ring: #315f4d;
   --destructive: #a3362d;
-  --font-heading: var(--hafo-font);
-  --font-sans: var(--hafo-font);
+  --font-heading: var(--site-font);
+  --font-sans: var(--site-font);
 }
 
-.public-site .hafo-inverse {
+.public-site .site-inverse {
   --white-100: #f7f5ef;
   --white-60: #d5ded3;
   --white-50: #c5d2c7;
@@ -51,24 +51,24 @@
 
 @media (min-width: 1440px) {
   .public-site {
-    --hafo-unit: 16px;
+    --site-unit: 16px;
   }
 }
 
 @media (min-width: 1920px) {
   .public-site {
-    --hafo-unit: calc(100vw / 120);
+    --site-unit: calc(100vw / 120);
   }
 }
 
 @media (min-width: 1024px) and (max-height: 800px) {
   .public-site {
-    --hafo-unit: calc(100vw * 14 / 1440);
+    --site-unit: calc(100vw * 14 / 1440);
   }
 }
 
 @media (max-width: 479px) {
   .public-site {
-    --hafo-unit: calc(100vw / 23.4375);
+    --site-unit: calc(100vw / 23.4375);
   }
 }

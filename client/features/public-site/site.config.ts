@@ -7,11 +7,11 @@ export const publicSiteConfig = {
   currency: "VND",
   regions: 3,
   brand: {
-    logo: "/hafo/brand/hafo-travel.svg",
-    inverseLogo: "/hafo/brand/hafo-travel-inverse.svg",
-    icon: "/hafo/brand/hafo-icon.svg",
-    favicon: "/hafo/brand/favicon.svg",
-    appleIcon: "/hafo/brand/apple-touch-icon.png",
-    openGraph: "/hafo/brand/og-image.jpg",
+    logo: "/public-site/brand/logo.svg",
+    inverseLogo: "/public-site/brand/logo-inverse.svg",
+    icon: "/public-site/brand/icon.svg",
+    favicon: "/public-site/brand/favicon.svg",
+    appleIcon: "/public-site/brand/apple-touch-icon.png",
+    openGraph: "/public-site/brand/og-image.jpg",
   },
 } as const;

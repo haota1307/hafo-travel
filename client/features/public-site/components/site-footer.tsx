@@ -10,7 +10,7 @@ export function SiteFooter() {
 
   return (
     <>
-      <div className="footer hafo-inverse" role="contentinfo">
+      <div className="footer site-inverse" role="contentinfo">
         <div className="container">
           <div className="footer__in">
             <div className="footer__visual">

@@ -456,7 +456,7 @@
     "polishTheAnalyticsChartLabels": "Polish the analytics chart labels",
     "verifyTheResponsiveTableLayout": "Verify the responsive table layout",
     "shadcnAdminTemplate": "Shadcn Admin Template",
-    "localUITemplatesForRoviet": "Local UI templates for Roviet.",
+    "localUITemplates": "Local UI templates.",
     "nextJsShadcnUI": "Next.js + ShadcnUI",
     "satnaing": "satnaing",
     "p": "⇧⌘P",
@@ -519,8 +519,8 @@
     "BACKEND_NOT_CONFIGURED": "The server is not configured."
   },
   "home": {
-    "title": "Roviet",
-    "description": "Roviet application base",
+    "title": "Application",
+    "description": "Application base",
     "getStarted": "To get started, edit the",
     "file": "file.",
     "lookingFor": "Looking for a starting point or more instructions? Head over to",

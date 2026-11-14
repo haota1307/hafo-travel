@@ -21,7 +21,7 @@ export function HomeHero() {
       <div className="container">
         <div className="intro__in">
           <div className="intro__text">
-            <p data-anim="fade-up" className="hafo-eyebrow">
+            <p data-anim="fade-up" className="site-eyebrow">
               {t("hero.eyebrow")}
             </p>
             <h1

@@ -48,7 +48,7 @@ Khi provider timeout, worker lưu UNKNOWN và đối soát theo reference/idempo
 
 Các khoảng 1 giây, 5 giây, 30 giây, 2 phút chỉ là ví dụ backoff. Ngưỡng thật phải dựa vào SLA, hạn giữ chỗ và giới hạn provider tại Q-15/Q-20.
 
-DLT đề xuất theo consumer, ví dụ `hafo.booking-payment.dlt.v1`. Record chứa topic/partition/offset gốc, eventId, schemaVersion, errorCode, số lần thử, thời điểm và correlationId; hạn chế payload nhạy cảm. Đưa record vào DLT hoặc lưu công việc cách ly bền vững xong mới commit offset gốc.
+DLT đề xuất theo consumer, ví dụ `booking-payment.dlt.v1`. Record chứa topic/partition/offset gốc, eventId, schemaVersion, errorCode, số lần thử, thời điểm và correlationId; hạn chế payload nhạy cảm. Đưa record vào DLT hoặc lưu công việc cách ly bền vững xong mới commit offset gốc.
 
 DLT không đồng nghĩa nghiệp vụ đã hoàn tất. Có người xem, phân loại nguyên nhân và quyết định sửa/replay/đối soát. Nếu phát sang DLT thành công nhưng commit offset thất bại thì DLT có thể trùng; công cụ xử lý cũng dedupe theo record gốc.
 

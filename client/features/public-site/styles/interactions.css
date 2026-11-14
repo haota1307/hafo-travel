@@ -5,14 +5,14 @@
 
 .public-site [id] {
   scroll-margin-top: calc(
-    var(--hafo-header-height, 72px) + var(--hafo-nav-height, 0px) + 20px
+    var(--site-header-height, 72px) + var(--site-nav-height, 0px) + 20px
   );
 }
 
 .public-site .retreat-page-info,
 .public-site .legal-nav {
   position: sticky;
-  top: calc(var(--hafo-header-height, 72px) + 20px);
+  top: calc(var(--site-header-height, 72px) + 20px);
 }
 
 .public-site .retreat-page-content__sidebar,
@@ -54,7 +54,7 @@
   .public-site .retreat-page-info__nav.mobile-visible {
     position: sticky;
     z-index: 10;
-    top: var(--hafo-header-height, 64px);
+    top: var(--site-header-height, 64px);
     overflow-x: auto;
     scrollbar-width: none;
     background: var(--background);

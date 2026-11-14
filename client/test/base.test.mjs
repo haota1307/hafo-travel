@@ -225,14 +225,14 @@ test("HTTP transport and BFF envelope contract", async (t) => {
   );
   reply = () =>
     Response.json({ statusCode: 200, message: "Success", data: null });
-  await http.post("/items", { name: "Roviet" });
-  assert.equal(calls.at(-1).options.body, '{"name":"Roviet"}');
+  await http.post("/items", { name: "Sample item" });
+  assert.equal(calls.at(-1).options.body, '{"name":"Sample item"}');
   assert.equal(
     calls.at(-1).options.headers.get("content-type"),
     "application/json",
   );
   const form = new FormData();
-  form.append("name", "Roviet");
+  form.append("name", "Sample item");
   await http.post("/upload", form);
   assert.equal(calls.at(-1).options.body, form);
   assert.equal(calls.at(-1).options.headers.has("content-type"), false);
@@ -250,7 +250,7 @@ test("Both locales have matching keys and every demo ICU message formats", () =>
   const en = load("../messages/en.json");
   const vi = load("../messages/vi.json");
   const mapping = load("../template/i18n/source-message-keys.json");
-  assert.equal(vi.home.description, "Nền tảng ứng dụng Roviet");
+  assert.equal(vi.home.description, "Nền tảng ứng dụng");
   assert.equal(vi.errors.UNKNOWN_ERROR, "Đã xảy ra lỗi. Vui lòng thử lại.");
 
   for (const namespace of Object.keys(en)) {

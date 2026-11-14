@@ -23,7 +23,7 @@ Khi chuyển test, sửa import tương đối và tìm lại tham chiếu setup
 ## Chọn kiểm tra theo thay đổi
 
 - Dùng Node.js 26.13.0 và pnpm 12.18.0. Compiler CLI TypeScript 7.0.2 cài qua `@typescript/native`; alias `typescript` dùng `@typescript/typescript6@6.0.2` cho API của Nx/ts-loader/ts-jest. `pnpm typecheck` kiểm tra toàn bộ app/library/spec bằng compiler 7.
-- Khi mở cả `hafo-travel` trong VS Code, SDK ở root trỏ tới API/editor TypeScript 6.0.2 trong `server/node_modules`; chọn `TypeScript: Select TypeScript Version` → `Use Workspace Version`. Setting `js/ts.tsdk.path` chỉ khai báo đường dẫn, không tự chọn SDK. Khi mở riêng server, dùng `server/.vscode`.
+- Khi mở root repository trong VS Code, SDK ở root trỏ tới API/editor TypeScript 6.0.2 trong `server/node_modules`; chọn `TypeScript: Select TypeScript Version` → `Use Workspace Version`. Setting `js/ts.tsdk.path` chỉ khai báo đường dẫn, không tự chọn SDK. Khi mở riêng server, dùng `server/.vscode`.
 - Cấu hình backend dùng NodeNext, ES2023, strict và isolatedModules, bỏ baseUrl/node10/node16 override cũ và `ignoreDeprecations`. Type/interface dùng trong decorated signature phải import type; class DTO/service cần metadata runtime vẫn import giá trị.
 - Jest 30/ts-jest chạy với `NODE_OPTIONS=--experimental-vm-modules` được khai báo trong `nx.json` để nạp Nest 12 ESM trên Node 26. Giữ kiểm tra kiểu độc lập; không thêm `--forceExit`, tắt diagnostics hoặc bỏ suite để che lỗi migration.
 

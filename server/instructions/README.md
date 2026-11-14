@@ -1,6 +1,6 @@
 # Hướng dẫn phát triển dự án dành cho AI
 
-Đây là bộ khung backend Nx + NestJS, giữ đăng nhập, phân quyền và người dùng. Nghiệp vụ invoice/product cũ đã được bỏ. Không tự phục hồi hoặc suy diễn nghiệp vụ từ tên thư mục repository `einvoice`.
+Đây là bộ khung backend Nx + NestJS, gồm đăng nhập, phân quyền và người dùng. Phạm vi nghiệp vụ dựa trên yêu cầu hiện tại và source; không suy diễn từ tên repository hoặc mã kế thừa.
 
 ## Cách sử dụng
 

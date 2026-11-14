@@ -456,7 +456,7 @@
     "polishTheAnalyticsChartLabels": "Hoàn thiện nhãn biểu đồ phân tích",
     "verifyTheResponsiveTableLayout": "Kiểm tra bố cục bảng trên các kích thước màn hình",
     "shadcnAdminTemplate": "Mẫu giao diện Shadcn Admin",
-    "localUITemplatesForRoviet": "Bộ giao diện mẫu cho Roviet.",
+    "localUITemplates": "Bộ giao diện mẫu.",
     "nextJsShadcnUI": "Next.js + ShadcnUI",
     "satnaing": "satnaing",
     "p": "⇧⌘P",
@@ -519,8 +519,8 @@
     "BACKEND_NOT_CONFIGURED": "Máy chủ chưa được cấu hình."
   },
   "home": {
-    "title": "Roviet",
-    "description": "Nền tảng ứng dụng Roviet",
+    "title": "Ứng dụng",
+    "description": "Nền tảng ứng dụng",
     "getStarted": "Để bắt đầu, chỉnh sửa tệp",
     "file": ".",
     "lookingFor": "Bạn cần mẫu khởi đầu hoặc hướng dẫn? Tham khảo",

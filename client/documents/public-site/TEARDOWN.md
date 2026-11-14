@@ -1,4 +1,4 @@
-# Teardown: Vita Travel
+# Khảo sát giao diện tham chiếu
 
 Bản public hiện tại đã rebrand thành **Hafo Travel**. Tài liệu này giữ nguyên nguồn đo và giới hạn của bản clone để truy xuất lịch sử; nhận diện, route và ảnh đang dùng được mô tả trong [README](README.md), [BRAND](BRAND.md) và [ASSETS](ASSETS.md). Asset nguyên mẫu đã chuyển ra khỏi public.
 
@@ -6,7 +6,7 @@ Tài liệu này ghi nhận nguyên mẫu và bản clone ban đầu. Control hi
 
 Nguồn: https://vita-travel.webflow.io/ — khảo sát ngày 2026-11-07 tại 1440, 768 và 390 px, chiều cao viewport 1000 px, DPR 1.
 
-`CONFIRMED` chỉ giá trị đọc trực tiếp từ DOM/CSS/runtime; `OBSERVED` chỉ hành vi quan sát qua browser. Tệp khảo sát chi tiết nằm ở `output/vita-travel.webflow.io/` tại root workspace, gồm `surface-map.json`, `motion.json`, `tokens-*.json`, `measurements-*.json`, `specs/` và `qa/`.
+`CONFIRMED` chỉ giá trị đọc trực tiếp từ DOM/CSS/runtime; `OBSERVED` chỉ hành vi quan sát qua browser. Hồ sơ khảo sát chi tiết được lưu trong thư mục output của workspace, gồm `surface-map.json`, `motion.json`, `tokens-*.json`, `measurements-*.json`, `specs/` và `qa/`.
 
 ## Stack và bề mặt
 
@@ -16,7 +16,7 @@ Nguồn: https://vita-travel.webflow.io/ — khảo sát ngày 2026-11-07 tại 
 | GSAP 3.14.1, SplitText, ScrollTrigger   | CONFIRMED: runtime                             | IntersectionObserver và Web Animations API; thông số cơ bản giữ nguyên |
 | ScrollSmoother smooth 1.2, effects true | CONFIRMED: source runtime                      | Cuộn native, không nạp ScrollSmoother                                  |
 | Slick mobile                            | CONFIRMED: source runtime                      | Scroll snap và nút chọn ảnh                                            |
-| Inter, weight 300/400/500/600/700       | CONFIRMED: computed styles và Google Fonts CSS | Font local, đổi tên family thành Vita Inter để cô lập                  |
+| Inter, weight 300/400/500/600/700       | CONFIRMED: computed styles và Google Fonts CSS | Font local với family riêng để cô lập                                  |
 | Canvas/WebGL/WebGPU/video               | CONFIRMED: không có trên các bề mặt khảo sát   | Không cần shader track                                                 |
 
 Probe có fingerprint `lenis`, nhưng đối chiếu source xác nhận phần cuộn của trang dùng ScrollSmoother. Không dựa vào fingerprint này để cài thêm Lenis.
@@ -37,7 +37,7 @@ Probe có fingerprint `lenis`, nhưng đối chiếu source xác nhận phần c
 | Khoảng cách section phổ biến | 80 px                                                 |
 | Bán kính nút                 | 80 px                                                 |
 
-CONFIRMED: kích thước dùng rem dựa trên `html` fluid của nguyên mẫu: `16 * width / 1440`, đổi sang `16 * width / 375` khi width <= 479; từ 1440 dùng 16 px, từ 1920 dùng `16 * width / 1920`. Desktop height <= 800 dùng hệ số 14 thay cho 16. Bản tích hợp dùng biến `--vita-unit` riêng để có cùng kết quả mà không sửa font-size toàn ứng dụng.
+CONFIRMED: kích thước dùng rem dựa trên `html` fluid của nguyên mẫu: `16 * width / 1440`, đổi sang `16 * width / 375` khi width <= 479; từ 1440 dùng 16 px, từ 1920 dùng `16 * width / 1920`. Desktop height <= 800 dùng hệ số 14 thay cho 16. Bản tích hợp hiện tại dùng biến `--site-unit` riêng để có cùng kết quả mà không sửa font-size toàn ứng dụng.
 
 ## Section và tương tác
 
@@ -61,7 +61,7 @@ CONFIRMED: SplitText gom phần số và chữ Step của Combine thành một b
 
 139 ảnh/SVG tải từ nguồn, tổng khoảng 6.53 MB, tier REAL. Font Inter local có license kèm theo. Icon thương hiệu trong header dùng path SVG của nguyên mẫu; không tạo ảnh AI hay placeholder. Không nạp CSS/JS/CDN của Webflow khi chạy ứng dụng.
 
-Đích xây dựng là `roviet-client` hiện có: Next.js App Router + React + TypeScript, không scaffold project thứ hai. `app/[locale]/(public)` sở hữu layout, `features/public-site/` sở hữu component, section, dữ liệu và CSS. Đây là lựa chọn theo yêu cầu tích hợp của dự án.
+Đích xây dựng là `client` hiện có: Next.js App Router + React + TypeScript, không scaffold project thứ hai. `app/[locale]/(public)` sở hữu layout, `features/public-site/` sở hữu component, section, dữ liệu và CSS. Đây là lựa chọn theo yêu cầu tích hợp của dự án.
 
 ## Giới hạn đã biết
 

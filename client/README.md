@@ -45,8 +45,8 @@ pnpm 12 đặt cấu hình tại `pnpm-workspace.yaml`: `allowBuilds` liệt kê
 - `app/` giữ routing/layout; `features/<domain>/` sở hữu API, query hooks, schema và component nghiệp vụ khi có yêu cầu.
 - `components/ui/` là bộ Base UI chuẩn cho tính năng mới. Component tổng hợp dùng chung đặt trong `components/shared/` khi cần.
 - `template/` chứa toàn bộ demo, Radix UI, mock và adapter i18n; code ứng dụng không import demo. ESLint kiểm tra ranh giới này.
-- `features/public-site/` chứa giao diện public độc lập; routes nằm trong `app/[locale]/(public)`, assets ở `public/hafo/`. Control dùng chung shadcn/Base UI; CSS, semantic tokens và portal được scope riêng để giữ style admin. Sáu retreat dùng một page component và dữ liệu riêng. Form liên hệ chưa kết nối API.
+- `features/public-site/` chứa giao diện public độc lập; routes nằm trong `app/[locale]/(public)`, assets ở `public/public-site/`. Control dùng chung shadcn/Base UI; CSS, semantic tokens và portal được scope riêng để giữ style admin. Sáu retreat dùng một page component và dữ liệu riêng. Form liên hệ chưa kết nối API.
 - `cn` và `useIsMobile` dùng chung tại `lib/utils.ts`, `hooks/use-mobile.ts`.
 - Frontend dùng formatter Prettier mặc định; luôn dùng dấu ngoặc cho nhánh/vòng lặp và dòng trống giữa các bước xử lý.
 
-Frontend chưa tích hợp auth thật; backend đã có Keycloak và user/role MongoDB. Proxy hiện không forward cookie/Authorization. Không đưa mock submit hoặc nghiệp vụ company của TS68 vào tính năng mới.
+Frontend chưa tích hợp auth thật; backend đã có Keycloak và user/role MongoDB. Proxy hiện không forward cookie/Authorization. Không đưa mock submit hoặc nghiệp vụ ngoài yêu cầu vào tính năng mới.

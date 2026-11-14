@@ -10,25 +10,25 @@ Lượt rebrand trước đã bỏ sót việc so sánh tỷ lệ và vị trí 
 - Tại 1440 px, chiều rộng các ô là 480/240/240/240/240 px; hàng bước cao khoảng 290,8 px. Tại 390 px, mô tả rộng 390 px, mỗi bước rộng 195 px; bảng cách danh sách phía trên khoảng 27,4 px.
 - Prettier trong phạm vi CSS và tài liệu sửa đạt. Chỉ thay CSS của Combine; không thay route, nội dung, ảnh hoặc motion. Không chạy lại build vì không đổi API/type/route/dependency. Browser test được đóng sau khi dùng; không mở thêm server.
 
-Evidence và ảnh section nằm trong `output/hafo-layout-fix/measurements.json`, `combine-vi-1440.png`, `combine-vi-390.png` và các ảnh theo locale/viewport cùng thư mục. Kết quả này chỉ xác nhận section Combine, không thay thế việc đối chiếu từng section còn lại.
+Hồ sơ kiểm tra section gồm `measurements.json`, `combine-vi-1440.png`, `combine-vi-390.png` và các ảnh theo locale/viewport, được lưu trong thư mục output của lần kiểm tra. Kết quả này chỉ xác nhận section Combine, không thay thế việc đối chiếu từng section còn lại.
 
 ## Hafo Travel — rebrand ngày 09/11/2026
 
-Evidence production ở `output/hafo-remix/verification.json`. Script kiểm tra dùng Chromium headless; không dùng Computer Use. Server test riêng chạy cổng 3107 và đã dừng; dev server có sẵn của người dùng được giữ nguyên.
+Evidence production là `verification.json` trong hồ sơ đổi nhận diện ngày 09/11/2026. Script kiểm tra dùng Chromium headless; không dùng Computer Use. Server test riêng chạy cổng 3107 và đã dừng; dev server có sẵn của người dùng được giữ nguyên.
 
 - `pnpm build` đạt, gồm TypeScript và 12 cặp locale/slug của sáu hành trình. Lượt build cuối không còn cảnh báo metadataBase.
 - ESLint/Prettier phạm vi sửa đạt; `pnpm test:base` đạt 5/5. Test kiểm tra cấu trúc vi/en, ICU/rich text, dữ liệu theo locale, giá card/detail cùng nguồn, asset local và lỗi ký tự tiếng Việt bị hỏng.
 - 22 URL public (11 trang × vi/en) trả 200, có một H1 và nhận diện Hafo Travel. Cookie ngôn ngữ đối lập không đổi nội dung của locale trên URL.
 - 14 URL tương thích (7 URL × vi/en) trả 308 đúng đích và giữ query; browser xác nhận fragment cũng được giữ.
 - 80 asset (68 ảnh và 12 asset thương hiệu/font) trả 200. Browser giải mã ảnh trên các trang; không ghi nhận ảnh lỗi. SVG hợp lệ XML; font WOFF giữ glyph tiếng Việt.
-- 22 trang được kiểm tra bằng browser ở desktop; thêm 15 trường hợp responsive trên tablet/mobile. Các template home, trải nghiệm, liên hệ, detail và hai trang pháp lý được chụp tại 1440/768/390 × 1000. Kiểm tra bổ sung hero sau sửa xác nhận chiều rộng khung đúng viewport ở cả ba kích thước; font Hafo Inter weight 500 đã tải.
+- 22 trang được kiểm tra bằng browser ở desktop; thêm 15 trường hợp responsive trên tablet/mobile. Các template home, trải nghiệm, liên hệ, detail và hai trang pháp lý được chụp tại 1440/768/390 × 1000. Kiểm tra bổ sung hero sau sửa xác nhận chiều rộng khung đúng viewport ở cả ba kích thước; font Public Inter weight 500 đã tải.
 - Sheet mở/đóng bằng Escape, trả focus và điều hướng đúng locale. Popover trải nghiệm hỗ trợ Enter/Escape; portal vẫn nằm trong public scope.
 - Gallery mobile chọn được ảnh thứ tư. Điều hướng phần hương vị cuộn đúng heading, cập nhật active state và hash. Đổi VI/EN giữ pathname, query và hash, nội dung detail đổi theo locale.
 - Form báo lỗi họ tên/email, submit hợp lệ hiển thị thông tin liên hệ thay vì báo thành công; không có contact POST. Cookie decline giữ sau reload. Mục lục pháp lý hoạt động; reduced motion giữ nội dung hiển thị. Admin demo nằm ngoài public shell.
 - Không ghi nhận page error hoặc console error trong lượt production. Chromium có hai cảnh báo ảnh hero preload chưa dùng kịp khi kiểm tra đổi viewport/điều hướng; ảnh vẫn tải và giải mã thành công. Không coi đây là đo PageSpeed hoặc chứng minh LCP/CLS bằng 0.
 - Rà source của public, routes và messages: không còn tên/logo/domain/email thương hiệu cũ. URL cũ được giữ riêng trong bảng redirect; tên nguồn còn trong hồ sơ teardown lịch sử.
 
-Ảnh cuối: `hero-1440.png`, `hero-768.png`, `hero-390.png`, các ảnh `home-*`, ảnh template trang con và `brand-kit.png` trong `output/hafo-remix/`. `before-after-1440.jpg`, `before-after-768.jpg`, `before-after-390.jpg` đặt bản mới cạnh baseline clone ngày 07/11/2026. Baseline có trước bản i18n ngày 09/11; so sánh này phục vụ review nhận diện/bố cục, không phải pixel diff yêu cầu cùng màu và cùng nội dung.
+Ảnh cuối trong hồ sơ đổi nhận diện gồm `hero-1440.png`, `hero-768.png`, `hero-390.png`, các ảnh `home-*`, ảnh template trang con và `brand-kit.png`. `before-after-1440.jpg`, `before-after-768.jpg`, `before-after-390.jpg` đặt bản mới cạnh baseline clone ngày 07/11/2026. Baseline có trước bản i18n ngày 09/11; so sánh này phục vụ review nhận diện/bố cục, không phải pixel diff yêu cầu cùng màu và cùng nội dung.
 
 Giới hạn sử dụng: chưa có API gửi liên hệ, booking hoặc thanh toán; giá/lịch trình là dữ liệu tư vấn, không tạo giá hoặc ngày khởi hành giả. Đặt `NEXT_PUBLIC_SITE_URL` thành origin chính thức khi triển khai; hiện dùng localhost cho phát triển. Ảnh phần hương vị là cảm hứng ẩm thực Việt Nam và ghi rõ nơi chụp, không xác nhận thực đơn của một tour/resort.
 
@@ -63,7 +63,7 @@ Các con số pixel diff bên dưới là hồ sơ của bản clone ban đầu.
 
 ## Hồ sơ clone ban đầu
 
-Bằng chứng của lần clone trước khi chuẩn hóa control nằm trong `output/vita-travel.webflow.io/qa/`.
+Bằng chứng của lần clone trước khi chuẩn hóa control nằm trong thư mục `qa/` của hồ sơ khảo sát gốc.
 
 Pixel diff dùng Chromium, DPR 1, viewport 1440/768/390 × 1000, per-pixel threshold 0.2 và giới hạn sai khác 2% mỗi ảnh. Ảnh reference hoàn tất các reveal một lần và tắt ScrollSmoother để đo bố cục native ổn định. Cookie và dev indicator được ẩn trong cả hai bên; không bật reduced motion khi so sánh. Motion được kiểm tra riêng bằng hành vi.
 

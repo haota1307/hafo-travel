@@ -48,7 +48,7 @@ export function ContactsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="hafo-direct-contact">
+                <div className="site-direct-contact">
                   <h2 className="body-md">{t("contactsPage.directContact")}</h2>
                   <a href={`tel:${publicSiteConfig.phone}`}>
                     {publicSiteConfig.phone}

@@ -12,19 +12,19 @@ export const photoAssetsBySource: Record<string, PhotoAsset> =
   Object.fromEntries(Object.values(photos).map((photo) => [photo.src, photo]));
 
 const icons = {
-  inspiration: "/hafo/icons/inspiration.svg",
-  destination: "/hafo/icons/destination.svg",
-  conversation: "/hafo/icons/conversation.svg",
-  journey: "/hafo/icons/journey.svg",
-  plus: "/hafo/icons/plus.svg",
-  clarity: "/hafo/icons/clarity.svg",
-  respect: "/hafo/icons/respect.svg",
-  pace: "/hafo/icons/pace.svg",
-  details: "/hafo/icons/details.svg",
-  connection: "/hafo/icons/connection.svg",
-  beauty: "/hafo/icons/beauty.svg",
-  rest: "/hafo/icons/rest.svg",
-  discovery: "/hafo/icons/discovery.svg",
+  inspiration: "/public-site/icons/inspiration.svg",
+  destination: "/public-site/icons/destination.svg",
+  conversation: "/public-site/icons/conversation.svg",
+  journey: "/public-site/icons/journey.svg",
+  plus: "/public-site/icons/plus.svg",
+  clarity: "/public-site/icons/clarity.svg",
+  respect: "/public-site/icons/respect.svg",
+  pace: "/public-site/icons/pace.svg",
+  details: "/public-site/icons/details.svg",
+  connection: "/public-site/icons/connection.svg",
+  beauty: "/public-site/icons/beauty.svg",
+  rest: "/public-site/icons/rest.svg",
+  discovery: "/public-site/icons/discovery.svg",
 };
 
 export const publicImages = {

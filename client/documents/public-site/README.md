@@ -46,7 +46,7 @@ features/public-site/
   metadata.ts               Metadata theo locale và origin cấu hình
   site.config.ts            Nhận diện, liên hệ và đơn vị tiền
 messages/vi.json, en.json    Nội dung public trong namespace publicSite
-public/hafo/                Logo, icon, ảnh WebP và font có license
+public/public-site/                Logo, icon, ảnh WebP và font có license
 ```
 
 ## Dữ liệu và hành vi
@@ -59,11 +59,11 @@ public/hafo/                Logo, icon, ảnh WebP và font có license
 - Lịch trình là gợi ý; chưa công bố ngày khởi hành, số chỗ, đánh giá khách hàng hay quan hệ đối tác. Các khối dấu ấn địa phương thay cho nhân sự demo.
 - Ảnh trong phần hương vị là cảm hứng ẩm thực Việt Nam, có địa điểm chụp dưới từng ảnh; không được hiểu là thực đơn đã bao gồm. Không gắn ảnh của địa phương khác với chú thích sai địa điểm.
 - Form giữ React Hook Form + Zod và Alert báo chưa có dịch vụ gửi. Submit hợp lệ không báo thành công và không có request POST. Điện thoại/email là kênh liên hệ trực tiếp.
-- Lựa chọn cookie tiếp tục dùng key `roviet.public.cookie-choice` để giữ lựa chọn trước đó; không cài analytics hoặc marketing cookie.
+- Lựa chọn cookie dùng key `public-site.cookie-choice`; tự chuyển lựa chọn từ khóa cũ khi có và chỉ xóa khóa cũ sau khi lưu thành công. Không cài analytics hoặc marketing cookie.
 
 ## Style và ảnh
 
-CSS riêng nằm trong `.public-site`; màu sáng/tối dùng semantic tokens cục bộ và `.hafo-inverse`. Font `Hafo Inter` được phục vụ local, giữ license Inter. Đơn vị fluid là `--hafo-unit`; không sửa font-size của `html`, CSS global hoặc theme admin.
+CSS riêng nằm trong `.public-site`; màu sáng/tối dùng semantic tokens cục bộ và `.site-inverse`. Font `Public Inter` được phục vụ local, giữ license Inter. Đơn vị fluid là `--site-unit`; không sửa font-size của `html`, CSS global hoặc theme admin.
 
 Ảnh nội dung qua `PublicImage`/Next Image có width, height và sizes; ảnh raster dùng tối ưu của Next. Hero dùng hai lớp từ cùng một ảnh thật để giữ cấu trúc nhiều lớp mà không tạo địa điểm giả. Các ảnh nội dung khác được chọn riêng theo vai trò. Nguồn và mapping đầy đủ trong [ASSETS](ASSETS.md); màu, logo và font trong [BRAND](BRAND.md).
 

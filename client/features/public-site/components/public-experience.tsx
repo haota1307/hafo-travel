@@ -135,8 +135,8 @@ function mountSectionNavigation(
     );
     const mobileNavHeight =
       nav && window.innerWidth <= 479 ? nav.getBoundingClientRect().height : 0;
-    root.style.setProperty("--hafo-header-height", `${headerHeight}px`);
-    root.style.setProperty("--hafo-nav-height", `${mobileNavHeight}px`);
+    root.style.setProperty("--site-header-height", `${headerHeight}px`);
+    root.style.setProperty("--site-nav-height", `${mobileNavHeight}px`);
 
     return headerHeight + mobileNavHeight + 20;
   }
@@ -209,8 +209,8 @@ function mountSectionNavigation(
     window.removeEventListener("scroll", onScroll);
     window.removeEventListener("resize", onScroll);
     root.removeEventListener("click", onClick, true);
-    root.style.removeProperty("--hafo-header-height");
-    root.style.removeProperty("--hafo-nav-height");
+    root.style.removeProperty("--site-header-height");
+    root.style.removeProperty("--site-nav-height");
   };
 }
 

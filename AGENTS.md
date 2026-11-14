@@ -7,11 +7,12 @@
 
 Trước khi sửa code:
 
-- Frontend: đọc `client/instructions.md`.
+- Frontend: đọc `client/documents/instructions.md`.
 - Backend: đọc `server/instructions/README.md` và các tài liệu được liên kết.
 - API contract, auth hoặc tích hợp FE–BE: đọc cả hai tài liệu.
 - Kiểm tra source và tái sử dụng pattern hiện có; giữ thay đổi của người dùng.
-- Không tự thêm nghiệp vụ TS68, auth/company hoặc database model ngoài yêu cầu.
+- Không tự thêm nghiệp vụ hoặc thay đổi auth/database model ngoài yêu cầu.
+- Đặt tên kỹ thuật theo chức năng; không dùng tên dự án hoặc thương hiệu làm tiền tố cho package, biến, class CSS, event hay asset. Tên thương hiệu thuộc nội dung và cấu hình nhận diện.
 - Khi thay đổi nền tảng/contract, cập nhật instructions và README liên quan.
 
 ## Trình bày code

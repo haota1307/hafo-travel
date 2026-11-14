@@ -7,8 +7,9 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PublicButton } from "./public-button";
 
-const storageKey = "roviet.public.cookie-choice";
-const changeEvent = "roviet-public-cookie-change";
+const storageKey = "public-site.cookie-choice";
+const legacyStorageKey = "roviet.public.cookie-choice";
+const changeEvent = "public-site-cookie-change";
 
 function subscribe(onChange: () => void) {
   window.addEventListener("storage", onChange);
@@ -22,7 +23,11 @@ function subscribe(onChange: () => void) {
 
 function getChoice() {
   try {
-    return localStorage.getItem(storageKey) ?? "unset";
+    return (
+      localStorage.getItem(storageKey) ??
+      localStorage.getItem(legacyStorageKey) ??
+      "unset"
+    );
   } catch {
     return "unavailable";
   }
@@ -34,6 +39,24 @@ export function CookieNotice() {
   const noticeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    try {
+      const legacyChoice = localStorage.getItem(legacyStorageKey);
+
+      if (legacyChoice === null) {
+        return;
+      }
+
+      if (localStorage.getItem(storageKey) === null) {
+        localStorage.setItem(storageKey, legacyChoice);
+      }
+
+      localStorage.removeItem(legacyStorageKey);
+    } catch {
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
     const notice = noticeRef.current;
     const root = notice?.closest<HTMLElement>(".public-site");
 
@@ -43,7 +66,7 @@ export function CookieNotice() {
 
     const observer = new ResizeObserver(() => {
       root.style.setProperty(
-        "--hafo-cookie-height",
+        "--site-cookie-height",
         `${notice.getBoundingClientRect().height}px`,
       );
     });
@@ -51,7 +74,7 @@ export function CookieNotice() {
 
     return () => {
       observer.disconnect();
-      root.style.removeProperty("--hafo-cookie-height");
+      root.style.removeProperty("--site-cookie-height");
     };
   }, [choice]);
 

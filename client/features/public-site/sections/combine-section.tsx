@@ -7,13 +7,13 @@ export function CombineSection() {
   return (
     <>
       <section className="combine-section">
-        <div className="combine hafo-inverse">
+        <div className="combine site-inverse">
           <PublicImage
             src={publicImages.combine}
             alt=""
             decorative
             sizes="100vw"
-            className="hafo-combine-photo"
+            className="site-combine-photo"
           />
           <div className="container">
             <div className="head margin-bottom-40 mobile-margin-bottom-24">

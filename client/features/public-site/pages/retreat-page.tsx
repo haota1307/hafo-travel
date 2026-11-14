@@ -228,7 +228,7 @@ export function RetreatPage({ retreat }: { retreat: RetreatDetails }) {
                 </div>
                 <div className="retreat-page-content-item__photos">
                   {retreat.food.images.map((src) => (
-                    <figure key={src} className="hafo-food-photo">
+                    <figure key={src} className="site-food-photo">
                       <PublicImage
                         src={src}
                         alt=""

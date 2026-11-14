@@ -30,7 +30,7 @@ export async function generateMetadata({
     icons: {
       icon: [
         { url: publicSiteConfig.brand.favicon, type: "image/svg+xml" },
-        { url: "/hafo/brand/favicon.ico" },
+        { url: "/public-site/brand/favicon.ico" },
       ],
       apple: publicSiteConfig.brand.appleIcon,
     },
