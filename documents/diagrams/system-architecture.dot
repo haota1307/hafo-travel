@@ -1,0 +1,148 @@
+digraph Architecture {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    pad=0.5,
+    nodesep=0.55,
+    ranksep=0.8,
+    splines=spline,
+    outputorder=edgesfirst,
+    fontname="Arial",
+    fontsize=28,
+    fontcolor="#172B4D",
+    labelloc=t,
+    label="HAFO TRAVEL · KIẾN TRÚC TỔNG QUAN\n ",
+    dpi=150
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fillcolor="#EAF4FF",
+    color="#3877AA",
+    fontname="Arial",
+    fontcolor="#172B4D",
+    fontsize=17,
+    penwidth=1.6,
+    margin="0.22,0.16"
+  ];
+
+  edge [
+    fontname="Arial",
+    fontsize=13,
+    fontcolor="#475569",
+    color="#64748B",
+    arrowsize=0.75,
+    penwidth=1.2
+  ];
+
+  frontend [label="Client / Frontend\nNext.js · public vi/en · template admin", fillcolor="#FFF5E8", color="#C7853D"];
+  proxy [label="Next.js backend proxy\n/api/backend/[[...path]]"];
+  bff [label="BFF · NestJS\nHTTP :3300/api\nUserGuard + PermissionGuard", penwidth=2.3];
+  redis [label="Redis :6379\nCache xác thực JWT", shape=cylinder, fillcolor="#EAF7EF", color="#4C8A66"];
+
+  authorizer [label="Authorizer\ngRPC :5100\nLogin · xác thực JWT"];
+  users [label="User Access\ngRPC :5101\nUser · role · permission"];
+  keycloak [label="Keycloak :8180\nNhà cung cấp danh tính", fillcolor="#FFF5E8", color="#C7853D"];
+  mongo [label="MongoDB :27017\nUser / role", shape=cylinder, fillcolor="#F1ECFC", color="#8763B4"];
+
+  node [style="rounded,filled,dashed"];
+
+  booking [label="Booking Service\nTour · lịch · giá · giữ chỗ\nĐơn · điều phối vòng đời"];
+  payment [label="Payment Service\nPayment attempt · webhook\nĐối soát · hoàn tiền"];
+  ai [label="AI Assistant\nHội thoại · retrieval\nĐiều phối tool có quyền"];
+  notification [label="Notification Service\nDelivery job · template\nLịch sử gửi"];
+  indexer [label="Knowledge index worker\nModule AI · đọc nguồn đúng version\nCập nhật chỉ mục / ACL"];
+
+  node [shape=cylinder, fillcolor="#F1ECFC", color="#8763B4", style="filled,dashed"];
+
+  booking_db [label="Booking DB · PostgreSQL\nTour · reservation · booking\nOutbox / inbox"];
+  payment_db [label="Payment DB · PostgreSQL\nAttempt · refund · job\nOutbox / inbox"];
+  ai_db [label="AI DB · PostgreSQL đề xuất\nConversation · tool run · index\nVector store còn mở"];
+  delivery_db [label="Delivery DB\nJob · inbox · kết quả gửi\nKho bền vững cần chốt"];
+
+  node [shape=box, style="rounded,filled,dashed", fillcolor="#FFF5E8", color="#C7853D"];
+
+  payment_provider [label="Cổng thanh toán\nSandbox · provider cần chốt"];
+  llm [label="LLM provider\nModel / framework cần chốt"];
+  mail [label="Email / SMTP sandbox\nProvider cần chốt"];
+  knowledge [label="Nguồn tri thức được duyệt\nNội dung / policy có version"];
+
+  kafka [
+    label="Kafka\nEvents + commands\nOutbox relay → broker → inbox",
+    shape=cylinder,
+    fillcolor="#EAF7EF",
+    color="#4C8A66",
+    penwidth=2.0
+  ];
+
+  notes [
+    shape=note,
+    style=filled,
+    fillcolor="#F8FAFC",
+    color="#CBD5E1",
+    fontsize=14,
+    label="QUAN SÁT HỆ THỐNG\lLog HTTP/gRPC có processId hiện có.\lOpenTelemetry trace / metrics được đề xuất.\lExporter và backend lưu trữ cần chốt.\l"
+  ];
+
+  legend [
+    shape=plain,
+    style="",
+    fontsize=14,
+    label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="7" CELLPADDING="5">
+      <TR><TD COLSPAN="4"><B>TRẠNG THÁI THÀNH PHẦN</B> · Viền liền = hiện có trong source · Viền đứt = thiết kế đề xuất</TD></TR>
+      <TR>
+        <TD BGCOLOR="#EAF4FF">Ứng dụng / service</TD>
+        <TD BGCOLOR="#F1ECFC">Kho dữ liệu</TD>
+        <TD BGCOLOR="#EAF7EF">Cache / broker</TD>
+        <TD BGCOLOR="#FFF5E8">Client / hệ thống ngoài</TD>
+      </TR>
+      <TR><TD COLSPAN="4">Mũi tên thể hiện hướng gọi hoặc truyền dữ liệu · Giao thức và chức năng được ghi trên đường nối</TD></TR>
+      <TR><TD COLSPAN="4">Căn cứ tài liệu 05–08, 10–11 và source FE/BE · Đối chiếu 16/11/2026</TD></TR>
+    </TABLE>>
+  ];
+
+  frontend -> proxy [label="HTTP · browser"];
+  proxy -> bff [label="HTTP · API_URL\nSession / forward auth cần hoàn thiện", color="#B77728", fontcolor="#98601F"];
+  bff -> redis [label="Đọc / ghi cache"];
+  bff -> authorizer [label="gRPC · login / verify token"];
+  bff -> users [label="gRPC · user / role / quyền hiện tại"];
+  authorizer -> users [label="gRPC · tra cứu hồ sơ →\n← Tạo user Keycloak", dir=both, constraint=false];
+  authorizer -> keycloak [label="HTTP · token / JWKS / Admin API"];
+  users -> mongo [label="Đọc / ghi"];
+
+  bff -> booking [label="gRPC/protobuf v1"];
+  bff -> payment [label="gRPC/protobuf v1"];
+  bff -> ai [label="Chat · HTTP streaming / SSE\nTuyến riêng đề xuất"];
+  ai -> booking [label="gRPC · tool giá / chỗ / đơn", color="#8B65AB", fontcolor="#795397", constraint=false];
+  ai -> payment [label="gRPC · tool tra cứu payment", color="#8B65AB", fontcolor="#795397", constraint=false];
+
+  booking -> booking_db [label="Đọc / ghi · transaction cục bộ"];
+  payment -> payment_db [label="Đọc / ghi"];
+  ai -> ai_db [label="Hội thoại / retrieval"];
+  ai -> llm [label="API của provider"];
+  payment -> payment_provider [label="HTTPS · API giao dịch / refund\nHTTP · webhook từ provider", dir=both];
+
+  booking -> kafka [label="Phát booking.events.v1 / catalog.events.v1\nPhát payment.commands.v1\nNhận payment.events.v1", dir=both, color="#428368", fontcolor="#326A50", minlen=2];
+  payment -> kafka [label="Phát payment.events.v1\nNhận booking.events.v1\nNhận payment.commands.v1", dir=both, color="#428368", fontcolor="#326A50", minlen=2];
+  kafka -> notification [label="booking.events.v1", color="#428368", fontcolor="#326A50"];
+  kafka -> indexer [label="catalog.events.v1", color="#428368", fontcolor="#326A50"];
+  notification -> delivery_db [label="Job / kết quả gửi"];
+  notification -> mail [label="Gửi email"];
+  indexer -> ai_db [label="Cập nhật chỉ mục", color="#8B65AB", fontcolor="#795397", constraint=false];
+  knowledge -> indexer [label="Nhập nguồn được duyệt", constraint=false];
+
+  { rank=same; authorizer; users; booking; payment; ai; }
+  { rank=same; keycloak; mongo; booking_db; payment_db; ai_db; llm; }
+  { rank=same; kafka; payment_provider; knowledge; }
+  { rank=same; notification; indexer; notes; }
+  { rank=same; delivery_db; mail; }
+
+  redis -> users [style=invis];
+  keycloak -> mongo -> booking_db -> payment_db -> ai_db -> llm [style=invis];
+  kafka -> payment_provider -> knowledge [style=invis];
+  ai_db -> indexer [style=invis, weight=20];
+  notification -> notes -> indexer [style=invis];
+  delivery_db -> legend [style=invis];
+  mail -> legend [style=invis];
+}

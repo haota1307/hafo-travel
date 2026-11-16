@@ -88,30 +88,37 @@ export interface UserAccessServiceClient {
     request: CreateUserRequest,
     metadata?: Metadata,
   ): Observable<CreateUserResponse>;
+
   getUserById(
     request: GetUserByIdRequest,
     metadata?: Metadata,
   ): Observable<GetUserByIdResponse>;
+
   setUserRoles(
     request: SetUserRolesRequest,
     metadata?: Metadata,
   ): Observable<GetUserByIdResponse>;
+
   listRoles(
     request: ListRolesRequest,
     metadata?: Metadata,
   ): Observable<ListRolesResponse>;
+
   getRole(
     request: RoleIdRequest,
     metadata?: Metadata,
   ): Observable<RoleResponse>;
+
   createRole(
     request: CreateRoleRequest,
     metadata?: Metadata,
   ): Observable<RoleResponse>;
+
   updateRole(
     request: UpdateRoleRequest,
     metadata?: Metadata,
   ): Observable<RoleResponse>;
+
   deleteRole(
     request: RoleIdRequest,
     metadata?: Metadata,
@@ -126,6 +133,7 @@ export interface UserAccessServiceController {
     | Promise<CreateUserResponse>
     | Observable<CreateUserResponse>
     | CreateUserResponse;
+
   getUserById(
     request: GetUserByIdRequest,
     metadata?: Metadata,
@@ -133,6 +141,7 @@ export interface UserAccessServiceController {
     | Promise<GetUserByIdResponse>
     | Observable<GetUserByIdResponse>
     | GetUserByIdResponse;
+
   setUserRoles(
     request: SetUserRolesRequest,
     metadata?: Metadata,
@@ -140,6 +149,7 @@ export interface UserAccessServiceController {
     | Promise<GetUserByIdResponse>
     | Observable<GetUserByIdResponse>
     | GetUserByIdResponse;
+
   listRoles(
     request: ListRolesRequest,
     metadata?: Metadata,
@@ -147,18 +157,22 @@ export interface UserAccessServiceController {
     | Promise<ListRolesResponse>
     | Observable<ListRolesResponse>
     | ListRolesResponse;
+
   getRole(
     request: RoleIdRequest,
     metadata?: Metadata,
   ): Promise<RoleResponse> | Observable<RoleResponse> | RoleResponse;
+
   createRole(
     request: CreateRoleRequest,
     metadata?: Metadata,
   ): Promise<RoleResponse> | Observable<RoleResponse> | RoleResponse;
+
   updateRole(
     request: UpdateRoleRequest,
     metadata?: Metadata,
   ): Promise<RoleResponse> | Observable<RoleResponse> | RoleResponse;
+
   deleteRole(
     request: RoleIdRequest,
     metadata?: Metadata,

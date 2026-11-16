@@ -5,10 +5,26 @@
 ## Cách sử dụng
 
 1. Đọc [kiến trúc và nguồn đối chiếu](architecture.md) trước khi sửa một luồng.
-2. Đọc [quy ước triển khai](coding.md) khi thêm hoặc refactor code.
+2. Đọc [quy ước triển khai](coding.md) trước khi sửa code, gồm cách chọn pattern, phân trách nhiệm và giữ code dễ đọc.
 3. Đọc [quy ước test và kiểm chứng](testing.md) khi thay đổi test, cấu hình hoặc xác nhận kết quả.
 4. Xem [README backend](../README.md) để cài đặt và chạy local. Phiên bản thực tế lấy từ `package.json` và `pnpm-lock.yaml`.
 5. Đọc [xác thực và RBAC](rbac.md) khi thay đổi user, role, permission hoặc truy cập endpoint.
+
+## Giữ nhất quán khi AI coding
+
+- Mỗi thay đổi phải bám yêu cầu hiện tại và pattern của luồng tương tự trong source. Dùng [bảng mẫu theo trách nhiệm](architecture.md#chọn-mẫu-theo-trách-nhiệm) để chọn file cần đọc trước khi triển khai.
+- Đọc cả method cần sửa, nơi gọi, module đăng ký dependency và type liên quan. Khi thêm luồng, đối chiếu một luồng hoàn chỉnh đang có cùng transport và cách lưu dữ liệu.
+- Mở rộng module/helper hiện có khi chúng đáp ứng yêu cầu. Việc thêm tầng, dependency hoặc pattern kiến trúc cần giải quyết một nhu cầu cụ thể của tác vụ và có lý do trong báo cáo kết quả.
+- Khi các file có cách viết khác nhau, dùng trách nhiệm của thành phần và quy ước trong bộ instructions để lựa chọn. Giữ phạm vi chỉnh sửa gắn với yêu cầu, kể cả khi phát hiện code lân cận có thể cải thiện.
+- Chỉ lập plan hoặc dùng computer use khi người dùng yêu cầu. Không thêm comment vào code.
+
+## Tự rà trước khi hoàn tất
+
+- Đối chiếu diff với yêu cầu và luồng mẫu đã đọc, kiểm tra từng file/tầng/helper mới có trách nhiệm cần thiết.
+- Kiểm tra controller, service, repository và mapper thực hiện đúng trách nhiệm trong [quy ước triển khai](coding.md#trách-nhiệm-trong-luồng-xử-lý).
+- Kiểm tra các nơi sử dụng khi đổi signature/type, cùng response, lỗi, validation, quyền và side effect bị tác động. Với refactor, đối chiếu hành vi trước và sau.
+- Chạy formatter trong phạm vi file đã sửa và chọn lint/test theo [phạm vi kiểm chứng](testing.md#chọn-kiểm-tra-theo-thay-đổi). Dừng process do mình bật sau kiểm tra.
+- Báo ngắn gọn thay đổi, kiểm chứng đã chạy và phần còn chưa xác minh. Nêu lý do nếu cần dùng pattern mới hoặc phát hiện khác biệt giữa tài liệu và source.
 
 ## Nguyên tắc không suy diễn
 

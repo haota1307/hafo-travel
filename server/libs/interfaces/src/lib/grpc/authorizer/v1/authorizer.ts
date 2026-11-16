@@ -48,10 +48,12 @@ export const AUTHORIZER_V1_PACKAGE_NAME = 'authorizer.v1';
 
 export interface AuthorizerServiceClient {
   login(request: LoginRequest, metadata?: Metadata): Observable<LoginResponse>;
+
   verifyUserToken(
     request: VerifyUserTokenRequest,
     metadata?: Metadata,
   ): Observable<VerifyUserTokenResponse>;
+
   createKeycloakUser(
     request: CreateKeycloakUserRequest,
     metadata?: Metadata,
@@ -63,6 +65,7 @@ export interface AuthorizerServiceController {
     request: LoginRequest,
     metadata?: Metadata,
   ): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
+
   verifyUserToken(
     request: VerifyUserTokenRequest,
     metadata?: Metadata,
@@ -70,6 +73,7 @@ export interface AuthorizerServiceController {
     | Promise<VerifyUserTokenResponse>
     | Observable<VerifyUserTokenResponse>
     | VerifyUserTokenResponse;
+
   createKeycloakUser(
     request: CreateKeycloakUserRequest,
     metadata?: Metadata,

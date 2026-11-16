@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="5552pt" height="3492pt"
+ viewBox="0.00 0.00 5552.00 3492.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(2.08333 2.08333) rotate(0) translate(36 1640.24)">
+<title>Architecture</title>
+<polygon fill="white" stroke="none" points="-36,36 -36,-1640.24 2628.95,-1640.24 2628.95,36 -36,36"/>
+<text xml:space="preserve" text-anchor="middle" x="1296.48" y="-1575.04" font-family="Arial" font-size="28.00" fill="#172b4d">HAFO TRAVEL · KIẾN TRÚC TỔNG QUAN</text>
+<text xml:space="preserve" text-anchor="middle" x="1296.48" y="-1541.44" font-family="Arial" font-size="28.00" fill="#172b4d"> </text>
+<g id="edge1" class="edge">
+<title>frontend&#45;&gt;proxy</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M761.82,-1464.71C761.82,-1445.95 761.82,-1421.92 761.82,-1401.69"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="764.44,-1401.71 761.82,-1394.21 759.19,-1401.71 764.44,-1401.71"/>
+<text xml:space="preserve" text-anchor="middle" x="809.13" y="-1424.5" font-family="Arial" font-size="13.00" fill="#475569">HTTP · browser</text>
+</g>
+<g id="edge2" class="edge">
+<title>proxy&#45;&gt;bff</title>
+<path fill="none" stroke="#b77728" stroke-width="1.2" d="M761.82,-1327.21C761.82,-1304.93 761.82,-1274.54 761.82,-1248.78"/>
+<polygon fill="#b77728" stroke="#b77728" stroke-width="1.2" points="764.44,-1248.83 761.82,-1241.33 759.19,-1248.83 764.44,-1248.83"/>
+<text xml:space="preserve" text-anchor="middle" x="874.55" y="-1287.06" font-family="Arial" font-size="13.00" fill="#98601f">HTTP · API_URL</text>
+<text xml:space="preserve" text-anchor="middle" x="874.55" y="-1271.46" font-family="Arial" font-size="13.00" fill="#98601f">Session / forward auth cần hoàn thiện</text>
+</g>
+<g id="edge3" class="edge">
+<title>bff&#45;&gt;redis</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M628.22,-1180.66C582.61,-1170.6 533.41,-1153.69 494.77,-1125.32 481.96,-1115.91 471.44,-1102.54 463.15,-1089.06"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="465.49,-1087.87 459.44,-1082.72 460.96,-1090.52 465.49,-1087.87"/>
+<text xml:space="preserve" text-anchor="middle" x="540.3" y="-1113.62" font-family="Arial" font-size="13.00" fill="#475569">Đọc / ghi cache</text>
+</g>
+<g id="edge4" class="edge">
+<title>bff&#45;&gt;authorizer</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M627.96,-1185.64C474.19,-1171.69 234.6,-1140.85 168.92,-1080.72 126.89,-1042.25 114.5,-975.62 111.24,-929.35"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="113.86,-929.23 110.79,-921.9 108.62,-929.54 113.86,-929.23"/>
+<text xml:space="preserve" text-anchor="middle" x="245.87" y="-1032.93" font-family="Arial" font-size="13.00" fill="#475569">gRPC · login / verify token</text>
+</g>
+<g id="edge5" class="edge">
+<title>bff&#45;&gt;users</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M698.15,-1153.31C671.12,-1133.41 640.55,-1108.04 617.29,-1080.72 577.61,-1034.12 545.07,-971.54 525.17,-928.34"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="527.61,-927.36 522.11,-921.62 522.83,-929.54 527.61,-927.36"/>
+<text xml:space="preserve" text-anchor="middle" x="722.05" y="-1032.93" font-family="Arial" font-size="13.00" fill="#475569">gRPC · user / role / quyền hiện tại</text>
+</g>
+<g id="edge9" class="edge">
+<title>bff&#45;&gt;booking</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M797.9,-1153.24C813.08,-1132.76 829.01,-1106.95 836.82,-1080.72 851.71,-1030.74 847.33,-970.72 841.02,-929.06"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="843.62,-928.72 839.85,-921.72 838.44,-929.54 843.62,-928.72"/>
+<text xml:space="preserve" text-anchor="middle" x="898.54" y="-1032.93" font-family="Arial" font-size="13.00" fill="#475569">gRPC/protobuf v1</text>
+</g>
+<g id="edge10" class="edge">
+<title>bff&#45;&gt;payment</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M847.36,-1153.26C939.54,-1107.55 1090.31,-1031.99 1218.82,-963.94 1242.62,-951.33 1268.28,-937.32 1291.75,-924.33"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1292.74,-926.79 1298.02,-920.85 1290.19,-922.19 1292.74,-926.79"/>
+<text xml:space="preserve" text-anchor="middle" x="1208.79" y="-1032.93" font-family="Arial" font-size="13.00" fill="#475569">gRPC/protobuf v1</text>
+</g>
+<g id="edge11" class="edge">
+<title>bff&#45;&gt;ai</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M895.52,-1169.76C998.82,-1148.85 1144.92,-1116.94 1270.82,-1080.72 1432.56,-1034.19 1615.23,-967.33 1730.42,-923.35"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1731.17,-925.87 1737.24,-920.74 1729.3,-920.97 1731.17,-925.87"/>
+<text xml:space="preserve" text-anchor="middle" x="1622.31" y="-1040.73" font-family="Arial" font-size="13.00" fill="#475569">Chat · HTTP streaming / SSE</text>
+<text xml:space="preserve" text-anchor="middle" x="1622.31" y="-1025.13" font-family="Arial" font-size="13.00" fill="#475569">Tuyến riêng đề xuất</text>
+</g>
+<g id="edge6" class="edge">
+<title>authorizer&#45;&gt;users</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M220.51,-877.22C272.05,-877.22 333.57,-877.22 386.09,-877.22"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="220.83,-874.6 213.33,-877.22 220.83,-879.85 220.83,-874.6"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="385.79,-879.85 393.29,-877.22 385.79,-874.6 385.79,-879.85"/>
+<text xml:space="preserve" text-anchor="middle" x="303.3" y="-899.72" font-family="Arial" font-size="13.00" fill="#475569">gRPC · tra cứu hồ sơ →</text>
+<text xml:space="preserve" text-anchor="middle" x="303.3" y="-884.12" font-family="Arial" font-size="13.00" fill="#475569">← Tạo user Keycloak</text>
+</g>
+<g id="edge7" class="edge">
+<title>authorizer&#45;&gt;keycloak</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M110.82,-834.57C110.82,-785.07 110.82,-703.03 110.82,-653.99"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="113.44,-654.25 110.82,-646.75 108.19,-654.25 113.44,-654.25"/>
+<text xml:space="preserve" text-anchor="middle" x="210.51" y="-748.8" font-family="Arial" font-size="13.00" fill="#475569">HTTP · token / JWKS / Admin API</text>
+</g>
+<g id="edge8" class="edge">
+<title>users&#45;&gt;mongo</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M484.64,-834.57C463.54,-788.73 429.59,-714.98 406.75,-665.38"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="409.19,-664.39 403.67,-658.68 404.42,-666.59 409.19,-664.39"/>
+<text xml:space="preserve" text-anchor="middle" x="483.69" y="-748.8" font-family="Arial" font-size="13.00" fill="#475569">Đọc / ghi</text>
+</g>
+<g id="edge14" class="edge">
+<title>booking&#45;&gt;booking_db</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M716.02,-834.45C691.31,-819.88 668.31,-800.79 653.91,-776.1 637.2,-747.44 638.87,-711 645.61,-679.88"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="648.16,-680.5 647.33,-672.6 643.05,-679.3 648.16,-680.5"/>
+<text xml:space="preserve" text-anchor="middle" x="743.86" y="-748.8" font-family="Arial" font-size="13.00" fill="#475569">Đọc / ghi · transaction cục bộ</text>
+</g>
+<g id="edge19" class="edge">
+<title>booking&#45;&gt;kafka</title>
+<path fill="none" stroke="#428368" stroke-width="1.2" d="M834.5,-825.17C838.21,-795.87 845.67,-759.09 860.67,-729.3 869.87,-711.01 882.74,-693.4 896.29,-677.67"/>
+<polygon fill="#428368" stroke="#428368" stroke-width="1.2" points="831.89,-824.85 833.63,-832.6 837.11,-825.46 831.89,-824.85"/>
+<polygon fill="#428368" stroke="#428368" stroke-width="1.2" points="897.94,-679.77 900.94,-672.41 894,-676.3 897.94,-679.77"/>
+<text xml:space="preserve" text-anchor="middle" x="984.24" y="-764.4" font-family="Arial" font-size="13.00" fill="#326a50">Phát booking.events.v1 / catalog.events.v1</text>
+<text xml:space="preserve" text-anchor="middle" x="984.24" y="-748.8" font-family="Arial" font-size="13.00" fill="#326a50">Phát payment.commands.v1</text>
+<text xml:space="preserve" text-anchor="middle" x="984.24" y="-733.2" font-family="Arial" font-size="13.00" fill="#326a50">Nhận payment.events.v1</text>
+</g>
+<g id="edge15" class="edge">
+<title>payment&#45;&gt;payment_db</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M1369.11,-834.55C1364.6,-804.31 1356.13,-762.97 1340.82,-729.3 1332.8,-711.67 1321.83,-694.07 1310.44,-678.11"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1312.79,-676.89 1306.25,-672.37 1308.55,-679.98 1312.79,-676.89"/>
+<text xml:space="preserve" text-anchor="middle" x="1383.44" y="-748.8" font-family="Arial" font-size="13.00" fill="#475569">Đọc / ghi</text>
+</g>
+<g id="edge18" class="edge">
+<title>payment&#45;&gt;payment_provider</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M1405.7,-826.93C1438.32,-776.5 1488.35,-699.14 1518.4,-652.68"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1403.61,-825.32 1401.74,-833.05 1408.02,-828.18 1403.61,-825.32"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1520.55,-654.19 1522.42,-646.46 1516.15,-651.33 1520.55,-654.19"/>
+<text xml:space="preserve" text-anchor="middle" x="1563.37" y="-756.6" font-family="Arial" font-size="13.00" fill="#475569">HTTPS · API giao dịch / refund</text>
+<text xml:space="preserve" text-anchor="middle" x="1563.37" y="-741" font-family="Arial" font-size="13.00" fill="#475569">HTTP · webhook từ provider</text>
+</g>
+<g id="edge20" class="edge">
+<title>payment&#45;&gt;kafka</title>
+<path fill="none" stroke="#428368" stroke-width="1.2" d="M1254.7,-830.65C1221.99,-815.6 1187.48,-797.21 1158.13,-776.1 1134.88,-759.37 1135.03,-748.55 1113.82,-729.3 1093.97,-711.29 1071.61,-692.97 1050.36,-676.36"/>
+<polygon fill="#428368" stroke="#428368" stroke-width="1.2" points="1253.4,-832.95 1261.31,-833.66 1255.57,-828.17 1253.4,-832.95"/>
+<polygon fill="#428368" stroke="#428368" stroke-width="1.2" points="1052.16,-674.44 1044.63,-671.91 1048.94,-678.58 1052.16,-674.44"/>
+<text xml:space="preserve" text-anchor="middle" x="1244.47" y="-764.4" font-family="Arial" font-size="13.00" fill="#326a50">Phát payment.events.v1</text>
+<text xml:space="preserve" text-anchor="middle" x="1244.47" y="-748.8" font-family="Arial" font-size="13.00" fill="#326a50">Nhận booking.events.v1</text>
+<text xml:space="preserve" text-anchor="middle" x="1244.47" y="-733.2" font-family="Arial" font-size="13.00" fill="#326a50">Nhận payment.commands.v1</text>
+</g>
+<g id="edge12" class="edge">
+<title>ai&#45;&gt;booking</title>
+<path fill="none" stroke="#8b65ab" stroke-width="1.2" d="M1734.86,-894.42C1548.19,-922.19 1179.1,-971.79 1050.34,-950.79 1015.14,-945.05 977.97,-934.45 944.42,-923.05"/>
+<polygon fill="#8b65ab" stroke="#8b65ab" stroke-width="1.2" points="945.64,-920.69 937.69,-920.73 943.93,-925.65 945.64,-920.69"/>
+<text xml:space="preserve" text-anchor="middle" x="1129.82" y="-952.24" font-family="Arial" font-size="13.00" fill="#795397">gRPC · tool giá / chỗ / đơn</text>
+</g>
+<g id="edge13" class="edge">
+<title>ai&#45;&gt;payment</title>
+<path fill="none" stroke="#8b65ab" stroke-width="1.2" d="M1734.86,-877.22C1666.76,-877.22 1579.14,-877.22 1507.27,-877.22"/>
+<polygon fill="#8b65ab" stroke="#8b65ab" stroke-width="1.2" points="1507.45,-874.6 1499.95,-877.22 1507.45,-879.85 1507.45,-874.6"/>
+<text xml:space="preserve" text-anchor="middle" x="1616.43" y="-884.12" font-family="Arial" font-size="13.00" fill="#795397">gRPC · tool tra cứu payment</text>
+</g>
+<g id="edge16" class="edge">
+<title>ai&#45;&gt;ai_db</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M1845.82,-834.57C1845.82,-793.1 1845.82,-728.77 1845.82,-680.16"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1848.44,-680.28 1845.82,-672.78 1843.19,-680.28 1848.44,-680.28"/>
+<text xml:space="preserve" text-anchor="middle" x="1903.61" y="-748.8" font-family="Arial" font-size="13.00" fill="#475569">Hội thoại / retrieval</text>
+</g>
+<g id="edge17" class="edge">
+<title>ai&#45;&gt;llm</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M1899.37,-834.57C1964.62,-783.84 2073.83,-698.91 2136.24,-650.38"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2137.5,-652.73 2141.81,-646.05 2134.28,-648.58 2137.5,-652.73"/>
+<text xml:space="preserve" text-anchor="middle" x="2084.35" y="-748.8" font-family="Arial" font-size="13.00" fill="#475569">API của provider</text>
+</g>
+<g id="edge23" class="edge">
+<title>notification&#45;&gt;delivery_db</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M1021.92,-392.92C1006.92,-372.62 988.56,-347.76 971.79,-325.06"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="974.06,-323.71 967.49,-319.24 969.84,-326.83 974.06,-323.71"/>
+<text xml:space="preserve" text-anchor="middle" x="1049.15" y="-349.93" font-family="Arial" font-size="13.00" fill="#475569">Job / kết quả gửi</text>
+</g>
+<g id="edge24" class="edge">
+<title>notification&#45;&gt;mail</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M1087.28,-392.96C1095.44,-382.8 1104.04,-371.9 1111.82,-361.63 1127.18,-341.34 1143.64,-318.23 1156.95,-299.2"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="1159.08,-300.72 1161.21,-293.07 1154.77,-297.72 1159.08,-300.72"/>
+<text xml:space="preserve" text-anchor="middle" x="1151.2" y="-349.93" font-family="Arial" font-size="13.00" fill="#475569">Gửi email</text>
+</g>
+<g id="edge25" class="edge">
+<title>indexer&#45;&gt;ai_db</title>
+<path fill="none" stroke="#8b65ab" stroke-width="1.2" d="M1866.83,-478.36C1870.96,-488.43 1874.68,-499.33 1876.82,-509.87 1879.16,-521.38 1878.41,-533.46 1875.97,-545.1"/>
+<polygon fill="#8b65ab" stroke="#8b65ab" stroke-width="1.2" points="1873.48,-544.23 1874.23,-552.14 1878.57,-545.49 1873.48,-544.23"/>
+<text xml:space="preserve" text-anchor="middle" x="1938.2" y="-513.77" font-family="Arial" font-size="13.00" fill="#795397">Cập nhật chỉ mục</text>
+</g>
+<g id="edge26" class="edge">
+<title>knowledge&#45;&gt;indexer</title>
+<path fill="none" stroke="#64748b" stroke-width="1.2" d="M2397.48,-579.68C2375.62,-570.86 2351.45,-561.72 2328.82,-554.47 2225.81,-521.46 2107.89,-492.55 2014.35,-471.65"/>
+<polygon fill="#64748b" stroke="#64748b" stroke-width="1.2" points="2015.04,-469.11 2007.15,-470.04 2013.9,-474.24 2015.04,-469.11"/>
+<text xml:space="preserve" text-anchor="middle" x="2300.65" y="-513.77" font-family="Arial" font-size="13.00" fill="#475569">Nhập nguồn được duyệt</text>
+</g>
+<g id="edge21" class="edge">
+<title>kafka&#45;&gt;notification</title>
+<path fill="none" stroke="#428368" stroke-width="1.2" d="M993.88,-553.72C1004.79,-532.06 1017.1,-507.63 1027.64,-486.72"/>
+<polygon fill="#428368" stroke="#428368" stroke-width="1.2" points="1029.88,-488.1 1030.91,-480.22 1025.19,-485.73 1029.88,-488.1"/>
+<text xml:space="preserve" text-anchor="middle" x="1066.48" y="-513.77" font-family="Arial" font-size="13.00" fill="#326a50">booking.events.v1</text>
+</g>
+<g id="edge22" class="edge">
+<title>kafka&#45;&gt;indexer</title>
+<path fill="none" stroke="#428368" stroke-width="1.2" d="M1097.76,-559.8C1104.17,-557.89 1110.54,-556.09 1116.82,-554.47 1331.29,-498.97 1391.34,-517.59 1609.82,-480.87 1631.68,-477.2 1654.65,-473.14 1677.31,-469.03"/>
+<polygon fill="#428368" stroke="#428368" stroke-width="1.2" points="1677.63,-471.64 1684.54,-467.71 1676.69,-466.48 1677.63,-471.64"/>
+<text xml:space="preserve" text-anchor="middle" x="1412.4" y="-513.77" font-family="Arial" font-size="13.00" fill="#326a50">catalog.events.v1</text>
+</g>
+<g id="node1" class="node">
+<title>frontend</title>
+<path fill="#fff5e8" stroke="#c7853d" stroke-width="1.6" d="M911.17,-1529.04C911.17,-1529.04 612.47,-1529.04 612.47,-1529.04 606.47,-1529.04 600.47,-1523.04 600.47,-1517.04 600.47,-1517.04 600.47,-1477.2 600.47,-1477.2 600.47,-1471.2 606.47,-1465.2 612.47,-1465.2 612.47,-1465.2 911.17,-1465.2 911.17,-1465.2 917.17,-1465.2 923.17,-1471.2 923.17,-1477.2 923.17,-1477.2 923.17,-1517.04 923.17,-1517.04 923.17,-1523.04 917.17,-1529.04 911.17,-1529.04"/>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1502.22" font-family="Arial" font-size="17.00" fill="#172b4d">Client / Frontend</text>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1481.82" font-family="Arial" font-size="17.00" fill="#172b4d">Next.js · public vi/en · template admin</text>
+</g>
+<g id="node2" class="node">
+<title>proxy</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" d="M849.3,-1391.6C849.3,-1391.6 674.34,-1391.6 674.34,-1391.6 668.34,-1391.6 662.34,-1385.6 662.34,-1379.6 662.34,-1379.6 662.34,-1339.76 662.34,-1339.76 662.34,-1333.76 668.34,-1327.76 674.34,-1327.76 674.34,-1327.76 849.3,-1327.76 849.3,-1327.76 855.3,-1327.76 861.3,-1333.76 861.3,-1339.76 861.3,-1339.76 861.3,-1379.6 861.3,-1379.6 861.3,-1385.6 855.3,-1391.6 849.3,-1391.6"/>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1364.78" font-family="Arial" font-size="17.00" fill="#172b4d">Next.js backend proxy</text>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1344.38" font-family="Arial" font-size="17.00" fill="#172b4d">/api/backend/[[...path]]</text>
+</g>
+<g id="node3" class="node">
+<title>bff</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="2.3" d="M882.58,-1238.56C882.58,-1238.56 641.06,-1238.56 641.06,-1238.56 635.06,-1238.56 629.06,-1232.56 629.06,-1226.56 629.06,-1226.56 629.06,-1166.32 629.06,-1166.32 629.06,-1160.32 635.06,-1154.32 641.06,-1154.32 641.06,-1154.32 882.58,-1154.32 882.58,-1154.32 888.58,-1154.32 894.58,-1160.32 894.58,-1166.32 894.58,-1166.32 894.58,-1226.56 894.58,-1226.56 894.58,-1232.56 888.58,-1238.56 882.58,-1238.56"/>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1211.74" font-family="Arial" font-size="17.00" fill="#172b4d">BFF · NestJS</text>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1191.34" font-family="Arial" font-size="17.00" fill="#172b4d">HTTP :3300/api</text>
+<text xml:space="preserve" text-anchor="middle" x="761.82" y="-1170.94" font-family="Arial" font-size="17.00" fill="#172b4d">UserGuard + PermissionGuard</text>
+</g>
+<g id="node4" class="node">
+<title>redis</title>
+<path fill="#eaf7ef" stroke="#4c8a66" stroke-width="1.6" d="M536.42,-1072.74C536.42,-1077.14 493.12,-1080.72 439.82,-1080.72 386.51,-1080.72 343.21,-1077.14 343.21,-1072.74 343.21,-1072.74 343.21,-1000.92 343.21,-1000.92 343.21,-996.52 386.51,-992.94 439.82,-992.94 493.12,-992.94 536.42,-996.52 536.42,-1000.92 536.42,-1000.92 536.42,-1072.74 536.42,-1072.74"/>
+<path fill="none" stroke="#4c8a66" stroke-width="1.6" d="M536.42,-1072.74C536.42,-1068.34 493.12,-1064.76 439.82,-1064.76 386.51,-1064.76 343.21,-1068.34 343.21,-1072.74"/>
+<text xml:space="preserve" text-anchor="middle" x="439.82" y="-1041.93" font-family="Arial" font-size="17.00" fill="#172b4d">Redis :6379</text>
+<text xml:space="preserve" text-anchor="middle" x="439.82" y="-1021.53" font-family="Arial" font-size="17.00" fill="#172b4d">Cache xác thực JWT</text>
+</g>
+<g id="node5" class="node">
+<title>authorizer</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" d="M198.74,-919.34C198.74,-919.34 22.9,-919.34 22.9,-919.34 16.9,-919.34 10.9,-913.34 10.9,-907.34 10.9,-907.34 10.9,-847.1 10.9,-847.1 10.9,-841.1 16.9,-835.1 22.9,-835.1 22.9,-835.1 198.74,-835.1 198.74,-835.1 204.74,-835.1 210.74,-841.1 210.74,-847.1 210.74,-847.1 210.74,-907.34 210.74,-907.34 210.74,-913.34 204.74,-919.34 198.74,-919.34"/>
+<text xml:space="preserve" text-anchor="middle" x="110.82" y="-892.52" font-family="Arial" font-size="17.00" fill="#172b4d">Authorizer</text>
+<text xml:space="preserve" text-anchor="middle" x="110.82" y="-872.12" font-family="Arial" font-size="17.00" fill="#172b4d">gRPC :5100</text>
+<text xml:space="preserve" text-anchor="middle" x="110.82" y="-851.72" font-family="Arial" font-size="17.00" fill="#172b4d">Login · xác thực JWT</text>
+</g>
+<g id="node6" class="node">
+<title>users</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" d="M599.77,-919.34C599.77,-919.34 407.87,-919.34 407.87,-919.34 401.87,-919.34 395.87,-913.34 395.87,-907.34 395.87,-907.34 395.87,-847.1 395.87,-847.1 395.87,-841.1 401.87,-835.1 407.87,-835.1 407.87,-835.1 599.77,-835.1 599.77,-835.1 605.77,-835.1 611.77,-841.1 611.77,-847.1 611.77,-847.1 611.77,-907.34 611.77,-907.34 611.77,-913.34 605.77,-919.34 599.77,-919.34"/>
+<text xml:space="preserve" text-anchor="middle" x="503.82" y="-892.52" font-family="Arial" font-size="17.00" fill="#172b4d">User Access</text>
+<text xml:space="preserve" text-anchor="middle" x="503.82" y="-872.12" font-family="Arial" font-size="17.00" fill="#172b4d">gRPC :5101</text>
+<text xml:space="preserve" text-anchor="middle" x="503.82" y="-851.72" font-family="Arial" font-size="17.00" fill="#172b4d">User · role · permission</text>
+</g>
+<g id="node7" class="node">
+<title>keycloak</title>
+<path fill="#fff5e8" stroke="#c7853d" stroke-width="1.6" d="M209.64,-644.31C209.64,-644.31 12,-644.31 12,-644.31 6,-644.31 0,-638.31 0,-632.31 0,-632.31 0,-592.47 0,-592.47 0,-586.47 6,-580.47 12,-580.47 12,-580.47 209.64,-580.47 209.64,-580.47 215.64,-580.47 221.64,-586.47 221.64,-592.47 221.64,-592.47 221.64,-632.31 221.64,-632.31 221.64,-638.31 215.64,-644.31 209.64,-644.31"/>
+<text xml:space="preserve" text-anchor="middle" x="110.82" y="-617.49" font-family="Arial" font-size="17.00" fill="#172b4d">Keycloak :8180</text>
+<text xml:space="preserve" text-anchor="middle" x="110.82" y="-597.09" font-family="Arial" font-size="17.00" fill="#172b4d">Nhà cung cấp danh tính</text>
+</g>
+<g id="node8" class="node">
+<title>mongo</title>
+<path fill="#f1ecfc" stroke="#8763b4" stroke-width="1.6" d="M464.81,-648.3C464.81,-652.7 428.06,-656.28 382.82,-656.28 337.57,-656.28 300.82,-652.7 300.82,-648.3 300.82,-648.3 300.82,-576.48 300.82,-576.48 300.82,-572.07 337.57,-568.5 382.82,-568.5 428.06,-568.5 464.81,-572.07 464.81,-576.48 464.81,-576.48 464.81,-648.3 464.81,-648.3"/>
+<path fill="none" stroke="#8763b4" stroke-width="1.6" d="M464.81,-648.3C464.81,-643.89 428.06,-640.32 382.82,-640.32 337.57,-640.32 300.82,-643.89 300.82,-648.3"/>
+<text xml:space="preserve" text-anchor="middle" x="382.82" y="-617.49" font-family="Arial" font-size="17.00" fill="#172b4d">MongoDB :27017</text>
+<text xml:space="preserve" text-anchor="middle" x="382.82" y="-597.09" font-family="Arial" font-size="17.00" fill="#172b4d">User / role</text>
+</g>
+<g id="node9" class="node">
+<title>booking</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" stroke-dasharray="5,2" d="M941.89,-919.34C941.89,-919.34 719.75,-919.34 719.75,-919.34 713.75,-919.34 707.75,-913.34 707.75,-907.34 707.75,-907.34 707.75,-847.1 707.75,-847.1 707.75,-841.1 713.75,-835.1 719.75,-835.1 719.75,-835.1 941.89,-835.1 941.89,-835.1 947.89,-835.1 953.89,-841.1 953.89,-847.1 953.89,-847.1 953.89,-907.34 953.89,-907.34 953.89,-913.34 947.89,-919.34 941.89,-919.34"/>
+<text xml:space="preserve" text-anchor="middle" x="830.82" y="-892.52" font-family="Arial" font-size="17.00" fill="#172b4d">Booking Service</text>
+<text xml:space="preserve" text-anchor="middle" x="830.82" y="-872.12" font-family="Arial" font-size="17.00" fill="#172b4d">Tour · lịch · giá · giữ chỗ</text>
+<text xml:space="preserve" text-anchor="middle" x="830.82" y="-851.72" font-family="Arial" font-size="17.00" fill="#172b4d">Đơn · điều phối vòng đời</text>
+</g>
+<g id="node10" class="node">
+<title>payment</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" stroke-dasharray="5,2" d="M1485.38,-919.34C1485.38,-919.34 1262.25,-919.34 1262.25,-919.34 1256.25,-919.34 1250.25,-913.34 1250.25,-907.34 1250.25,-907.34 1250.25,-847.1 1250.25,-847.1 1250.25,-841.1 1256.25,-835.1 1262.25,-835.1 1262.25,-835.1 1485.38,-835.1 1485.38,-835.1 1491.38,-835.1 1497.38,-841.1 1497.38,-847.1 1497.38,-847.1 1497.38,-907.34 1497.38,-907.34 1497.38,-913.34 1491.38,-919.34 1485.38,-919.34"/>
+<text xml:space="preserve" text-anchor="middle" x="1373.82" y="-892.52" font-family="Arial" font-size="17.00" fill="#172b4d">Payment Service</text>
+<text xml:space="preserve" text-anchor="middle" x="1373.82" y="-872.12" font-family="Arial" font-size="17.00" fill="#172b4d">Payment attempt · webhook</text>
+<text xml:space="preserve" text-anchor="middle" x="1373.82" y="-851.72" font-family="Arial" font-size="17.00" fill="#172b4d">Đối soát · hoàn tiền</text>
+</g>
+<g id="node11" class="node">
+<title>ai</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" stroke-dasharray="5,2" d="M1944.15,-919.34C1944.15,-919.34 1747.49,-919.34 1747.49,-919.34 1741.49,-919.34 1735.49,-913.34 1735.49,-907.34 1735.49,-907.34 1735.49,-847.1 1735.49,-847.1 1735.49,-841.1 1741.49,-835.1 1747.49,-835.1 1747.49,-835.1 1944.15,-835.1 1944.15,-835.1 1950.15,-835.1 1956.15,-841.1 1956.15,-847.1 1956.15,-847.1 1956.15,-907.34 1956.15,-907.34 1956.15,-913.34 1950.15,-919.34 1944.15,-919.34"/>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-892.52" font-family="Arial" font-size="17.00" fill="#172b4d">AI Assistant</text>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-872.12" font-family="Arial" font-size="17.00" fill="#172b4d">Hội thoại · retrieval</text>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-851.72" font-family="Arial" font-size="17.00" fill="#172b4d">Điều phối tool có quyền</text>
+</g>
+<g id="node12" class="node">
+<title>notification</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" stroke-dasharray="5,2" d="M1143.11,-477.87C1143.11,-477.87 962.52,-477.87 962.52,-477.87 956.52,-477.87 950.52,-471.87 950.52,-465.87 950.52,-465.87 950.52,-405.63 950.52,-405.63 950.52,-399.63 956.52,-393.63 962.52,-393.63 962.52,-393.63 1143.11,-393.63 1143.11,-393.63 1149.11,-393.63 1155.11,-399.63 1155.11,-405.63 1155.11,-405.63 1155.11,-465.87 1155.11,-465.87 1155.11,-471.87 1149.11,-477.87 1143.11,-477.87"/>
+<text xml:space="preserve" text-anchor="middle" x="1052.82" y="-451.05" font-family="Arial" font-size="17.00" fill="#172b4d">Notification Service</text>
+<text xml:space="preserve" text-anchor="middle" x="1052.82" y="-430.65" font-family="Arial" font-size="17.00" fill="#172b4d">Delivery job · template</text>
+<text xml:space="preserve" text-anchor="middle" x="1052.82" y="-410.25" font-family="Arial" font-size="17.00" fill="#172b4d">Lịch sử gửi</text>
+</g>
+<g id="node13" class="node">
+<title>indexer</title>
+<path fill="#eaf4ff" stroke="#3877aa" stroke-width="1.6" stroke-dasharray="5,2" d="M1992.81,-477.87C1992.81,-477.87 1698.82,-477.87 1698.82,-477.87 1692.82,-477.87 1686.82,-471.87 1686.82,-465.87 1686.82,-465.87 1686.82,-405.63 1686.82,-405.63 1686.82,-399.63 1692.82,-393.63 1698.82,-393.63 1698.82,-393.63 1992.81,-393.63 1992.81,-393.63 1998.81,-393.63 2004.81,-399.63 2004.81,-405.63 2004.81,-405.63 2004.81,-465.87 2004.81,-465.87 2004.81,-471.87 1998.81,-477.87 1992.81,-477.87"/>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-451.05" font-family="Arial" font-size="17.00" fill="#172b4d">Knowledge index worker</text>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-430.65" font-family="Arial" font-size="17.00" fill="#172b4d">Module AI · đọc nguồn đúng version</text>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-410.25" font-family="Arial" font-size="17.00" fill="#172b4d">Cập nhật chỉ mục / ACL</text>
+</g>
+<g id="node14" class="node">
+<title>booking_db</title>
+<path fill="#f1ecfc" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M792.85,-659.77C792.85,-665.58 737.26,-670.3 668.82,-670.3 600.38,-670.3 544.79,-665.58 544.79,-659.77 544.79,-659.77 544.79,-565 544.79,-565 544.79,-559.19 600.38,-554.47 668.82,-554.47 737.26,-554.47 792.85,-559.19 792.85,-565 792.85,-565 792.85,-659.77 792.85,-659.77"/>
+<path fill="none" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M792.85,-659.77C792.85,-653.96 737.26,-649.24 668.82,-649.24 600.38,-649.24 544.79,-653.96 544.79,-659.77"/>
+<text xml:space="preserve" text-anchor="middle" x="668.82" y="-627.69" font-family="Arial" font-size="17.00" fill="#172b4d">Booking DB · PostgreSQL</text>
+<text xml:space="preserve" text-anchor="middle" x="668.82" y="-607.29" font-family="Arial" font-size="17.00" fill="#172b4d">Tour · reservation · booking</text>
+<text xml:space="preserve" text-anchor="middle" x="668.82" y="-586.89" font-family="Arial" font-size="17.00" fill="#172b4d">Outbox / inbox</text>
+</g>
+<g id="node15" class="node">
+<title>payment_db</title>
+<path fill="#f1ecfc" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M1375.12,-659.77C1375.12,-665.58 1321.65,-670.3 1255.82,-670.3 1189.99,-670.3 1136.52,-665.58 1136.52,-659.77 1136.52,-659.77 1136.52,-565 1136.52,-565 1136.52,-559.19 1189.99,-554.47 1255.82,-554.47 1321.65,-554.47 1375.12,-559.19 1375.12,-565 1375.12,-565 1375.12,-659.77 1375.12,-659.77"/>
+<path fill="none" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M1375.12,-659.77C1375.12,-653.96 1321.65,-649.24 1255.82,-649.24 1189.99,-649.24 1136.52,-653.96 1136.52,-659.77"/>
+<text xml:space="preserve" text-anchor="middle" x="1255.82" y="-627.69" font-family="Arial" font-size="17.00" fill="#172b4d">Payment DB · PostgreSQL</text>
+<text xml:space="preserve" text-anchor="middle" x="1255.82" y="-607.29" font-family="Arial" font-size="17.00" fill="#172b4d">Attempt · refund · job</text>
+<text xml:space="preserve" text-anchor="middle" x="1255.82" y="-586.89" font-family="Arial" font-size="17.00" fill="#172b4d">Outbox / inbox</text>
+</g>
+<g id="node16" class="node">
+<title>ai_db</title>
+<path fill="#f1ecfc" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M1979.3,-659.77C1979.3,-665.58 1919.47,-670.3 1845.82,-670.3 1772.16,-670.3 1712.33,-665.58 1712.33,-659.77 1712.33,-659.77 1712.33,-565 1712.33,-565 1712.33,-559.19 1772.16,-554.47 1845.82,-554.47 1919.47,-554.47 1979.3,-559.19 1979.3,-565 1979.3,-565 1979.3,-659.77 1979.3,-659.77"/>
+<path fill="none" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M1979.3,-659.77C1979.3,-653.96 1919.47,-649.24 1845.82,-649.24 1772.16,-649.24 1712.33,-653.96 1712.33,-659.77"/>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-627.69" font-family="Arial" font-size="17.00" fill="#172b4d">AI DB · PostgreSQL đề xuất</text>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-607.29" font-family="Arial" font-size="17.00" fill="#172b4d">Conversation · tool run · index</text>
+<text xml:space="preserve" text-anchor="middle" x="1845.82" y="-586.89" font-family="Arial" font-size="17.00" fill="#172b4d">Vector store còn mở</text>
+</g>
+<g id="node17" class="node">
+<title>delivery_db</title>
+<path fill="#f1ecfc" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M1041.23,-306.5C1041.23,-312.31 988.61,-317.03 923.82,-317.03 859.03,-317.03 806.4,-312.31 806.4,-306.5 806.4,-306.5 806.4,-211.73 806.4,-211.73 806.4,-205.92 859.03,-201.2 923.82,-201.2 988.61,-201.2 1041.23,-205.92 1041.23,-211.73 1041.23,-211.73 1041.23,-306.5 1041.23,-306.5"/>
+<path fill="none" stroke="#8763b4" stroke-width="1.6" stroke-dasharray="5,2" d="M1041.23,-306.5C1041.23,-300.69 988.61,-295.97 923.82,-295.97 859.03,-295.97 806.4,-300.69 806.4,-306.5"/>
+<text xml:space="preserve" text-anchor="middle" x="923.82" y="-274.42" font-family="Arial" font-size="17.00" fill="#172b4d">Delivery DB</text>
+<text xml:space="preserve" text-anchor="middle" x="923.82" y="-254.02" font-family="Arial" font-size="17.00" fill="#172b4d">Job · inbox · kết quả gửi</text>
+<text xml:space="preserve" text-anchor="middle" x="923.82" y="-233.62" font-family="Arial" font-size="17.00" fill="#172b4d">Kho bền vững cần chốt</text>
+</g>
+<g id="node18" class="node">
+<title>payment_provider</title>
+<path fill="#fff5e8" stroke="#c7853d" stroke-width="1.6" stroke-dasharray="5,2" d="M1660.58,-644.31C1660.58,-644.31 1427.06,-644.31 1427.06,-644.31 1421.06,-644.31 1415.06,-638.31 1415.06,-632.31 1415.06,-632.31 1415.06,-592.47 1415.06,-592.47 1415.06,-586.47 1421.06,-580.47 1427.06,-580.47 1427.06,-580.47 1660.58,-580.47 1660.58,-580.47 1666.58,-580.47 1672.58,-586.47 1672.58,-592.47 1672.58,-592.47 1672.58,-632.31 1672.58,-632.31 1672.58,-638.31 1666.58,-644.31 1660.58,-644.31"/>
+<text xml:space="preserve" text-anchor="middle" x="1543.82" y="-617.49" font-family="Arial" font-size="17.00" fill="#172b4d">Cổng thanh toán</text>
+<text xml:space="preserve" text-anchor="middle" x="1543.82" y="-597.09" font-family="Arial" font-size="17.00" fill="#172b4d">Sandbox · provider cần chốt</text>
+</g>
+<g id="node19" class="node">
+<title>llm</title>
+<path fill="#fff5e8" stroke="#c7853d" stroke-width="1.6" stroke-dasharray="5,2" d="M2296.78,-644.31C2296.78,-644.31 2070.86,-644.31 2070.86,-644.31 2064.86,-644.31 2058.86,-638.31 2058.86,-632.31 2058.86,-632.31 2058.86,-592.47 2058.86,-592.47 2058.86,-586.47 2064.86,-580.47 2070.86,-580.47 2070.86,-580.47 2296.78,-580.47 2296.78,-580.47 2302.78,-580.47 2308.78,-586.47 2308.78,-592.47 2308.78,-592.47 2308.78,-632.31 2308.78,-632.31 2308.78,-638.31 2302.78,-644.31 2296.78,-644.31"/>
+<text xml:space="preserve" text-anchor="middle" x="2183.82" y="-617.49" font-family="Arial" font-size="17.00" fill="#172b4d">LLM provider</text>
+<text xml:space="preserve" text-anchor="middle" x="2183.82" y="-597.09" font-family="Arial" font-size="17.00" fill="#172b4d">Model / framework cần chốt</text>
+</g>
+<g id="node20" class="node">
+<title>mail</title>
+<path fill="#fff5e8" stroke="#c7853d" stroke-width="1.6" stroke-dasharray="5,2" d="M1274.11,-291.04C1274.11,-291.04 1093.53,-291.04 1093.53,-291.04 1087.53,-291.04 1081.53,-285.04 1081.53,-279.04 1081.53,-279.04 1081.53,-239.2 1081.53,-239.2 1081.53,-233.2 1087.53,-227.2 1093.53,-227.2 1093.53,-227.2 1274.11,-227.2 1274.11,-227.2 1280.11,-227.2 1286.11,-233.2 1286.11,-239.2 1286.11,-239.2 1286.11,-279.04 1286.11,-279.04 1286.11,-285.04 1280.11,-291.04 1274.11,-291.04"/>
+<text xml:space="preserve" text-anchor="middle" x="1183.82" y="-264.21" font-family="Arial" font-size="17.00" fill="#172b4d">Email / SMTP sandbox</text>
+<text xml:space="preserve" text-anchor="middle" x="1183.82" y="-243.81" font-family="Arial" font-size="17.00" fill="#172b4d">Provider cần chốt</text>
+</g>
+<g id="node21" class="node">
+<title>knowledge</title>
+<path fill="#fff5e8" stroke="#c7853d" stroke-width="1.6" stroke-dasharray="5,2" d="M2580.95,-644.31C2580.95,-644.31 2360.68,-644.31 2360.68,-644.31 2354.68,-644.31 2348.68,-638.31 2348.68,-632.31 2348.68,-632.31 2348.68,-592.47 2348.68,-592.47 2348.68,-586.47 2354.68,-580.47 2360.68,-580.47 2360.68,-580.47 2580.95,-580.47 2580.95,-580.47 2586.95,-580.47 2592.95,-586.47 2592.95,-592.47 2592.95,-592.47 2592.95,-632.31 2592.95,-632.31 2592.95,-638.31 2586.95,-644.31 2580.95,-644.31"/>
+<text xml:space="preserve" text-anchor="middle" x="2470.82" y="-617.49" font-family="Arial" font-size="17.00" fill="#172b4d">Nguồn tri thức được duyệt</text>
+<text xml:space="preserve" text-anchor="middle" x="2470.82" y="-597.09" font-family="Arial" font-size="17.00" fill="#172b4d">Nội dung / policy có version</text>
+</g>
+<g id="node22" class="node">
+<title>kafka</title>
+<path fill="#eaf7ef" stroke="#4c8a66" stroke-width="2" stroke-dasharray="5,2" d="M1096.88,-659.77C1096.88,-665.58 1037.69,-670.3 964.82,-670.3 891.95,-670.3 832.76,-665.58 832.76,-659.77 832.76,-659.77 832.76,-565 832.76,-565 832.76,-559.19 891.95,-554.47 964.82,-554.47 1037.69,-554.47 1096.88,-559.19 1096.88,-565 1096.88,-565 1096.88,-659.77 1096.88,-659.77"/>
+<path fill="none" stroke="#4c8a66" stroke-width="2" stroke-dasharray="5,2" d="M1096.88,-659.77C1096.88,-653.96 1037.69,-649.24 964.82,-649.24 891.95,-649.24 832.76,-653.96 832.76,-659.77"/>
+<text xml:space="preserve" text-anchor="middle" x="964.82" y="-627.69" font-family="Arial" font-size="17.00" fill="#172b4d">Kafka</text>
+<text xml:space="preserve" text-anchor="middle" x="964.82" y="-607.29" font-family="Arial" font-size="17.00" fill="#172b4d">Events + commands</text>
+<text xml:space="preserve" text-anchor="middle" x="964.82" y="-586.89" font-family="Arial" font-size="17.00" fill="#172b4d">Outbox relay → broker → inbox</text>
+</g>
+<g id="node23" class="node">
+<title>notes</title>
+<polygon fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.6" points="1583.58,-480.87 1270.05,-480.87 1270.05,-390.63 1589.58,-390.63 1589.58,-474.87 1583.58,-480.87"/>
+<polyline fill="none" stroke="#cbd5e1" stroke-width="1.6" points="1583.58,-480.87 1583.58,-474.87"/>
+<polyline fill="none" stroke="#cbd5e1" stroke-width="1.6" points="1589.58,-474.87 1583.58,-474.87"/>
+<text xml:space="preserve" text-anchor="start" x="1285.89" y="-456.75" font-family="Arial" font-size="14.00" fill="#172b4d">QUAN SÁT HỆ THỐNG</text>
+<text xml:space="preserve" text-anchor="start" x="1285.89" y="-439.95" font-family="Arial" font-size="14.00" fill="#172b4d">Log HTTP/gRPC có processId hiện có.</text>
+<text xml:space="preserve" text-anchor="start" x="1285.89" y="-423.15" font-family="Arial" font-size="14.00" fill="#172b4d">OpenTelemetry trace / metrics được đề xuất.</text>
+<text xml:space="preserve" text-anchor="start" x="1285.89" y="-406.35" font-family="Arial" font-size="14.00" fill="#172b4d">Exporter và backend lưu trữ cần chốt.</text>
+</g>
+<g id="node24" class="node">
+<title>legend</title>
+<text xml:space="preserve" text-anchor="start" x="749.79" y="-118.6" font-family="Arial" font-weight="bold" font-size="14.00" fill="#172b4d">TRẠNG THÁI THÀNH PHẦN</text>
+<text xml:space="preserve" text-anchor="start" x="931.01" y="-118.6" font-family="Arial" font-size="14.00" fill="#172b4d"> · Viền liền = hiện có trong source · Viền đứt = thiết kế đề xuất</text>
+<polygon fill="#eaf4ff" stroke="none" points="722.57,-74.6 722.57,-101.4 894.7,-101.4 894.7,-74.6 722.57,-74.6"/>
+<text xml:space="preserve" text-anchor="start" x="747.55" y="-82.4" font-family="Arial" font-size="14.00" fill="#172b4d">Ứng dụng / service</text>
+<polygon fill="#f1ecfc" stroke="none" points="901.7,-74.6 901.7,-101.4 1029.47,-101.4 1029.47,-74.6 901.7,-74.6"/>
+<text xml:space="preserve" text-anchor="start" x="926.67" y="-82.4" font-family="Arial" font-size="14.00" fill="#172b4d">Kho dữ liệu</text>
+<polygon fill="#eaf7ef" stroke="none" points="1036.47,-74.6 1036.47,-101.4 1178.25,-101.4 1178.25,-74.6 1036.47,-74.6"/>
+<text xml:space="preserve" text-anchor="start" x="1061.45" y="-82.4" font-family="Arial" font-size="14.00" fill="#172b4d">Cache / broker</text>
+<polygon fill="#fff5e8" stroke="none" points="1185.25,-74.6 1185.25,-101.4 1383.06,-101.4 1383.06,-74.6 1185.25,-74.6"/>
+<text xml:space="preserve" text-anchor="start" x="1210.23" y="-82.4" font-family="Arial" font-size="14.00" fill="#172b4d">Client / hệ thống ngoài</text>
+<text xml:space="preserve" text-anchor="start" x="727.57" y="-48.6" font-family="Arial" font-size="14.00" fill="#172b4d">Mũi tên thể hiện hướng gọi hoặc truyền dữ liệu · Giao thức và chức năng được ghi trên đường nối</text>
+<text xml:space="preserve" text-anchor="start" x="824.82" y="-14.8" font-family="Arial" font-size="14.00" fill="#172b4d">Căn cứ tài liệu 05–08, 10–11 và source FE/BE · Đối chiếu 16/11/2026</text>
+</g>
+</g>
+</svg>

@@ -2,6 +2,16 @@
 
 Trạng thái: **hiện trạng được đối chiếu + kiến trúc đích đề xuất**. Chưa tạo service, broker hoặc database mới trong phạm vi tài liệu.
 
+## Sơ đồ tổng quan
+
+![Sơ đồ kiến trúc tổng quan](diagrams/system-architecture.svg)
+
+Mở [ảnh PNG](diagrams/system-architecture.png), [bản SVG phóng to](diagrams/system-architecture.svg) hoặc [nguồn Graphviz DOT](diagrams/system-architecture.dot) để chỉnh sửa sơ đồ.
+
+Viền liền biểu thị thành phần hiện có trong source; viền đứt biểu thị thiết kế đề xuất. Nhãn trên đường nối thể hiện giao thức và hướng gọi hoặc truyền dữ liệu. Sơ đồ được đối chiếu ngày 16/11/2026 theo các phần bên dưới, tài liệu 06–08, 10–11 và source FE/BE.
+
+Frontend session/chuyển tiếp auth, nhà cung cấp thanh toán, LLM/vector store và backend quan sát hệ thống còn cần chốt theo tài liệu hiện có.
+
 ## 1. Kiến trúc hiện tại
 
 ```mermaid
