@@ -1,9 +1,8 @@
+import { envNumber } from '@common/utils/env-number.util';
 import { createKeyv } from '@keyv/redis';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-
-import { envNumber } from './env-number';
 
 export class RedisConfiguration {
   @IsString()

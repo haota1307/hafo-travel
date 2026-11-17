@@ -4,7 +4,7 @@ Các đường dẫn code dưới đây tính từ root repository. Luôn đọc
 
 ## Ranh giới thành phần
 
-Nền tảng hiện tại là Node 26 LTS, NestJS 12, Nx 24 và TypeORM 1. Ứng dụng vẫn emit CommonJS qua NodeNext; Node 26 hỗ trợ require ESM của Nest 12. Compiler native TypeScript 7 kiểm tra kiểu, còn API TypeScript 6 phục vụ Nx/webpack/Jest/editor. Cấu hình database chỉ được nâng trong Compose với volume mới theo major; không tự chuyển đổi dữ liệu cũ.
+Nền tảng hiện tại là Node 26 LTS, NestJS 12, Nx 24 và TypeORM 1. Ứng dụng vẫn emit CommonJS qua NodeNext; Node 26 hỗ trợ require ESM của Nest 12. Compiler native TypeScript 7 kiểm tra kiểu, còn API TypeScript 6 phục vụ Nx/webpack/Jest/editor. Compose mặc định bật MongoDB, Redis, Keycloak, PostgreSQL và pgAdmin, lưu dữ liệu trong `server/docker/docker_data` theo thư mục riêng từng major. Cấu hình database chỉ được nâng trong Compose với volume mới theo major; không tự chuyển đổi dữ liệu cũ.
 
 | Thư mục                                 | Trách nhiệm                                                              |
 | --------------------------------------- | ------------------------------------------------------------------------ |

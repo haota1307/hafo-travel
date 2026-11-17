@@ -17,8 +17,7 @@ import {
   USERACCESS_V1_PACKAGE_NAME,
   protobufFileName as userAccessProtoFile,
 } from '@common/interfaces/grpc/user-access/v1/user-access';
-
-import { envNumber } from './env-number';
+import { envNumber } from '@common/utils/env-number.util';
 
 export enum GRPC_SERVICES {
   AUTHORIZER_SERVICE = 'GRPC_AUTHORIZER_SERVICE',

@@ -1,6 +1,5 @@
+import { envNumber } from '@common/utils/env-number.util';
 import { IsNumber } from 'class-validator';
-
-import { envNumber } from './env-number';
 
 export class AppConfiguration {
   @IsNumber()

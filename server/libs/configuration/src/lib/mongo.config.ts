@@ -1,10 +1,9 @@
+import { envNumber } from '@common/utils/env-number.util';
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Connection } from 'mongoose';
-
-import { envNumber } from './env-number';
 
 export class MongoConfig {
   @IsString()

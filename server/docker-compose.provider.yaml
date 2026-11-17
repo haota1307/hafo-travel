@@ -16,11 +16,10 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - ./docker/backend_data/mongodb-9:/data/db
+      - ./docker/docker_data/mongodb-9:/data/db
     restart: unless-stopped
 
   postgres:
-    profiles: [postgres]
     image: postgres:18.6
     ports:
       - 5432:5432
@@ -31,11 +30,10 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: backend_app
     volumes:
-      - ./docker/backend_data/postgresql-18:/var/lib/postgresql
+      - ./docker/docker_data/postgresql-18:/var/lib/postgresql
     restart: unless-stopped
 
   pgAdmin:
-    profiles: [postgres]
     image: dpage/pgadmin4:9.19.0
     ports:
       - 5050:80
@@ -47,7 +45,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
     volumes:
-      - ./docker/backend_data/pgadmin_data:/var/lib/pgadmin
+      - ./docker/docker_data/pgadmin-9:/var/lib/pgadmin
     restart: unless-stopped
 
   keycloak:
@@ -60,7 +58,7 @@ services:
     command: start-dev
     restart: unless-stopped
     volumes:
-      - ./docker/backend_data/keycloak-26:/opt/keycloak/data
+      - ./docker/docker_data/keycloak-26:/opt/keycloak/data
     networks:
       - backend-nw
 
@@ -71,6 +69,6 @@ services:
     networks:
       - backend-nw
     volumes:
-      - ./docker/backend_data/redis-8:/data
+      - ./docker/docker_data/redis-8:/data
     command: redis-server --save 60 1 --loglevel warning
     restart: unless-stopped

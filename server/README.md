@@ -25,16 +25,16 @@ Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và c
 
 1. Chạy `pnpm install --frozen-lockfile`.
 2. Tạo `.env` từ `.env.example`, điền thông tin kết nối và cấu hình Keycloak. Dùng database/realm riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
-3. Chạy `docker compose -f docker-compose.provider.yaml up -d` khi đã sẵn sàng dùng database mới. Compose ghim MongoDB 9.0.4, Keycloak 26.8.2, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong các thư mục riêng theo major ở `docker/backend_data`; không tự dùng lại hoặc chuyển đổi dữ liệu cũ. Các cổng mặc định cần còn trống.
+3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Keycloak 26.8.2, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `keycloak-26`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
 4. Trong Keycloak tại http://localhost:8180, tạo realm/client khớp .env. Luồng hiện có dùng client secret, client_credentials và password grant: cấu hình client authentication, service account có quyền quản lý người dùng và direct access grants tương ứng. Realm/client không được tự seed.
 5. Tạo tài khoản quản trị trong Keycloak, điền bốn biến `BOOTSTRAP_ADMIN_*` trong `.env`, rồi chạy `node --env-file=.env tools/bootstrap-admin.cjs` để tạo/cập nhật role administrator và liên kết hồ sơ MongoDB. Xem [RBAC](instructions/rbac.md) về đầu vào và ảnh hưởng tới quyền. Công cụ không tạo tài khoản Keycloak và không tự chạy khi app khởi động. Seed JSON chỉ tạo role, không đủ để đăng nhập quản trị.
 6. Chạy `pnpm dev-lite` để bật ba service bff, user-access và authorizer.
 
 Swagger theo cấu hình mẫu: http://localhost:3300/api/docs.
 
-PostgreSQL/pgAdmin là tùy chọn: `docker compose -f docker-compose.provider.yaml --profile postgres up -d`.
+Compose mặc định bật cả năm dịch vụ, không cần profile. MongoDB dùng cổng 27017, Redis 6379, PostgreSQL 5432, Keycloak http://localhost:8180 và pgAdmin http://localhost:5050.
 
-PostgreSQL 18 mount volume tại `/var/lib/postgresql`; Keycloak 26 dùng `KC_BOOTSTRAP_ADMIN_USERNAME`/`KC_BOOTSTRAP_ADMIN_PASSWORD`. Các thư mục dữ liệu cũ được giữ nguyên. Nếu cần dữ liệu cũ, thực hiện backup và migration riêng trước khi đổi volume; seed role chỉ chạy lên database mới được chọn rõ.
+PostgreSQL 18 mount volume tại `/var/lib/postgresql`; Keycloak 26 dùng `KC_BOOTSTRAP_ADMIN_USERNAME`/`KC_BOOTSTRAP_ADMIN_PASSWORD`. Các thư mục dữ liệu cũ như `postgres_data` (PostgreSQL 17) được giữ nguyên trong `docker/docker_data`. Nếu cần dữ liệu cũ, thực hiện backup và migration riêng trước khi đổi volume; seed role chỉ chạy lên database mới được chọn rõ. Khi chuyển thư mục dữ liệu đang dùng, dừng container trước khi di chuyển và giữ đúng phiên bản database.
 
 ## Phát triển nghiệp vụ mới
 

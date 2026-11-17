@@ -12,7 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../utils/src/lib/env-number.ts"],
   "exclude": [
     "jest.config.ts",
     "jest.config.cts",
