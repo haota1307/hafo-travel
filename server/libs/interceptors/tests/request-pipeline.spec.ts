@@ -15,6 +15,7 @@ import { Response as ExpressResponse } from 'express';
 import { NEVER, of, throwError } from 'rxjs';
 
 import { PERMISSION } from '@common/constants/enum/role.enum';
+import { USER_TOKEN_CACHE_VERSION_KEY } from '@common/constants/common.constants';
 import { Authorization } from '@common/decorators/authorizer.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
 import { PermissionGuard } from '@common/guards/permissions.guard';
@@ -67,12 +68,12 @@ describe('Auth and request pipeline', () => {
   const now = 1700000000000;
   let request: RequestContext;
   let verifyUserToken: jest.Mock;
-  let getUserById: jest.Mock;
   let cache: { get: jest.Mock; set: jest.Mock; del: jest.Mock };
   let guard: UserGuard;
   const authorized = (exp?: number) =>
     new AuthorizeResponse({
       valid: true,
+      cacheVersion: 'version-1',
       MetadataKeys: {
         jwt:
           exp === undefined
@@ -103,22 +104,15 @@ describe('Auth and request pipeline', () => {
       }),
     );
     cache = {
-      get: jest.fn().mockResolvedValue(undefined),
+      get: jest.fn(async (key: string) =>
+        key === USER_TOKEN_CACHE_VERSION_KEY ? 'version-1' : undefined,
+      ),
       set: jest.fn().mockResolvedValue(undefined),
       del: jest.fn().mockResolvedValue(undefined),
     };
-    getUserById = jest.fn(() =>
-      of({
-        user: {
-          id: 'user-1',
-          roles: [{ permissions: [PERMISSION.USER_CREATE] }],
-        },
-      }),
-    );
     guard = new UserGuard(
       new Reflector(),
       { getService: () => ({ verifyUserToken }) } as unknown as ClientGrpc,
-      { getService: () => ({ getUserById }) } as unknown as ClientGrpc,
       cache as unknown as Cache,
     );
     guard.onModuleInit();
@@ -138,10 +132,12 @@ describe('Auth and request pipeline', () => {
     );
   });
   it('uses a valid unexpired cache without an RPC call', async () => {
-    cache.get.mockResolvedValue(authorized(now / 1000 + 10));
+    const cached = authorized(now / 1000 + 10);
+    cached.MetadataKeys.permissions = [PERMISSION.USER_CREATE];
+    cache.get.mockResolvedValueOnce(cached);
     await expect(guard.canActivate(context(request))).resolves.toBe(true);
     expect(verifyUserToken).not.toHaveBeenCalled();
-    expect(getUserById).toHaveBeenCalledTimes(1);
+    expect(request.userData).toBe(cached);
     expect(request.userData?.MetadataKeys.permissions).toEqual([
       PERMISSION.USER_CREATE,
     ]);
@@ -149,22 +145,28 @@ describe('Auth and request pipeline', () => {
   it('revokes permissions even when an old authorization response is cached', async () => {
     const cached = authorized(now / 1000 + 10);
     cached.MetadataKeys.permissions = [PERMISSION.USER_CREATE];
-    cache.get.mockResolvedValue(cached);
-    getUserById.mockReturnValue(of({ user: { id: 'user-1', roles: [] } }));
+    cache.get.mockImplementation(async (key: string) =>
+      key === USER_TOKEN_CACHE_VERSION_KEY ? 'version-2' : cached,
+    );
 
     await expect(guard.canActivate(context(request, 'create'))).resolves.toBe(
       true,
     );
     const permissions = new PermissionGuard(new Reflector());
+    expect(verifyUserToken).toHaveBeenCalledTimes(1);
 
     expect(() => permissions.canActivate(context(request, 'create'))).toThrow(
       'Permission denied',
     );
   });
 
-  it('rejects a deleted application user despite a valid cached token', async () => {
-    cache.get.mockResolvedValue(authorized(now / 1000 + 10));
-    getUserById.mockReturnValue(of({}));
+  it('rejects a removed user after the authorization cache is invalidated', async () => {
+    cache.get.mockImplementation(async (key: string) =>
+      key === USER_TOKEN_CACHE_VERSION_KEY
+        ? 'version-2'
+        : authorized(now / 1000 + 10),
+    );
+    verifyUserToken.mockReturnValue(of({ valid: false }));
 
     await expect(guard.canActivate(context(request))).rejects.toMatchObject({
       status: 401,
@@ -187,7 +189,7 @@ describe('Auth and request pipeline', () => {
     },
   );
   it('rejects an expired cached token if authorizer rejects it', async () => {
-    cache.get.mockResolvedValue(authorized(now / 1000 - 1));
+    cache.get.mockResolvedValueOnce(authorized(now / 1000 - 1));
     verifyUserToken.mockReturnValue(
       throwError(() => ({
         code: GrpcStatus.UNAUTHENTICATED,
@@ -215,6 +217,42 @@ describe('Auth and request pipeline', () => {
     cache.set.mockRejectedValue(new Error('Redis unavailable'));
     await expect(guard.canActivate(context(request))).resolves.toBe(true);
     expect(verifyUserToken).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reuse legacy cache entries without an authorization version', async () => {
+    const cached = authorized(now / 1000 + 10);
+    delete cached.cacheVersion;
+    cache.get.mockResolvedValueOnce(cached);
+
+    await expect(guard.canActivate(context(request))).resolves.toBe(true);
+    expect(verifyUserToken).toHaveBeenCalledTimes(1);
+    expect(cache.del).toHaveBeenCalledWith(
+      guard.generateTokenCacheKey('test-token'),
+    );
+  });
+
+  it('keeps the version read before verification when invalidation occurs during an RPC', async () => {
+    verifyUserToken.mockImplementationOnce(() => {
+      cache.get.mockImplementation(async (key: string) =>
+        key === USER_TOKEN_CACHE_VERSION_KEY ? 'version-2' : undefined,
+      );
+
+      return of({
+        valid: true,
+        metadata: {
+          userId: 'user-1',
+          permissions: [PERMISSION.USER_CREATE],
+          jwtJson: JSON.stringify({ exp: now / 1000 + 60 }),
+        },
+      });
+    });
+    await guard.canActivate(context(request));
+    const cached = cache.set.mock.calls[0][1];
+    expect(cached.cacheVersion).toBe('version-1');
+    cache.get.mockResolvedValueOnce(cached);
+    await guard.canActivate(context(request));
+
+    expect(verifyUserToken).toHaveBeenCalledTimes(2);
   });
   it('returns 401 for permissions without a user instead of crashing', () => {
     const permissions = new PermissionGuard(new Reflector());

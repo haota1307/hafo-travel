@@ -72,7 +72,7 @@ Các link dưới đây tính từ tài liệu này. Đọc file mẫu cùng dep
 
 ## Quyền truy cập và dữ liệu
 
-`UserGuard` đọc `Authorization` và yêu cầu xác thực mặc định; metadata method ưu tiên class, permission vẫn buộc xác thực. `PermissionGuard` đọc `Permissions`. Khi thêm endpoint, xác định rõ public/secured và permission theo yêu cầu, đồng thời kiểm tra cả hai guard; enum permission không tự bảo vệ endpoint. Mô hình user → đúng một role → permissions và API quản trị nằm trong [RBAC](rbac.md). Dùng cache JWT vẫn phải đọc user/role hiện tại để áp dụng thu hồi quyền.
+`UserGuard` đọc `Authorization` và yêu cầu xác thực mặc định; metadata method ưu tiên class, permission vẫn buộc xác thực. `PermissionGuard` đọc `Permissions`. Khi thêm endpoint, xác định rõ public/secured và permission theo yêu cầu, đồng thời kiểm tra cả hai guard; enum permission không tự bảo vệ endpoint. Mô hình user → đúng một role → permissions và API quản trị nằm trong [RBAC](rbac.md). Guard dùng lại JWT/user/permissions trong Redis khi cache còn hạn và cùng version; BFF đổi version khi cập nhật role hoặc thay role user để request tiếp theo xác minh lại.
 
 Schema user/role nằm tại `libs/schemas/src/lib/`. Mapper user chọn rõ từng trường và chuyển role ID sang `Types.ObjectId`; không đưa password vào dữ liệu MongoDB hoặc response. Role seed tại `apps/user-access/src/seeds/role.json` không tự tạo tài khoản quản trị Keycloak.
 

@@ -15,6 +15,7 @@ export class AuthorizedMetadata {
 
 export class AuthorizeResponse {
   valid = false;
+  cacheVersion?: string;
   MetadataKeys = new AuthorizedMetadata();
 
   constructor(payload?: Partial<AuthorizeResponse>) {

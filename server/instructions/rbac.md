@@ -12,8 +12,9 @@ Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, d
 
 - `UserGuard` yêu cầu token mặc định. Endpoint public phải gắn `Authorization({ secured: false })`; login là public. Endpoint có `Permissions` vẫn cần xác thực dù được đánh dấu public.
 - `PermissionGuard` yêu cầu đủ tất cả permission khai báo, trả 401 khi thiếu xác thực và 403 khi thiếu quyền.
-- Redis cache kết quả xác minh JWT tối đa 30 phút, không vượt `exp`. Khi dùng cache, guard vẫn gọi User-access để lấy user/role/permission mới. Token không có `exp` không được cache.
-- Đổi role hoặc sửa permission có hiệu lực với lần kiểm tra quyền tiếp theo; không chờ token hết hạn. Request đã vượt qua guard trước thay đổi có thể tiếp tục xử lý.
+- Redis cache kết quả xác minh JWT cùng user và permissions tối đa 30 phút, không vượt `exp`. Cache hit có cùng `cacheVersion` dùng lại toàn bộ kết quả, không gọi Authorizer hoặc User-access. Token không có `exp` không được cache; cache cũ chưa có version phải xác minh lại.
+- Sau khi đổi role user hoặc cập nhật role thành công qua BFF, controller đổi khóa Redis `user-token:version` (không TTL). Các token cache thuộc version cũ đều phải xác minh lại ở request tiếp theo; không cần đăng nhập lại. Cache entry cũ tự hết TTL. Version được đọc trước RPC xác minh nên kết quả RPC cũ ghi muộn không thể hồi sinh cache sau invalidation. Request đã vượt qua guard trước thay đổi có thể tiếp tục xử lý.
+- Redis lỗi thì guard xác minh qua Authorizer và không tin kết quả cache đã đọc dở. Lỗi ghi version được trả về caller, không báo cập nhật quyền thành công khi chưa hoàn tất invalidation; dữ liệu MongoDB có thể đã cập nhật trước lỗi này. Thao tác đổi quyền trực tiếp qua gRPC, MongoDB hoặc bootstrap không đi qua BFF phải đổi cùng version Redis hoặc vô hiệu hóa cache riêng; hiện các luồng đó chưa tự invalidation. Khi bổ sung endpoint đổi/xóa user hoặc quyền, phải áp dụng invalidation tương tự.
 - Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi tạo tài khoản Keycloak. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
 - Không xóa role đang được user sử dụng; API trả 409. Cần chuyển user sang role khác trước khi xóa. Role có thể có permission rỗng nếu user không được thực hiện tác vụ quản trị.
 

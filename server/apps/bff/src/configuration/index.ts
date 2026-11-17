@@ -10,6 +10,7 @@ class Configuration extends BaseConfiguration {
   @ValidateNested()
   @Type(() => GrpcConfiguration)
   GRPC_SERV = new GrpcConfiguration();
+
   @ValidateNested()
   @Type(() => AppConfiguration)
   APP_CONFIG = new AppConfiguration();

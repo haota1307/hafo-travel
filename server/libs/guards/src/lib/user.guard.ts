@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
@@ -16,7 +16,10 @@ import type { Cache } from 'cache-manager';
 import type { JwtPayload } from 'jsonwebtoken';
 
 import { GRPC_SERVICES } from '@common/configuration/grpc.config';
-import { MetadataKeys } from '@common/constants/common.constants';
+import {
+  MetadataKeys,
+  USER_TOKEN_CACHE_VERSION_KEY,
+} from '@common/constants/common.constants';
 import { Permissions } from '@common/decorators/permission.decorator';
 import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
 import type { RequestContext } from '@common/interfaces/gateway/request-context.interface';
@@ -24,10 +27,6 @@ import {
   AUTHORIZER_SERVICE_NAME,
   type AuthorizerServiceClient,
 } from '@common/interfaces/grpc/authorizer/v1/authorizer';
-import {
-  USER_ACCESS_SERVICE_NAME,
-  type UserAccessServiceClient,
-} from '@common/interfaces/grpc/user-access/v1/user-access';
 import { getAccessToken, setUserData } from '@common/utils/request.util';
 import { requestGrpcData } from '@common/utils/rpc.util';
 
@@ -35,21 +34,15 @@ import { requestGrpcData } from '@common/utils/rpc.util';
 export class UserGuard implements CanActivate, OnModuleInit {
   private readonly logger = new Logger(UserGuard.name);
   private authorizer: AuthorizerServiceClient;
-  private users: UserAccessServiceClient;
 
   constructor(
     private readonly reflector: Reflector,
     @Inject(GRPC_SERVICES.AUTHORIZER_SERVICE)
     private readonly authorizerClient: ClientGrpc,
-    @Inject(GRPC_SERVICES.USER_ACCESS_SERVICE)
-    private readonly userAccessClient: ClientGrpc,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   onModuleInit() {
-    this.users = this.userAccessClient.getService<UserAccessServiceClient>(
-      USER_ACCESS_SERVICE_NAME,
-    );
     this.authorizer = this.authorizerClient.getService<AuthorizerServiceClient>(
       AUTHORIZER_SERVICE_NAME,
     );
@@ -79,42 +72,40 @@ export class UserGuard implements CanActivate, OnModuleInit {
 
     const cacheKey = this.generateTokenCacheKey(token);
     let cached: AuthorizeResponse | undefined;
+    let cacheVersion: string | undefined;
 
     try {
-      cached = await this.cacheManager.get<AuthorizeResponse>(cacheKey);
+      [cached, cacheVersion] = await Promise.all([
+        this.cacheManager.get<AuthorizeResponse>(cacheKey),
+        this.cacheManager.get<string>(USER_TOKEN_CACHE_VERSION_KEY),
+      ]);
+
+      if (!cacheVersion) {
+        cacheVersion = randomUUID();
+        await this.cacheManager.set(
+          USER_TOKEN_CACHE_VERSION_KEY,
+          cacheVersion,
+          0,
+        );
+      }
     } catch {
+      cached = undefined;
+      cacheVersion = undefined;
       this.logger.warn('Token cache read failed; verifying with authorizer');
     }
 
-    if (cached?.valid && this.cacheTtl(cached) > 0) {
+    if (
+      cached?.valid &&
+      cached.cacheVersion === cacheVersion &&
+      this.cacheTtl(cached) > 0
+    ) {
       const subject = cached.MetadataKeys.jwt?.sub;
 
       if (typeof subject !== 'string' || !subject) {
         throw new UnauthorizedException('Invalid token subject');
       }
 
-      const { user } = await requestGrpcData(
-        this.users.getUserById,
-        { userId: subject },
-        { processId: request.processId },
-      );
-
-      if (!user) {
-        throw new UnauthorizedException('User not found');
-      }
-
-      const current = new AuthorizeResponse({
-        valid: true,
-        MetadataKeys: {
-          jwt: cached.MetadataKeys.jwt,
-          user,
-          userId: user.id,
-          permissions: [
-            ...new Set(user.roles.flatMap((role) => role.permissions)),
-          ],
-        },
-      });
-      setUserData(request, current);
+      setUserData(request, cached);
 
       return true;
     }
@@ -156,6 +147,7 @@ export class UserGuard implements CanActivate, OnModuleInit {
 
     const result = new AuthorizeResponse({
       valid: response.valid,
+      cacheVersion,
       MetadataKeys: {
         userId: response.metadata.userId,
         user: response.metadata.user,
@@ -166,7 +158,7 @@ export class UserGuard implements CanActivate, OnModuleInit {
     setUserData(request, result);
     const ttl = this.cacheTtl(result);
 
-    if (ttl > 0) {
+    if (ttl > 0 && cacheVersion) {
       try {
         await this.cacheManager.set(cacheKey, result, ttl);
       } catch {

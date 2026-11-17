@@ -1,3 +1,6 @@
+import { randomUUID } from 'node:crypto';
+
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -10,9 +13,11 @@ import {
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { map } from 'rxjs';
+import type { Cache } from 'cache-manager';
+import { concatMap, map } from 'rxjs';
 
 import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import { USER_TOKEN_CACHE_VERSION_KEY } from '@common/constants/common.constants';
 import { PERMISSION } from '@common/constants/enum/role.enum';
 import { Authorization } from '@common/decorators/authorizer.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
@@ -37,6 +42,7 @@ export class UserController implements OnModuleInit {
   constructor(
     @Inject(GRPC_SERVICES.USER_ACCESS_SERVICE)
     private readonly userAccessClient: ClientGrpc,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   onModuleInit() {
@@ -78,6 +84,16 @@ export class UserController implements OnModuleInit {
       this.users.setUserRoles,
       { userId, roles: body.roles },
       { processId },
-    ).pipe(map((response) => response.user));
+    ).pipe(
+      concatMap(async (response) => {
+        await this.cacheManager.set(
+          USER_TOKEN_CACHE_VERSION_KEY,
+          randomUUID(),
+          0,
+        );
+
+        return response.user;
+      }),
+    );
   }
 }

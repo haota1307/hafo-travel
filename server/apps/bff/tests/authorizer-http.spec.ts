@@ -24,6 +24,7 @@ import type { SigningKey } from 'jwks-rsa';
 import { Types } from 'mongoose';
 
 import { GRPC_SERVICES, grpcOptions } from '@common/configuration/grpc.config';
+import { USER_TOKEN_CACHE_VERSION_KEY } from '@common/constants/common.constants';
 import { ROLE, PERMISSION } from '@common/constants/enum/role.enum';
 import { Authorization } from '@common/decorators/authorizer.decorator';
 import { PermissionGuard } from '@common/guards/permissions.guard';
@@ -196,10 +197,15 @@ describe('BFF HTTP over real gRPC services', () => {
       return role;
     }),
   };
+  const cachedValues = new Map<string, unknown>();
   const cache = {
-    get: jest.fn().mockResolvedValue(undefined),
-    set: jest.fn().mockResolvedValue(undefined),
-    del: jest.fn().mockResolvedValue(undefined),
+    get: jest.fn(async (key: string) => structuredClone(cachedValues.get(key))),
+    set: jest.fn<Promise<void>, [string, unknown, number?]>(
+      async (key, value) => {
+        cachedValues.set(key, structuredClone(value));
+      },
+    ),
+    del: jest.fn(async (key: string) => cachedValues.delete(key)),
   };
 
   beforeAll(async () => {
@@ -324,6 +330,7 @@ describe('BFF HTTP over real gRPC services', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    cachedValues.clear();
     administrator.permissions = Object.values(PERMISSION);
     fixture.roles = [administrator];
   });
@@ -446,6 +453,7 @@ describe('BFF HTTP over real gRPC services', () => {
     expect(forbidden.status).toBe(403);
     expect(keycloak.createUser).not.toHaveBeenCalled();
     administrator.permissions.push(PERMISSION.USER_ASSIGN_ROLES);
+    cachedValues.clear();
     const invalid = await post('user', {
       ...input,
       roles: [new Types.ObjectId().toString()],
@@ -502,7 +510,9 @@ describe('BFF HTTP over real gRPC services', () => {
     const replacement = (await created.json()) as { data: { id: string } };
     const me = await request('user/me');
     expect(me.status).toBe(200);
-    const cached = cache.set.mock.calls[0][1];
+    const cached = cache.set.mock.calls.find(
+      ([key]) => key !== USER_TOKEN_CACHE_VERSION_KEY,
+    )?.[1];
     const changed = await request(`user/${fixture.userId}/roles`, 'PATCH', {
       roles: [replacement.data.id],
     });
@@ -523,7 +533,9 @@ describe('BFF HTTP over real gRPC services', () => {
     const id = administrator.id;
     const me = await request('user/me');
     expect(me.status).toBe(200);
-    const cached = cache.set.mock.calls[0][1];
+    const cached = cache.set.mock.calls.find(
+      ([key]) => key !== USER_TOKEN_CACHE_VERSION_KEY,
+    )?.[1];
     const updated = await request(`role/${id}`, 'PUT', {
       name: administrator.name,
       description: administrator.description,
@@ -550,6 +562,7 @@ describe('BFF HTTP over real gRPC services', () => {
     }
 
     fixture.roles = [role];
+    cachedValues.clear();
     const me = await request('user/me');
     expect(me.status).toBe(200);
     const cached = cache.set.mock.calls.at(-1)?.[1];
@@ -660,10 +673,27 @@ describe('BFF HTTP over real gRPC services', () => {
       }),
       expect.any(Number),
     );
-    const ttl = cache.set.mock.calls[0][2];
+    const ttl = cache.set.mock.calls.find(
+      ([key]) => key !== USER_TOKEN_CACHE_VERSION_KEY,
+    )?.[2];
 
     expect(ttl).toBeGreaterThan(0);
     expect(ttl).toBeLessThanOrEqual(60000);
+  });
+
+  it('reuses cached user and permissions without another user lookup', async () => {
+    const first = await request('user/me');
+    const second = await request('user/me');
+
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect(await second.json()).toMatchObject({
+      data: {
+        user: { id: fixture.id },
+        permissions: Object.values(PERMISSION),
+      },
+    });
+    expect(repository.getByUserId).toHaveBeenCalledTimes(1);
   });
 
   it('keeps a missing lookup optional instead of fabricating an empty user', async () => {

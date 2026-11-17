@@ -1,8 +1,9 @@
-import { envNumber } from '@common/utils/env-number.util';
 import { createKeyv } from '@keyv/redis';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
+import { envNumber } from '@common/utils/env-number.util';
 
 export class RedisConfiguration {
   @IsString()
@@ -25,6 +26,7 @@ export class RedisConfiguration {
 }
 
 export const RedisProvider = CacheModule.registerAsync({
+  isGlobal: true,
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
@@ -33,7 +35,9 @@ export const RedisProvider = CacheModule.registerAsync({
     const ttl = configService.get<number>('REDIS_CONFIG.TTL');
 
     return {
-      stores: [createKeyv({ url: `redis://${host}:${port}` })],
+      stores: [
+        createKeyv({ url: `redis://${host}:${port}` }, { throwOnErrors: true }),
+      ],
       ttl,
     };
   },
