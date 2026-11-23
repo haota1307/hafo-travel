@@ -740,21 +740,6 @@
 .public-site .footer-top__contact a {
   overflow-wrap: anywhere;
 }
-.public-site .site-direct-contact {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 32px;
-}
-.public-site .site-direct-contact a {
-  font-size: 18px;
-  letter-spacing: -0.025em;
-  overflow-wrap: anywhere;
-}
-.public-site .site-direct-contact a:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
 .public-site .contact-us__illustration {
   width: 100%;
   height: 100%;
@@ -994,9 +979,6 @@
   .public-site .legal-content__text {
     padding-right: 0;
     width: 100%;
-  }
-  .public-site .site-direct-contact a {
-    font-size: 17px;
   }
 }
 

@@ -1,5 +1,4 @@
 import { publicImages } from "../data/image-assets";
-import { publicSiteConfig } from "../site.config";
 import { SiteMark } from "@/features/public-site/components/site-mark";
 import { useTranslations } from "next-intl";
 import { PublicImage } from "@/features/public-site/components/public-image";
@@ -47,15 +46,6 @@ export function ContactsPage() {
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="site-direct-contact">
-                  <h2 className="body-md">{t("contactsPage.directContact")}</h2>
-                  <a href={`tel:${publicSiteConfig.phone}`}>
-                    {publicSiteConfig.phone}
-                  </a>
-                  <a href={`mailto:${publicSiteConfig.email}`}>
-                    {publicSiteConfig.email}
-                  </a>
                 </div>
                 <ContactForm />
               </div>
