@@ -7,7 +7,7 @@
 
 Trước khi sửa code:
 
-- Frontend: đọc `client/documents/instructions.md`.
+- Frontend: đọc `client/documents/instructions.md`. Khi thêm hoặc sửa feature gọi API, áp dụng phần [Mẫu module gọi API](client/documents/instructions.md#mẫu-module-gọi-api).
 - Backend: đọc `server/instructions/README.md` và các tài liệu được liên kết.
 - API contract, auth hoặc tích hợp FE–BE: đọc cả hai tài liệu.
 - Kiểm tra source và tái sử dụng pattern hiện có; giữ thay đổi của người dùng.

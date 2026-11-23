@@ -48,6 +48,16 @@ proxy.ts                      Locale middleware
 - Feature gom `<domain>.api.ts`, `<domain>.queries.ts`, `<domain>.schema.ts` và `components/`. Schema riêng nằm cạnh feature; chỉ đưa schema ra thư mục dùng chung khi thực sự có nhiều nơi sử dụng. Không tạo module hoặc thư mục rỗng trước nghiệp vụ.
 - Trình bày theo `AGENTS.md` và formatter hiện có: luôn có `{}` cho nhánh/vòng lặp, tách các bước xử lý bằng dòng trống, tách khai báo schema/type độc lập. Frontend dùng Prettier mặc định. Chạy formatter trong phạm vi sửa; ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước.
 
+## Mẫu module gọi API
+
+Đối chiếu [mã mẫu Vai trò](#ví-dụ-module-vai-trò) khi thêm hoặc sửa feature gọi API. Dùng contract của endpoint đang triển khai để xác định schema và query key.
+
+- `page.tsx` gắn màn hình vào route. `features/<domain>/components/` giữ trạng thái tương tác, form, thông báo và gọi hook của feature.
+- `<domain>.schema.ts` mô tả request, response và dữ liệu form khi cần. Kiểu dữ liệu được suy ra từ schema. Form kiểm tra dữ liệu nhập, API kiểm tra `payload` bằng schema nếu cần xác thực response ở runtime.
+- `<domain>.api.ts` khai báo một object `<domain>ApiRequest` với method theo nghiệp vụ như `list`, `detail`, `create`, `update`. Method tập trung HTTP verb, path, query params và body, rồi gọi `@/lib/http`. Giữ tham số và kiểu trả về theo contract đã đối chiếu ở BFF.
+- `<domain>.queries.ts` khai báo query key và các hook đọc/ghi. Query trả dữ liệu cho component, truyền `signal` xuống API và đưa các tham số ảnh hưởng kết quả vào key. Mutation làm mới đúng danh sách hoặc chi tiết bị ảnh hưởng. Component xử lý toast và đóng form sau khi thao tác thành công.
+- Kiểm tra HTTP verb, path, quyền, envelope và cấu trúc dữ liệu ở BFF trước khi viết API/schema. Chọn `useQuery` cho danh sách thông thường và `useInfiniteQuery` khi giao diện cần tải thêm và endpoint có contract phân trang. Session và xử lý 401 thuộc tầng tích hợp xác thực dùng chung.
+
 ## Luồng API và contract
 
 ```text
@@ -80,65 +90,27 @@ Endpoint hiện có: `POST /authorizer/login` public trả `data: { accessToken,
 - Form dùng React Hook Form + Zod; map message validation theo locale. Chặn submit lặp bằng `isPending`, chỉ đóng form sau thành công.
 - Quy ước số tiền, dấu thập phân, đơn vị và làm tròn phải theo nghiệp vụ đã xác nhận.
 
-### Ví dụ feature (minh họa, /items chưa tồn tại)
+### Ví dụ module Vai trò
 
-```ts
-// features/items/items.schema.ts
-import { z } from "zod";
+Mã tham chiếu dựa trên `GET /role`, `GET /role/:id` và `PUT /role/:id` trong [controller BFF](../../server/apps/bff/src/app/modules/role/controllers/role.controller.ts) và [hợp đồng RBAC](../../server/instructions/rbac.md#http-api).
 
-export const ItemSchema = z.object({ id: z.string(), name: z.string() });
+| File | Mẫu triển khai |
+| --- | --- |
+| [roles.schema.ts](examples/roles/roles.schema.ts) | Schema cho danh sách, chi tiết và body cập nhật. BFF kiểm tra permission theo danh mục hiện hành. |
+| [roles.api.ts](examples/roles/roles.api.ts) | API object gọi `http`, truyền `signal` và kiểm tra `payload` đã bóc từ envelope. |
+| [roles.queries.ts](examples/roles/roles.queries.ts) | Query key, điều kiện tải chi tiết và làm mới danh sách cùng đúng ID sau cập nhật. |
 
-export const ItemsSchema = z.object({
-  items: z.array(ItemSchema),
-  total: z.number(),
-  page: z.number(),
-  limit: z.number(),
-  totalPages: z.number().optional(),
-});
+Luồng **mở danh sách → chọn vai trò → lưu chỉnh sửa** đi qua các lớp sau:
 
-export type ItemsType = z.infer<typeof ItemsSchema>;
-```
+1. **Mở danh sách.** Route `page.tsx` render màn hình trong `features/roles/components/`. Màn hình gọi `useGetRoles(canReadList)`. Hook dùng key `['roles', 'list']`, gọi `rolesApiRequest.list(signal)` và trả mảng lấy từ `payload`. Màn hình hiển thị trạng thái tải, lỗi hoặc danh sách rỗng theo kết quả query.
+2. **Chọn vai trò.** Màn hình giữ `selectedId` và gọi `useGetRole(selectedId, canReadDetail)`. Chi tiết có cache riêng theo ID và chỉ tải khi có ID cùng quyền đọc chi tiết. Khi mở form sửa, khởi tạo form từ dữ liệu của ID đang chọn và dùng `zodResolver(UpdateRoleBodySchema)` để kiểm tra dữ liệu nhập.
+3. **Lưu chỉnh sửa.** Component dùng `useUpdateRole()` và gọi `mutateAsync({ id, body })` trong `handleSubmit`. API gọi `PUT /role/:id`. Sau thành công, hook làm mới cache danh sách và chi tiết của ID vừa sửa, component báo thành công và đóng form. Trong lúc lưu, dùng `isPending` để khóa nút lưu. Khi lỗi, giữ form mở và hiển thị thông báo đã dịch.
 
-```ts
-// features/items/items.api.ts
-import http from "@/lib/http";
-import { ItemsSchema } from "./items.schema";
+`canReadList`, `canReadDetail` và quyền sửa lấy từ session theo quyền `role.get_all`, `role.get_by_id` và `role.update`. BFF xác thực và kiểm tra quyền cho từng request.
 
-export const itemsApiRequest = {
-  async list(query: { page: number; search?: string }, signal?: AbortSignal) {
-    const params = new URLSearchParams({ page: String(query.page) });
-    if (query.search) {
-      params.set("search", query.search);
-    }
+Khi áp dụng cho feature khác, đặt mã triển khai tại `client/features/<domain>/` và đối chiếu endpoint, DTO cùng response của feature đó trước khi chọn schema, hook và tham số của query key. Ví dụ, danh sách có bộ lọc gửi lên server cần đưa bộ lọc vào key. Màn hình chỉ đọc dùng query, màn hình có thao tác ghi dùng thêm mutation và xác định dữ liệu cần làm mới.
 
-    const res = await http.get<unknown>(`/items?${params}`, { signal });
-
-    return { ...res, payload: ItemsSchema.parse(res.payload) };
-  },
-};
-```
-
-```ts
-// features/items/items.queries.ts
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
-import { itemsApiRequest } from "./items.api";
-type Query = Parameters<typeof itemsApiRequest.list>[0];
-
-export const itemQueryKeys = {
-  all: ["items"] as const,
-  list: (query: Query) => ["items", "list", query] as const,
-};
-
-export function useGetItems(query: Query) {
-  return useQuery({
-    queryKey: itemQueryKeys.list(query),
-    queryFn: async ({ signal }) =>
-      (await itemsApiRequest.list(query, signal)).payload,
-  });
-}
-```
+Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, module cần lớp HTTP bóc đúng envelope BFF và phiên đăng nhập được truyền qua proxy.
 
 ### State, query và tìm kiếm
 
