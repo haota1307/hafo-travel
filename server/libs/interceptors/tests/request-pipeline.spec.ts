@@ -16,6 +16,7 @@ import { NEVER } from 'rxjs';
 import { PERMISSION } from '@common/constants/enum/role.enum';
 import { Authorization } from '@common/decorators/authorization.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
+import type { AuthorizationService } from '@common/guards/authorization.service';
 import { PermissionGuard } from '@common/guards/permissions.guard';
 import { UserGuard } from '@common/guards/user.guard';
 import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
@@ -65,7 +66,9 @@ describe('Auth and request pipeline', () => {
   let request: RequestContext;
   const verifyAsync = jest.fn();
   const jwt = { verifyAsync } as unknown as JwtService;
-  const guard = new UserGuard(new Reflector(), jwt);
+  const guard = new UserGuard(new Reflector(), jwt, {
+    permissions: jest.fn(),
+  } as unknown as AuthorizationService);
 
   beforeEach(() => {
     verifyAsync.mockClear();

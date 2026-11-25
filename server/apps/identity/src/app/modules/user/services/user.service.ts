@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import type { Types } from 'mongoose';
 
+import { AuthorizationCache } from '@common/configuration/authorization-cache.config';
 import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
 import type { CreateUserRequest } from '@common/interfaces/grpc/identity/v1/identity';
 
@@ -19,6 +20,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly roleService: RoleService,
+    private readonly cache: AuthorizationCache,
   ) {}
 
   async create(data: CreateUserRequest) {
@@ -49,7 +51,9 @@ export class UserService {
 
   async setRoles(userId: string, roles: string[]) {
     const roleIds = await this.roleService.resolveRoleIds(roles);
-    const user = await this.userRepository.setRoles(userId, roleIds);
+    const user = await this.cache.change(this.cache.userKey(userId), () =>
+      this.userRepository.setRoles(userId, roleIds),
+    );
 
     if (!user) {
       throw new NotFoundException(CODE_ERROR.USER_NOT_FOUND);

@@ -5,6 +5,7 @@ import { AppConfiguration } from '@common/configuration/app.config';
 import { BaseConfiguration } from '@common/configuration/base.config';
 import { createConfiguration } from '@common/configuration/create-configuration';
 import { GrpcConfiguration } from '@common/configuration/grpc.config';
+import { RedisConfiguration } from '@common/configuration/redis.config';
 import { MongoConfig } from '@common/configuration/mongo.config';
 
 import { AuthConfiguration } from './auth.configuration';
@@ -23,6 +24,10 @@ class Configuration extends BaseConfiguration {
   MONGO_CONFIG = new MongoConfig({
     DB_NAME: process.env['IDENTITY_MONGODB_DB_NAME'] || 'identity',
   });
+
+  @ValidateNested()
+  @Type(() => RedisConfiguration)
+  REDIS_CONFIG = new RedisConfiguration();
 
   @ValidateNested()
   @Type(() => AuthConfiguration)

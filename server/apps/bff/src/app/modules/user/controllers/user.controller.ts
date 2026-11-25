@@ -60,7 +60,7 @@ export class UserController implements OnModuleInit {
   @Get('me')
   @Header('Cache-Control', 'no-store')
   @ApiOperation({
-    summary: 'Get the current profile and access-token permissions',
+    summary: 'Get the current profile and effective permissions',
   })
   me(@UserData() actor: AuthenticatedActor, @ProcessId() processId: string) {
     return requestGrpc(

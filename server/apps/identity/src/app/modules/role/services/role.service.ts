@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Types } from 'mongoose';
 
+import { AuthorizationCache } from '@common/configuration/authorization-cache.config';
 import { PERMISSION } from '@common/constants/enum/role.enum';
 import type { CreateRoleRequest } from '@common/interfaces/grpc/identity/v1/identity';
 
@@ -13,7 +14,10 @@ import { RoleRepository } from '../repositories/role.repository';
 
 @Injectable()
 export class RoleService {
-  constructor(private readonly roleRepository: RoleRepository) {}
+  constructor(
+    private readonly roleRepository: RoleRepository,
+    private readonly cache: AuthorizationCache,
+  ) {}
 
   getAll() {
     return this.roleRepository.getAll();
@@ -45,7 +49,9 @@ export class RoleService {
     const input = this.validateInput(data);
 
     try {
-      const role = await this.roleRepository.update(id, input);
+      const role = await this.cache.change(this.cache.roleKey(id), () =>
+        this.roleRepository.update(id, input),
+      );
 
       if (!role) {
         throw new NotFoundException('Role not found');
@@ -64,7 +70,9 @@ export class RoleService {
       throw new ConflictException('Cannot delete a role assigned to a user');
     }
 
-    const role = await this.roleRepository.delete(id);
+    const role = await this.cache.change(this.cache.roleKey(id), () =>
+      this.roleRepository.delete(id),
+    );
 
     if (!role) {
       throw new NotFoundException('Role not found');

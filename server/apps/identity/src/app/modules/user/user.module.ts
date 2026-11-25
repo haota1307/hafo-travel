@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { AuthorizationCacheModule } from '@common/configuration/authorization-cache.config';
 import { RoleDestination } from '@common/schemas/role.schema';
 import { UserDestination } from '@common/schemas/user.schema';
 
@@ -11,6 +12,7 @@ import { UserService } from './services/user.service';
 
 @Module({
   imports: [
+    AuthorizationCacheModule,
     MongooseModule.forFeature([UserDestination, RoleDestination]),
     RoleModule,
   ],

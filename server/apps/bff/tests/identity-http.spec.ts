@@ -16,6 +16,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Test } from '@nestjs/testing';
 import { Types } from 'mongoose';
 
+import { AuthorizationCache } from '@common/configuration/authorization-cache.config';
+import { AuthorizationService } from '@common/guards/authorization.service';
 import { AccessTokenModule } from '@common/configuration/access-token.config';
 import { GRPC_SERVICES, grpcOptions } from '@common/configuration/grpc.config';
 import {
@@ -73,6 +75,24 @@ describe('BFF HTTP over real gRPC services', () => {
   let userApp: INestMicroservice;
   let userClient: ClientGrpcProxy;
   let baseUrl: string;
+  const entries = new Map<string, unknown>();
+  const cache = {
+    userKey: AuthorizationCache.prototype.userKey,
+    roleKey: AuthorizationCache.prototype.roleKey,
+    async read<T>(key: string, load: () => Promise<T>) {
+      if (!entries.has(key)) {
+        entries.set(key, structuredClone(await load()));
+      }
+
+      return entries.get(key) as T;
+    },
+    async change<T>(key: string, write: () => Promise<T>) {
+      const result = await write();
+      entries.delete(key);
+
+      return result;
+    },
+  };
   const profileId = new Types.ObjectId();
   const fixture: UserWithRoles = {
     _id: profileId,
@@ -206,7 +226,7 @@ describe('BFF HTTP over real gRPC services', () => {
         aud: ACCESS_TOKEN_AUDIENCE,
         sub: fixture.userId,
         profileId: fixture.id,
-        permissions: Object.values(PERMISSION),
+        roleId: administrator.id,
         iat: now,
         exp: now + ACCESS_TOKEN_MAX_AGE_SECONDS,
         ...claims,
@@ -289,6 +309,7 @@ describe('BFF HTTP over real gRPC services', () => {
       providers: [
         UserService,
         RoleService,
+        { provide: AuthorizationCache, useValue: cache },
         { provide: RoleRepository, useValue: roleRepository },
         { provide: UserRepository, useValue: repository },
         { provide: AuthService, useValue: authService },
@@ -306,6 +327,8 @@ describe('BFF HTTP over real gRPC services', () => {
       imports: [AccessTokenModule],
       controllers: [BffUserController, BffRoleController, BffAuthController],
       providers: [
+        AuthorizationService,
+        { provide: AuthorizationCache, useValue: cache },
         { provide: GRPC_SERVICES.IDENTITY_SERVICE, useValue: userClient },
         { provide: APP_GUARD, useClass: UserGuard },
         { provide: APP_GUARD, useClass: PermissionGuard },
@@ -344,6 +367,7 @@ describe('BFF HTTP over real gRPC services', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    entries.clear();
     administrator.permissions = Object.values(PERMISSION);
     fixture.roles = [administrator];
   });
@@ -408,7 +432,7 @@ describe('BFF HTTP over real gRPC services', () => {
     expect((await getProtected('role', refreshedPair.accessToken)).status).toBe(
       200,
     );
-    expect(repository.getByUserId).not.toHaveBeenCalled();
+    expect(repository.getByUserId).toHaveBeenCalledTimes(1);
   });
 
   it('rejects unsigned refresh credentials before forwarding refresh or logout', async () => {
@@ -482,7 +506,12 @@ describe('BFF HTTP over real gRPC services', () => {
     },
   );
 
-  it('uses signed permissions until expiry and only queries Identity for endpoint data', async () => {
+  it('reuses cached grants and applies role edits to an existing JWT on the next request', async () => {
+    expect((await getProtected('role')).status).toBe(200);
+    expect((await getProtected('role')).status).toBe(200);
+    expect(repository.getByUserId).toHaveBeenCalledTimes(1);
+    expect(roleRepository.getById).toHaveBeenCalledTimes(1);
+
     await requestGrpcData(users.updateRole, {
       id: administrator.id,
       name: administrator.name,
@@ -490,11 +519,14 @@ describe('BFF HTTP over real gRPC services', () => {
       permissions: [],
     });
 
-    expect((await getProtected('role')).status).toBe(200);
-    const freshAccessToken = issueAccessToken({ permissions: [] });
-    expect((await getProtected('role', freshAccessToken)).status).toBe(403);
-    expect(repository.getByUserId).not.toHaveBeenCalled();
-    expect(roleRepository.getAll).toHaveBeenCalledTimes(1);
+    expect((await getProtected('role')).status).toBe(403);
+    const legacyToken = issueAccessToken({
+      roleId: undefined,
+      permissions: [PERMISSION.ROLE_GET_ALL],
+    });
+    expect((await getProtected('role', legacyToken)).status).toBe(403);
+    expect(roleRepository.getById).toHaveBeenCalledTimes(2);
+    expect(repository.getByUserId).toHaveBeenCalledTimes(1);
 
     const me = await getProtected('user/me');
 
@@ -506,12 +538,10 @@ describe('BFF HTTP over real gRPC services', () => {
           userId: fixture.userId,
           roles: [{ id: administrator.id, permissions: [] }],
         },
-        permissions: expect.arrayContaining([PERMISSION.ROLE_GET_ALL]),
+        permissions: [],
       },
     });
-    expect(repository.getByUserId).toHaveBeenCalledTimes(1);
-    expect(repository.getByUserId).toHaveBeenCalledWith(fixture.userId);
-    expect((await getProtected('user/me', freshAccessToken)).status).toBe(200);
+    expect(repository.getByUserId).toHaveBeenCalledTimes(2);
   });
 
   it('rejects a profile lookup whose ID does not match the signed profile ID', async () => {
@@ -554,7 +584,7 @@ describe('BFF HTTP over real gRPC services', () => {
       }),
       issueAccessToken({ iss: 'another-issuer' }),
       issueAccessToken({ tokenUse: REFRESH_TOKEN_USE }),
-      issueAccessToken({ permissions: [PERMISSION.ROLE_GET_ALL, 0] }),
+      issueAccessToken({ roleId: 0 }),
     ]) {
       expect((await getProtected('user/me', token)).status).toBe(401);
     }
@@ -607,6 +637,7 @@ describe('BFF HTTP over real gRPC services', () => {
     }
 
     const { id } = created.role;
+    expect((await getProtected('role')).status).toBe(200);
 
     await expect(
       requestGrpcData(users.createRole, input),
@@ -631,6 +662,7 @@ describe('BFF HTTP over real gRPC services', () => {
     ).resolves.toMatchObject({
       user: { roles: [expect.objectContaining({ id })] },
     });
+    expect((await getProtected('role')).status).toBe(403);
     await expect(
       requestGrpcData(users.deleteRole, { id }),
     ).rejects.toMatchObject({ status: 409 });
@@ -638,6 +670,7 @@ describe('BFF HTTP over real gRPC services', () => {
       userId: fixture.userId,
       roles: [administrator.id],
     });
+    expect((await getProtected('role')).status).toBe(200);
     await requestGrpcData(users.deleteRole, { id });
     await expect(requestGrpcData(users.getRole, { id })).rejects.toMatchObject({
       status: 404,

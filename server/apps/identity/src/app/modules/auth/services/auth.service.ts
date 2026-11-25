@@ -52,7 +52,7 @@ export class AuthService {
       throw new UnauthorizedException(CODE_ERROR.INVALID_CREDENTIALS);
     }
 
-    const permissionsLookupStartedAt = Date.now();
+    const profileLookupStartedAt = Date.now();
     const user = await this.users.getAuthProfileByEmail(normalizedEmail);
     const matches = await verifyPassword(password, user?.passwordHash);
 
@@ -60,12 +60,12 @@ export class AuthService {
       throw new UnauthorizedException(CODE_ERROR.INVALID_CREDENTIALS);
     }
 
-    return this.startSession(user, permissionsLookupStartedAt);
+    return this.startSession(user, profileLookupStartedAt);
   }
 
   async startSession(
     user: UserWithRoles | null,
-    permissionsLookupStartedAt: number,
+    profileLookupStartedAt: number,
   ): Promise<AuthTokenPair> {
     if (!this.hasValidRole(user)) {
       throw new UnauthorizedException(CODE_ERROR.INVALID_CREDENTIALS);
@@ -77,7 +77,7 @@ export class AuthService {
     );
     const pair = await this.createTokens(
       user,
-      permissionsLookupStartedAt,
+      profileLookupStartedAt,
       refreshExpiresAt,
     );
 
@@ -108,7 +108,7 @@ export class AuthService {
       throw new UnauthorizedException(CODE_ERROR.UNAUTHORIZED);
     }
 
-    const permissionsLookupStartedAt = Date.now();
+    const profileLookupStartedAt = Date.now();
     const user = await this.users.getAuthProfileById(session.profileId);
 
     if (
@@ -120,7 +120,7 @@ export class AuthService {
 
     const pair = await this.createTokens(
       user,
-      permissionsLookupStartedAt,
+      profileLookupStartedAt,
       session.refreshExpiresAt,
     );
     const rotated = await this.sessions.rotate(
@@ -156,20 +156,20 @@ export class AuthService {
 
   private async createTokens(
     user: UserWithRoles,
-    permissionsLookupStartedAt: number,
+    profileLookupStartedAt: number,
     refreshExpiresAt: Date,
   ): Promise<AuthTokenPair> {
     const issuedAt = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
     const refreshExpiration = Math.floor(
       refreshExpiresAt.getTime() / MILLISECONDS_PER_SECOND,
     );
-    const permissionExpiration =
-      Math.floor(permissionsLookupStartedAt / MILLISECONDS_PER_SECOND) +
+    const profileExpiration =
+      Math.floor(profileLookupStartedAt / MILLISECONDS_PER_SECOND) +
       ACCESS_TOKEN_MAX_AGE_SECONDS;
     const accessExpiration = Math.min(
       issuedAt + this.config.ACCESS_TTL_SECONDS,
       refreshExpiration,
-      permissionExpiration,
+      profileExpiration,
     );
 
     if (accessExpiration <= issuedAt) {
@@ -181,7 +181,7 @@ export class AuthService {
         {
           sub: user.userId,
           profileId: user._id.toHexString(),
-          permissions: user.roles[0].permissions,
+          roleId: user.roles[0].id,
           jti: randomUUID(),
           iat: issuedAt,
         },

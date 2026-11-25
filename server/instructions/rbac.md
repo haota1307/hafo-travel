@@ -10,7 +10,9 @@ Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, d
 
 ## Cơ chế kiểm tra
 
-- `UserGuard` yêu cầu bearer token cho route bảo vệ. BFF tự xác minh chữ ký HS256 bằng secret dùng chung, kiểm tra issuer, audience, thời gian hiệu lực và quyền trong JWT. Việc xác thực access token không cần gọi Identity, MongoDB hoặc Redis. Redis vẫn phục vụ giới hạn tần suất HTTP. Route public có khai báo permission vẫn yêu cầu xác thực.
+- `UserGuard` yêu cầu bearer token cho route bảo vệ. BFF xác minh chữ ký HS256, issuer, audience và thời hạn. Access JWT chứa `sub`, `profileId` và `roleId` tại thời điểm cấp. BFF tra role hiện tại theo `userId` và permissions theo `roleId`. Hai giá trị được cache riêng trong Redis để các user cùng role dùng chung danh sách quyền. Route public có khai báo permission vẫn yêu cầu xác thực.
+- Khi thiếu cache, BFF lấy dữ liệu từ Identity qua gRPC. Identity đánh dấu key trước khi ghi thay đổi role hoặc gán lại role cho user. Trong lúc ghi, request đọc trực tiếp từ Identity. Khi ghi xong, Identity xóa key liên quan. Request sau đó nhận quyền mới ngay cả khi dùng access token đã cấp. Kết quả đọc bắt đầu trước khi đổi quyền không thể ghi đè cache mới.
+- BFF và Identity phải dùng chung Redis trong cùng môi trường. TTL của cache phân quyền lấy từ `REDIS_TTL` (giây). Nếu Redis lỗi khi đọc quyền, guard tra Identity. Nếu Identity không thể đánh dấu key trên Redis trước khi ghi, thao tác thay đổi phân quyền trả 503.
 - `PermissionGuard` yêu cầu đủ tất cả permission khai báo, trả 401 khi thiếu xác thực và 403 khi thiếu quyền.
 - Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi lưu hồ sơ. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
 - Không xóa role đang được user sử dụng; API trả 409. Cần chuyển user sang role khác trước khi xóa. Role có thể có permission rỗng nếu user không được thực hiện tác vụ quản trị.
@@ -68,16 +70,16 @@ Khi chạy local, đặt hai giá trị khác nhau trong `server/.env`. Sinh đ�
 | --- | --- | --- |
 | `POST /api/auth/login` | `{ email, password }` | `{ accessToken, refreshToken, accessExpiresIn, refreshExpiresIn }` |
 | `POST /api/auth/refresh` | `{ refreshToken }` | Cặp token mới và thời gian còn lại tính bằng giây |
-| `GET /api/user/me` | Header `Authorization: Bearer <accessToken>` | Hồ sơ và role hiện tại từ Identity, `permissions` cấp cao nhất là quyền theo JWT |
+| `GET /api/user/me` | Header `Authorization: Bearer <accessToken>` | Hồ sơ và role hiện tại từ Identity, `permissions` cấp cao nhất là quyền hiệu lực của role hiện tại |
 | `POST /api/auth/logout` | `{ refreshToken }` | `{ loggedOut: true }`, có thể gọi lặp với cùng token |
 
 Login ưu tiên email khớp chính xác của hồ sơ cũ. Tài khoản tự đăng ký dùng email chữ thường. Email chưa có tài khoản, hồ sơ chưa cấp mật khẩu và mật khẩu sai đều trả 401 với cùng mã. Redis giới hạn mặc định 100 request mỗi phút theo địa chỉ kết nối và endpoint, riêng login thêm 10 lần mỗi phút theo email. Sau reverse proxy, nhiều người có thể dùng chung hạn mức IP. BFF trả 429 khi vượt hạn mức.
 
-Identity băm mật khẩu bằng scrypt với salt riêng. Khi login hoặc refresh, Identity đọc hồ sơ và quyền mới nhất rồi ký access JWT cho BFF. `AUTH_ACCESS_TTL_SECONDS` mặc định 300, thời hạn thực tế tối đa 5 phút và được giới hạn bởi thời gian còn lại của phiên.
+Identity băm mật khẩu bằng scrypt với salt riêng. Khi login hoặc refresh, Identity đọc hồ sơ cùng role hiện tại rồi ký access JWT cho BFF. `AUTH_ACCESS_TTL_SECONDS` mặc định 300, thời hạn thực tế tối đa 5 phút và được giới hạn bởi thời gian còn lại của phiên.
 
 Refresh JWT có `jti` riêng cho mỗi lần cấp. `AUTH_REFRESH_TTL_SECONDS` mặc định 604800 (7 ngày), tính từ lần đăng nhập. Xoay token giữ nguyên mốc hết hạn đó. Khi refresh, Identity kiểm tra chữ ký và các claim rồi dùng bản băm SHA-256 của toàn bộ refresh JWT để tìm phiên còn hiệu lực trong MongoDB. Bản ghi phiên giữ bản băm refresh, ID hồ sơ và thời hạn. TTL index dọn phiên hết hạn.
 
-Hai yêu cầu refresh cùng token chỉ có một yêu cầu thành công. Sau refresh, chỉ refresh token mới có thể gia hạn tiếp. Access JWT đã cấp tiếp tục dùng được đến `exp`, kể cả sau logout hoặc khi quyền thay đổi. Cookie ở trình duyệt được xóa sau khi logout thành công. Trong 30 giây, refresh token ngay trước đó vẫn có thể thu hồi cùng phiên để xử lý logout đồng thời. Mất kết nối ngay sau khi server xoay token có thể yêu cầu người dùng đăng nhập lại. Mỗi lần đăng nhập tạo phiên độc lập, logout chỉ thu hồi phiên được gửi.
+Hai yêu cầu refresh cùng token chỉ có một yêu cầu thành công. Sau refresh, chỉ refresh token mới có thể gia hạn tiếp. Access JWT đã cấp tiếp tục dùng được đến `exp`, kể cả sau logout. Khi role hoặc quyền thay đổi, BFF áp dụng quyền mới ở request kế tiếp. Cookie ở trình duyệt được xóa sau khi logout thành công. Trong 30 giây, refresh token ngay trước đó vẫn có thể thu hồi cùng phiên để xử lý logout đồng thời. Mất kết nối ngay sau khi server xoay token có thể yêu cầu người dùng đăng nhập lại. Mỗi lần đăng nhập tạo phiên độc lập, logout chỉ thu hồi phiên được gửi.
 
 Trình duyệt gọi Next `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` trên cùng origin. Hai route sau đọc refresh cookie phía server. Cookie dùng HttpOnly, SameSite=Lax và trong production có Secure cùng tiền tố `__Host-`. Next chỉ trả trạng thái trong JSON. Xem [cấu hình client](../../client/README.md).
 

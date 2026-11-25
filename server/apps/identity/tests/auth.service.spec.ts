@@ -190,7 +190,7 @@ describe('AuthService', () => {
     const accessClaims = {
       sub: user.userId,
       profileId: profileId.toHexString(),
-      permissions: [PERMISSION.ROLE_GET_ALL],
+      roleId: roleId.toHexString(),
       iat: Date.now() / 1000,
       exp: Date.now() / 1000 + ACCESS_TTL_SECONDS,
     };
@@ -350,7 +350,7 @@ describe('AuthService', () => {
     expect(sessions.deleteByRefreshHash).not.toHaveBeenCalled();
   });
 
-  it('bounds permissions to five minutes from when the profile lookup starts', async () => {
+  it('bounds access tokens to five minutes from when the profile lookup starts', async () => {
     const lookupStartedAt = Date.now() / 1000;
     users.getAuthProfileByEmail.mockImplementationOnce(async () => {
       jest.advanceTimersByTime((ACCESS_TOKEN_MAX_AGE_SECONDS - 2) * 1000);

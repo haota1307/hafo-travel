@@ -59,7 +59,7 @@ BFF dùng `requestGrpc` lấy raw protobuf response; `HttpResponseInterceptor` b
 
 RPC mặc định tối đa 10 giây, không vượt deadline nhận vào và không tự retry. Hủy RPC đang chờ không bảo đảm rollback/dừng side effect đã chạy. `GrpcLoggingInterceptor` giữ thông báo lỗi nghiệp vụ 4xx và dùng `INTERNAL_SERVER_ERROR` cho chi tiết lỗi nội bộ. BFF đọc status và message từ trailer `rpc-error-bin`, kể cả mảng validation Unicode. Status gRPC chuẩn được map sang HTTP, gồm UNAUTHENTICATED → 401, UNAVAILABLE → 503, DEADLINE_EXCEEDED → 504. Log chỉ metadata, method, status và thời gian.
 
-BFF cung cấp `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` và tự xác minh access JWT bằng secret dùng chung trước khi chạy API bảo vệ. Redis giới hạn request trước khi xác thực. Trước khi sử dụng, chạy migration, seed role trên DB mới và cấp credential theo [hướng dẫn vận hành Authentication](instructions/rbac.md#cấp-thông-tin-đăng-nhập).
+BFF cung cấp `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` và tự xác minh access JWT bằng secret dùng chung trước khi chạy API bảo vệ. BFF và Identity dùng chung Redis để cache role hiện tại theo user và permissions theo role. Sửa role hoặc gán lại role qua Identity có hiệu lực từ request kế tiếp. Redis cũng giới hạn tần suất request. Trước khi sử dụng, chạy migration, seed role trên DB mới và cấp credential theo [hướng dẫn vận hành Authentication](instructions/rbac.md#cấp-thông-tin-đăng-nhập).
 
 TypeORM đã bỏ entity sản phẩm và dùng autoLoadEntities. Đăng ký entity mới qua TypeOrmModule.forFeature và bổ sung TYPEORM_CONFIG/TypeOrmProviders ở service sử dụng. synchronize mặc định tắt; quản lý schema bằng migration của dự án mới.
 

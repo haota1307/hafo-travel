@@ -15,11 +15,14 @@ import { MetadataKeys } from '@common/constants/common.constants';
 import { Permissions } from '@common/decorators/permission.decorator';
 import type { RequestContext } from '@common/interfaces/gateway/request-context.interface';
 
+import { AuthorizationService } from './authorization.service';
+
 @Injectable()
 export class UserGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly jwt: JwtService,
+    private readonly authorization: AuthorizationService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -54,15 +57,7 @@ export class UserGuard implements CanActivate {
       throw new UnauthorizedException('Authentication is required');
     }
 
-    const {
-      sub,
-      profileId,
-      permissions: granted,
-      iat,
-      exp,
-      aud,
-      tokenUse,
-    } = claims;
+    const { sub, profileId, roleId, iat, exp, aud, tokenUse } = claims;
     const now = Math.floor(Date.now() / 1000);
 
     if (
@@ -72,8 +67,8 @@ export class UserGuard implements CanActivate {
       !sub.trim() ||
       typeof profileId !== 'string' ||
       !/^[a-f0-9]{24}$/.test(profileId) ||
-      !Array.isArray(granted) ||
-      !granted.every((permission) => typeof permission === 'string') ||
+      (roleId !== undefined &&
+        (typeof roleId !== 'string' || !/^[a-f0-9]{24}$/.test(roleId))) ||
       typeof iat !== 'number' ||
       !Number.isSafeInteger(iat) ||
       iat > now ||
@@ -88,7 +83,11 @@ export class UserGuard implements CanActivate {
     request[MetadataKeys.USER_DATA] = {
       userId: sub,
       profileId,
-      permissions: granted,
+      permissions: await this.authorization.permissions(
+        sub,
+        profileId,
+        request.processId,
+      ),
     };
 
     return true;

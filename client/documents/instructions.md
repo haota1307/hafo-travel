@@ -84,7 +84,7 @@ Server không dùng React Query hook. Component không gọi fetch trực tiếp
 
 Backend BFF trả `{ statusCode, message, data, code, processId, duration }` khi thành công, với `code: Success`. `message` là `string | string[]`; HTTP status lấy từ response HTTP. RPC nội bộ dùng gRPC/protobuf; BFF map về dữ liệu HTTP và bọc `ResponseDto` một lần. Frontend tiếp tục dùng HTTP.
 
-BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../server/instructions/rbac.md). BFF kiểm tra chữ ký và quyền được cấp trong access JWT. `GET /user/me` lấy hồ sơ hiện tại từ Identity và trả quyền hiệu lực của JWT ở `data.permissions`. Tạo hồ sơ dùng tên, email và đúng một role.
+BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../server/instructions/rbac.md). BFF xác minh access JWT rồi tra quyền theo role hiện tại của user. `GET /user/me` lấy hồ sơ từ Identity và trả quyền hiệu lực ở `data.permissions`. Thay đổi phân quyền có hiệu lực từ request kế tiếp. Tạo hồ sơ dùng tên, email và đúng một role.
 
 Các action đăng ký, xác thực email, quên/đặt lại mật khẩu và Google dùng cùng Next handler `/api/auth/[action]`. Form ở `features/auth`, route ở `/[locale]/auth`, dữ liệu đi qua schema, API object và React Query. Hai màn hình nhận liên kết đọc token từ fragment khi submit. Google Identity Services trả credential cho mutation; route Next ghi cookie phiên sau khi Identity xác minh.
 
