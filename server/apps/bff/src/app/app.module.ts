@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
 
+import { AccessTokenModule } from '@common/configuration/access-token.config';
 import { RedisProvider } from '@common/configuration/redis.config';
 import { ThrottlerProvider } from '@common/configuration/throttler.config';
 import { PermissionGuard } from '@common/guards/permissions.guard';
@@ -17,12 +18,15 @@ import { HttpResponseInterceptor } from '@common/interceptors/http-response.inte
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware';
 
 import { CONFIGURATION, TConfiguration } from '../configuration';
+import { AuthModule } from './modules/auth/auth.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [() => CONFIGURATION] }),
+    AccessTokenModule,
+    AuthModule,
     UserModule,
     RoleModule,
     RedisProvider,
@@ -32,9 +36,9 @@ import { UserModule } from './modules/user/user.module';
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ExceptionInterceptor },
     { provide: APP_INTERCEPTOR, useClass: HttpResponseInterceptor },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: UserGuard },
     { provide: APP_GUARD, useClass: PermissionGuard },
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule implements NestModule {

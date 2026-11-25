@@ -1,381 +1,210 @@
-import { normalizePath } from "@/lib/utils";
+import { getApiBaseUrl } from "./api-url";
+import { withSessionLock } from "./browser-session";
+
+export type ApiEnvelope<T> = {
+  statusCode: number;
+  message: string | string[];
+  data?: T;
+  processId?: string;
+  duration?: string;
+  code?: string;
+  error?: string;
+};
+
+export type HttpResponse<TPayload> = {
+  status: number;
+  payload: TPayload;
+};
+
+export type HttpOptions = Omit<RequestInit, "method" | "body"> & {
+  baseUrl?: string;
+};
+
+type HttpBody = object | string | null;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-type CustomOptions = Omit<RequestInit, "body" | "method"> & {
-  baseUrl?: string;
-  body?: BodyInit | object | null;
-  skipAuth?: boolean;
-};
+export class HttpError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly payload: unknown,
+  ) {
+    super(
+      isRecord(payload) && typeof payload.message === "string"
+        ? payload.message
+        : `HTTP ${status}`,
+    );
 
-type ApiResponse<TPayload> = {
-  status: number;
-  payload: TPayload;
-};
-
-type BackendEnvelope<TPayload> = {
-  success: boolean;
-  message: string;
-  data?: TPayload;
-  error?: unknown;
-  meta?: {
-    pagination?: {
-      total: number;
-      page: number;
-      limit: number;
-      [key: string]: unknown;
-    };
-  };
-};
-
-type EntityErrorPayload = {
-  message: string;
-  errors: {
-    field?: string;
-    path?: string;
-    message: string;
-    code?: string;
-    detail?: string;
-  }[];
-};
-
-const ENTITY_ERROR_STATUS = 422;
-const AUTHENTICATION_ERROR_STATUS = 401;
-const MAX_AUTH_RETRIES = 1;
-const DEFAULT_LOGIN_PATH = "/vi/auth/login";
-const AUTH_PATHS = {
-  refreshToken: "api/auth/refresh-token",
-  logout: "api/auth/logout",
-};
-
-const isClient = typeof window !== "undefined";
-
-export class HttpError<
-  TPayload extends { message?: string } = { message?: string },
-> extends Error {
-  status: number;
-  payload: TPayload;
-  response: {
-    data: TPayload;
-    status: number;
-  };
-
-  constructor({
-    status,
-    payload,
-    message = "UNKNOWN_ERROR",
-  }: {
-    status: number;
-    payload: TPayload;
-    message?: string;
-  }) {
-    super(message);
-    this.status = status;
-    this.payload = payload;
-    this.response = {
-      data: payload,
-      status,
-    };
+    this.name = "HttpError";
   }
 }
 
-export class EntityError extends HttpError<EntityErrorPayload> {
-  status: typeof ENTITY_ERROR_STATUS;
-  payload: EntityErrorPayload;
+export class EntityError extends HttpError {
+  constructor(status: number, payload: unknown) {
+    super(status, payload);
 
-  constructor({
-    status,
-    payload,
-  }: {
-    status: typeof ENTITY_ERROR_STATUS;
-    payload: EntityErrorPayload;
-  }) {
-    super({ status, payload, message: "VALIDATION_ERROR" });
-    this.status = status;
-    this.payload = payload;
+    this.name = "EntityError";
   }
 }
 
-let clientLogoutRequest: Promise<void> | null = null;
-let refreshTokenRequest: Promise<void> | null = null;
-
-function getLoginPath() {
-  if (!isClient) return DEFAULT_LOGIN_PATH;
-
-  const [locale] = location.pathname.split("/").filter(Boolean);
-
-  return locale ? `/${locale}/auth/login` : DEFAULT_LOGIN_PATH;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object";
 }
 
-function getBaseUrl(baseUrl?: string) {
-  return (
-    baseUrl ??
-    process.env.NEXT_PUBLIC_API_URL ??
-    process.env.NEXT_PUBLIC_API_ENDPOINT ??
-    ""
-  );
-}
-
-function getFullUrl(url: string, baseUrl?: string) {
-  const normalizedUrl = normalizePath(url);
-  const normalizedBaseUrl = getBaseUrl(baseUrl).replace(/\/+$/g, "");
-
-  if (!normalizedBaseUrl) return `/${normalizedUrl}`;
-
-  return `${normalizedBaseUrl}/${normalizedUrl}`;
-}
-
-function getRequestUrl(url: string, options: CustomOptions) {
-  if (isClient && !options.skipAuth && options.baseUrl === undefined) {
-    return getFullUrl(`api/backend/${normalizePath(url)}`, "");
+function unwrapPayload(body: unknown): unknown {
+  if (
+    !isRecord(body) ||
+    typeof body.statusCode !== "number" ||
+    !(
+      typeof body.message === "string" ||
+      (Array.isArray(body.message) &&
+        body.message.every((message) => typeof message === "string"))
+    )
+  ) {
+    return body;
   }
 
-  return getFullUrl(url, options.baseUrl);
+  return body.data;
 }
 
-function normalizeBody(body: CustomOptions["body"]) {
-  if (body === undefined || body === null) return undefined;
-  if (body instanceof FormData) return body;
-  if (body instanceof URLSearchParams) return body;
-  if (body instanceof Blob) return body;
-  if (typeof body === "string") return body;
+function getRequestUrl(path: string, configuredBaseUrl?: string) {
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  const baseUrl =
+    configuredBaseUrl ??
+    (typeof window === "undefined" ? getApiBaseUrl() : "/api/backend");
+  const url = `${baseUrl.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+
+  if (typeof window === "undefined" && !/^https?:\/\//i.test(url)) {
+    throw new Error("Server HTTP requests require an absolute baseUrl.");
+  }
+
+  return url;
+}
+
+function serializeBody(body: HttpBody | undefined): BodyInit | undefined {
+  if (body == null) {
+    return undefined;
+  }
+  if (
+    typeof body === "string" ||
+    body instanceof FormData ||
+    body instanceof URLSearchParams ||
+    body instanceof Blob
+  ) {
+    return body;
+  }
 
   return JSON.stringify(body);
 }
 
-async function parsePayload(response: Response) {
-  const contentType = response.headers.get("content-type");
-
-  if (contentType?.includes("application/json")) {
-    return response.json();
-  }
-
-  const text = await response.text();
-
-  return text || null;
-}
-
-function isBackendEnvelope(
-  payload: unknown,
-): payload is BackendEnvelope<unknown> {
-  return Boolean(
-    payload &&
-    typeof payload === "object" &&
-    "success" in payload &&
-    "message" in payload &&
-    ("data" in payload || "error" in payload),
-  );
-}
-
-function unwrapPayload<TPayload>(payload: unknown): TPayload {
-  if (isBackendEnvelope(payload) && payload.success) {
-    if (payload.meta?.pagination && Array.isArray(payload.data)) {
-      return {
-        items: payload.data,
-        ...payload.meta.pagination,
-      } as TPayload;
-    }
-
-    return payload.data as TPayload;
-  }
-
-  return payload as TPayload;
-}
-
-function toEntityErrorPayload(payload: unknown): EntityErrorPayload {
-  if (!payload || typeof payload !== "object") {
-    return {
-      message: "VALIDATION_ERROR",
-      errors: [],
-    };
-  }
-
-  const value = payload as {
-    message?: string;
-    errors?: EntityErrorPayload["errors"];
-    error?: {
-      details?: {
-        message?: EntityErrorPayload["errors"] | string;
-      };
-    };
-  };
-
-  if (value.errors?.length) {
-    return {
-      message: value.message ?? "VALIDATION_ERROR",
-      errors: value.errors,
-    };
-  }
-
-  const detailMessage = value.error?.details?.message;
-
-  return {
-    message: value.message ?? "VALIDATION_ERROR",
-    errors: Array.isArray(detailMessage) ? detailMessage : [],
-  };
-}
-
-class AuthAgent {
-  async refreshTokens() {
-    if (refreshTokenRequest) return refreshTokenRequest;
-
-    refreshTokenRequest = (async () => {
-      await request<{ message: string }>(
-        "POST",
-        AUTH_PATHS.refreshToken,
-        {
-          baseUrl: "",
-          skipAuth: true,
-        },
-        MAX_AUTH_RETRIES,
-      );
-    })();
-
-    try {
-      return await refreshTokenRequest;
-    } finally {
-      refreshTokenRequest = null;
-    }
-  }
-
-  async handleLogout() {
-    if (clientLogoutRequest) return clientLogoutRequest;
-
-    clientLogoutRequest = (async () => {
-      await fetch(getFullUrl(AUTH_PATHS.logout, ""), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).catch(() => undefined);
-
-      if (isClient) {
-        location.href = getLoginPath();
-      }
-    })();
-
-    try {
-      return await clientLogoutRequest;
-    } finally {
-      clientLogoutRequest = null;
-    }
-  }
-}
-
-const authAgent = new AuthAgent();
-
 async function request<TPayload>(
   method: HttpMethod,
-  url: string,
-  options: CustomOptions = {},
-  retryCount = 0,
-): Promise<ApiResponse<TPayload>> {
-  const normalizedUrl = normalizePath(url);
-  const body = normalizeBody(options.body);
-  const headers = new Headers(options.headers);
+  path: string,
+  body: HttpBody | undefined,
+  options: HttpOptions = {},
+): Promise<HttpResponse<TPayload>> {
+  const { baseUrl, headers: customHeaders, ...requestOptions } = options;
+  const headers = new Headers(customHeaders);
+  const serializedBody = serializeBody(body);
 
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/json");
+  }
   if (
+    body != null &&
+    typeof body === "object" &&
     !(body instanceof FormData) &&
-    body !== undefined &&
+    !(body instanceof URLSearchParams) &&
+    !(body instanceof Blob) &&
     !headers.has("Content-Type")
   ) {
     headers.set("Content-Type", "application/json");
   }
 
-  try {
-    const response = await fetch(getRequestUrl(url, options), {
-      ...options,
-      body,
-      headers,
-      method,
-    });
-    const rawPayload = await parsePayload(response);
-    const payload = unwrapPayload<TPayload>(rawPayload);
-    const data = {
-      status: response.status,
-      payload,
-    };
+  const response = await fetch(getRequestUrl(path, baseUrl), {
+    cache: "no-store",
+    ...requestOptions,
+    method,
+    headers,
+    body: serializedBody,
+  });
+  const text = await response.text();
+  const contentType = response.headers.get("Content-Type") ?? "";
 
-    if (!response.ok) {
-      if (response.status === ENTITY_ERROR_STATUS) {
-        throw new EntityError({
-          status: ENTITY_ERROR_STATUS,
-          payload: toEntityErrorPayload(rawPayload),
-        });
+  let payload: unknown = text || null;
+
+  if (text && /\bjson\b/i.test(contentType)) {
+    try {
+      payload = JSON.parse(text);
+    } catch (error) {
+      if (response.ok) {
+        throw error;
       }
-
-      if (response.status === AUTHENTICATION_ERROR_STATUS) {
-        if (
-          isClient &&
-          retryCount < MAX_AUTH_RETRIES &&
-          normalizedUrl !== AUTH_PATHS.refreshToken &&
-          normalizedUrl !== AUTH_PATHS.logout
-        ) {
-          try {
-            await authAgent.refreshTokens();
-
-            return request<TPayload>(method, url, options, retryCount + 1);
-          } catch {
-            await authAgent.handleLogout();
-          }
-        }
-
-        if (isClient) {
-          await authAgent.handleLogout();
-        }
-      }
-
-      throw new HttpError({
-        status: data.status,
-        payload: data.payload as TPayload & { message?: string },
-      });
     }
-
-    return data;
-  } catch (error) {
-    if (error instanceof HttpError) {
-      throw error;
-    }
-
-    throw new HttpError({
-      status: 500,
-      payload: {
-        message: error instanceof Error ? error.message : "UNKNOWN_ERROR",
-      },
-    });
   }
+
+  if (!response.ok) {
+    const ErrorClass = response.status === 422 ? EntityError : HttpError;
+    throw new ErrorClass(response.status, payload);
+  }
+
+  return {
+    status: response.status,
+    payload: unwrapPayload(payload) as TPayload,
+  };
 }
 
+let pendingRefresh: Promise<void> | undefined;
+
 const http = {
-  get<TPayload>(url: string, options?: Omit<CustomOptions, "body">) {
-    return request<TPayload>("GET", url, options);
-  },
-  post<TPayload>(
-    url: string,
-    body?: CustomOptions["body"],
-    options?: Omit<CustomOptions, "body">,
+  get: <T>(path: string, options?: HttpOptions) =>
+    request<T>("GET", path, undefined, options),
+  async getAuthenticated<T>(
+    path: string,
+    options?: Pick<HttpOptions, "signal">,
   ) {
-    return request<TPayload>("POST", url, { ...options, body });
+    if (typeof window === "undefined" || !/^\/(?!\/)/.test(path)) {
+      throw new Error(
+        "Authenticated reads require a browser and a relative BFF path.",
+      );
+    }
+
+    try {
+      return await request<T>("GET", path, undefined, options);
+    } catch (error) {
+      if (!(error instanceof HttpError) || error.status !== 401) {
+        throw error;
+      }
+    }
+
+    pendingRefresh ??= withSessionLock(async () => {
+      try {
+        await request("GET", "/user/me", undefined);
+      } catch (error) {
+        if (!(error instanceof HttpError) || error.status !== 401) {
+          throw error;
+        }
+
+        await request("POST", "/api/auth/refresh", null, { baseUrl: "" });
+      }
+    }).finally(() => {
+      pendingRefresh = undefined;
+    });
+    await pendingRefresh;
+
+    return request<T>("GET", path, undefined, options);
   },
-  put<TPayload>(
-    url: string,
-    body?: CustomOptions["body"],
-    options?: Omit<CustomOptions, "body">,
-  ) {
-    return request<TPayload>("PUT", url, { ...options, body });
-  },
-  patch<TPayload>(
-    url: string,
-    body?: CustomOptions["body"],
-    options?: Omit<CustomOptions, "body">,
-  ) {
-    return request<TPayload>("PATCH", url, { ...options, body });
-  },
-  delete<TPayload>(url: string, options?: Omit<CustomOptions, "body">) {
-    return request<TPayload>("DELETE", url, options);
-  },
-  authAgent,
+  post: <T>(path: string, body?: HttpBody, options?: HttpOptions) =>
+    request<T>("POST", path, body, options),
+  put: <T>(path: string, body?: HttpBody, options?: HttpOptions) =>
+    request<T>("PUT", path, body, options),
+  patch: <T>(path: string, body?: HttpBody, options?: HttpOptions) =>
+    request<T>("PATCH", path, body, options),
+  delete: <T>(path: string, options?: HttpOptions) =>
+    request<T>("DELETE", path, undefined, options),
 };
 
-export type { ApiResponse, CustomOptions, EntityErrorPayload };
 export default http;

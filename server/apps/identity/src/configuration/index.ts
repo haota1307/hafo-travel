@@ -7,6 +7,8 @@ import { createConfiguration } from '@common/configuration/create-configuration'
 import { GrpcConfiguration } from '@common/configuration/grpc.config';
 import { MongoConfig } from '@common/configuration/mongo.config';
 
+import { AuthConfiguration } from './auth.configuration';
+
 class Configuration extends BaseConfiguration {
   @ValidateNested()
   @Type(() => GrpcConfiguration)
@@ -21,6 +23,8 @@ class Configuration extends BaseConfiguration {
   MONGO_CONFIG = new MongoConfig({
     DB_NAME: process.env['IDENTITY_MONGODB_DB_NAME'] || 'identity',
   });
+
+  AUTH_CONFIG = new AuthConfiguration();
 }
 
 export const CONFIGURATION = createConfiguration(Configuration);

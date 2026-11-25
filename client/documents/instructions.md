@@ -71,18 +71,19 @@ Server Component/route handler → feature API → backend trực tiếp
 Server không dùng React Query hook. Component không gọi fetch trực tiếp cho backend thông thường.
 
 - `.env.local`: `API_URL=http://localhost:3300/api` theo cấu hình backend mẫu; fallback `NEXT_PUBLIC_API_URL` chỉ để tương thích. Không đặt secret trong biến public. Thiếu URL backend thì báo lỗi rõ trên server.
-- Proxy optional catch-all hỗ trợ cả `/api/backend` và đường dẫn con. Giữ method/query/body/status; chuyển tiếp Accept/Content-Type, response Content-Type/Content-Disposition/Retry-After/Allow. Không forward cookie hoặc Authorization. Backend không kết nối được trả 502.
+- `CLIENT_URL` là địa chỉ gốc của frontend, ví dụ `http://localhost:3000`. Next.js đối chiếu origin này với header `Origin` khi trình duyệt gửi yêu cầu ghi.
+- Proxy optional catch-all hỗ trợ cả `/api/backend` và đường dẫn con. Giữ method/query/body/status; chuyển tiếp Accept/Content-Type, response Content-Type/Content-Disposition/Retry-After/Allow. Proxy đọc đúng access cookie HttpOnly và tự tạo bearer header cho BFF. Kiểm tra origin trước thao tác ghi. Nhóm `/auth` chỉ đi qua route chuyên trách `/api/auth/[action]`. Backend không kết nối được trả 502.
 - `{ baseUrl: "" }` dùng cho route nội bộ Next trên browser. Server phải dùng URL tuyệt đối. URL tuyệt đối bỏ qua baseUrl/proxy.
 - `get/post/put/patch/delete` trả `{ status, payload }`. `post/put/patch` nhận body rồi options; `delete` giữ signature `(path, options)` hiện có.
 - JSON body tự serialize và gắn Content-Type; FormData giữ nguyên multipart boundary. Options hỗ trợ AbortSignal và tùy chọn fetch; mặc định `cache: "no-store"`.
 - Response BFF nhận diện bằng `statusCode` và `message` dạng chuỗi hoặc mảng chuỗi; wrapper unwrap `data`. Backend chưa có contract phân trang; không tự chuyển đổi pagination, feature parse theo contract của endpoint khi bổ sung.
 - Response không phải envelope giữ nguyên, text giữ chuỗi, body rỗng trả `null`. Binary download chưa có API riêng trong HTTP wrapper.
-- HTTP lỗi: `HttpError.status`, `HttpError.payload` giữ nguyên body; 422 là `EntityError`. Lỗi mạng, abort hoặc JSON thành công sai định dạng giữ lỗi gốc. Không tự retry/refresh token khi gặp 401.
+- HTTP lỗi: `HttpError.status`, `HttpError.payload` giữ nguyên body; 422 là `EntityError`. Lỗi mạng, abort hoặc JSON thành công sai định dạng giữ lỗi gốc. Đối với query cần phiên trên browser, dùng `http.getAuthenticated` với path BFF bắt đầu bằng `/`. Khi gặp 401, helper đồng bộ refresh rồi đọc lại tối đa một lần. Lệnh ghi và request thông thường trả nguyên lỗi cho caller.
 - Generic TypeScript không validate runtime; feature API có thể parse payload bằng Zod theo contract thật.
 
 Backend BFF trả `{ statusCode, message, data, code, processId, duration }` khi thành công, với `code: Success`. `message` là `string | string[]`; HTTP status lấy từ response HTTP. RPC nội bộ dùng gRPC/protobuf; BFF map về dữ liệu HTTP và bọc `ResponseDto` một lần. Frontend tiếp tục dùng HTTP.
 
-BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../server/instructions/rbac.md). Các route này trả 401 trong khi chờ triển khai đăng nhập. Tạo hồ sơ dùng tên, email và đúng một role.
+BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../server/instructions/rbac.md). BFF kiểm tra chữ ký và quyền được cấp trong access JWT. `GET /user/me` lấy hồ sơ hiện tại từ Identity và trả quyền hiệu lực của JWT ở `data.permissions`. Tạo hồ sơ dùng tên, email và đúng một role.
 
 ### Lỗi và form
 
@@ -144,7 +145,7 @@ Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, 
 
 ## Auth và database
 
-Login trong template là mô phỏng. BFF chưa cung cấp đăng nhập. Identity lưu hồ sơ và quyền trong MongoDB. Proxy hiện chưa chuyển tiếp cookie/Authorization. Khi triển khai đăng nhập, cần thống nhất contract phiên giữa client và BFF.
+Login trong template là mô phỏng. Luồng thực tế ở `features/auth` và `/[locale]/auth/login`. Next giữ access JWT và refresh JWT trong hai cookie HttpOnly. Proxy gửi access JWT dưới dạng Bearer đến BFF. Route refresh và logout chuyển giá trị refresh cookie đến Identity qua BFF. Route auth trả trạng thái cho browser và giữ credential ngoài JSON. Xem [cấu hình và kiểm thử](../README.md).
 
 ## Kiểm tra và cập nhật tài liệu
 

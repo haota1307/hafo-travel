@@ -80,6 +80,28 @@ export interface DeleteRoleResponse {
   message: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface AuthTokenPair {
+  accessToken: string;
+  refreshToken: string;
+  accessExpiresIn: number;
+  refreshExpiresIn: number;
+}
+
+export interface RefreshSessionRequest {
+  refreshToken: string;
+}
+
+export interface LogoutRequest {
+  refreshToken: string;
+}
+
+export type LogoutResponse = Record<string, never>;
+
 export const IDENTITY_V1_PACKAGE_NAME = 'identity.v1';
 
 export interface IdentityServiceClient {
@@ -115,6 +137,15 @@ export interface IdentityServiceClient {
     request: RoleIdRequest,
     metadata?: Metadata,
   ): Observable<DeleteRoleResponse>;
+  login(request: LoginRequest, metadata?: Metadata): Observable<AuthTokenPair>;
+  refreshSession(
+    request: RefreshSessionRequest,
+    metadata?: Metadata,
+  ): Observable<AuthTokenPair>;
+  logout(
+    request: LogoutRequest,
+    metadata?: Metadata,
+  ): Observable<LogoutResponse>;
 }
 
 export interface IdentityServiceController {
@@ -165,6 +196,18 @@ export interface IdentityServiceController {
     | Promise<DeleteRoleResponse>
     | Observable<DeleteRoleResponse>
     | DeleteRoleResponse;
+  login(
+    request: LoginRequest,
+    metadata?: Metadata,
+  ): Promise<AuthTokenPair> | Observable<AuthTokenPair> | AuthTokenPair;
+  refreshSession(
+    request: RefreshSessionRequest,
+    metadata?: Metadata,
+  ): Promise<AuthTokenPair> | Observable<AuthTokenPair> | AuthTokenPair;
+  logout(
+    request: LogoutRequest,
+    metadata?: Metadata,
+  ): Promise<LogoutResponse> | Observable<LogoutResponse> | LogoutResponse;
 }
 
 export const IDENTITY_SERVICE_NAME = 'IdentityService';
@@ -178,4 +221,7 @@ export const IDENTITY_SERVICE_METHODS = {
   CREATE_ROLE: 'CreateRole',
   UPDATE_ROLE: 'UpdateRole',
   DELETE_ROLE: 'DeleteRole',
+  LOGIN: 'Login',
+  REFRESH_SESSION: 'RefreshSession',
+  LOGOUT: 'Logout',
 } as const;

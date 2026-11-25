@@ -22,6 +22,7 @@ import { publicSiteConfig } from "../site.config";
 
 export function SiteHeader() {
   const t = useTranslations("publicSite");
+  const auth = useTranslations("auth");
   const pathname = usePathname();
   const portalContainer = usePublicPortalContainer();
   const headerRef = useRef<HTMLElement>(null);
@@ -31,6 +32,7 @@ export function SiteHeader() {
     { href: "/#retreats", label: t("retreats") },
     { href: "/experiences", label: t("experiences") },
     { href: "/contacts", label: t("contacts") },
+    { href: "/auth/login", label: auth("account") },
   ];
 
   useEffect(() => {

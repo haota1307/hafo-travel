@@ -34,6 +34,22 @@ export class UserRepository {
     return this.userModel.findOne({ email }).exec();
   }
 
+  getAuthProfileByEmail(email: string) {
+    return this.userModel
+      .findOne({ email })
+      .collation({ locale: 'simple' })
+      .select('+passwordHash')
+      .populate<{ roles: Role[] }>('roles')
+      .exec();
+  }
+
+  getAuthProfileById(profileId: Types.ObjectId) {
+    return this.userModel
+      .findById(profileId)
+      .populate<{ roles: Role[] }>('roles')
+      .exec();
+  }
+
   setRoles(userId: string, roles: Types.ObjectId[]) {
     return this.userModel
       .findOneAndUpdate(

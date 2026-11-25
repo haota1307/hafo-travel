@@ -24,7 +24,7 @@ Dependency được ghim stable trong `package.json` và `pnpm-lock.yaml`: Nx 24
 Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và các ngoại lệ version được ghim. Override schematics của `@nx/nest` lên 12.0.13; peer ngoại lệ chỉ cho phép Nest 12.4.2 với `@nx/nest` và webpack-dev-server 6.1.0 với `@nx/webpack` vì metadata Nx 24.0.6 còn khai báo major cũ. Giữ kiểm tra peer chung và kiểm chứng build/test/generator khi sửa các ngoại lệ. Công cụ seed dùng MongoDB driver từ `mongoose.mongo`.
 
 1. Chạy `pnpm install --frozen-lockfile`.
-2. Tạo `.env` từ `.env.example`, điền thông tin kết nối. Dùng database riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
+2. Tạo `.env` từ `.env.example`, điền thông tin kết nối và [hai khóa riêng cho access JWT và refresh JWT](instructions/rbac.md#khóa-ký-jwt). Dùng database riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
 3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
 4. Chạy `pnpm dev-lite` để bật BFF và Identity.
 
@@ -50,9 +50,9 @@ Các app dùng `createConfiguration(Configuration)` để khởi tạo và kiể
 
 BFF dùng `requestGrpc` lấy raw protobuf response; `HttpResponseInterceptor` bọc một lần thành `ResponseDto`. Create-user lấy `response.message` để giữ data dạng chuỗi. Service nội bộ dùng `requestGrpcData` trả Promise. Metadata `x-process-id` giữ correlation ID; `grpcCallContext(metadata, call)` truyền deadline còn lại qua các chặng.
 
-RPC mặc định tối đa 10 giây, không vượt deadline nhận vào và không tự retry. Hủy RPC đang chờ không bảo đảm rollback/dừng side effect đã chạy. `GrpcLoggingInterceptor` chuyển exception thành gRPC status cùng trailer `rpc-error-bin`; `normalizeError` khôi phục HTTP status/message, giữ mảng validation/Unicode. Status gRPC chuẩn được map sang HTTP, gồm UNAUTHENTICATED → 401, UNAVAILABLE → 503, DEADLINE_EXCEEDED → 504. Log chỉ metadata, method, status và thời gian.
+RPC mặc định tối đa 10 giây, không vượt deadline nhận vào và không tự retry. Hủy RPC đang chờ không bảo đảm rollback/dừng side effect đã chạy. `GrpcLoggingInterceptor` giữ thông báo lỗi nghiệp vụ 4xx và dùng `INTERNAL_SERVER_ERROR` cho chi tiết lỗi nội bộ. BFF đọc status và message từ trailer `rpc-error-bin`, kể cả mảng validation Unicode. Status gRPC chuẩn được map sang HTTP, gồm UNAUTHENTICATED → 401, UNAVAILABLE → 503, DEADLINE_EXCEEDED → 504. Log chỉ metadata, method, status và thời gian.
 
-BFF trả HTTP 401 cho các route cần xác thực, kể cả khi request có bearer token. Chưa có API đăng nhập. Redis tiếp tục phục vụ giới hạn tần suất request.
+BFF cung cấp `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` và tự xác minh access JWT bằng secret dùng chung trước khi chạy API bảo vệ. Redis giới hạn request trước khi xác thực. Trước khi sử dụng, chạy migration, seed role trên DB mới và cấp credential theo [hướng dẫn vận hành Authentication](instructions/rbac.md#cấp-thông-tin-đăng-nhập).
 
 TypeORM đã bỏ entity sản phẩm và dùng autoLoadEntities. Đăng ký entity mới qua TypeOrmModule.forFeature và bổ sung TYPEORM_CONFIG/TypeOrmProviders ở service sử dụng. synchronize mặc định tắt; quản lý schema bằng migration của dự án mới.
 
@@ -65,7 +65,7 @@ App và library dùng TypeScript strict chung; ESLint kiểm tra dấu ngoặc v
 - `pnpm build`: build cả năm app.
 - `pnpm typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
 - `pnpm lint`: kiểm tra lint workspace.
-- `pnpm test` chạy các suite BFF và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
+- `pnpm test` chạy các suite BFF, Identity và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
 - `pnpm exec nx run-many -t test`: chạy các test được bổ sung cho dự án mới.
 
 Nâng cấp toolchain đã chạy migration Nx; không chạy seed/migration database, không khởi động container và không xóa dữ liệu hiện có.
@@ -76,6 +76,6 @@ Source ứng dụng giữ CommonJS, dùng `module`/`moduleResolution: nodenext` 
 
 Client ở [../client](../client/README.md), cấu hình mẫu `API_URL=http://localhost:3300/api` theo `PORT=3300`, `GLOBAL_PREFIX=api` của `.env.example`. Nếu đổi cấu hình backend, cập nhật URL phía client tương ứng.
 
-BFF có `GET /api/user/me`, tạo user, thay role user và CRUD role theo [bảng API RBAC](instructions/rbac.md). Chưa có `GET /api`. Response HTTP thành công là `{ statusCode, message, data, code, processId, duration }`, giữ `code: Success`. Frontend unwrap `data`; validation 400 trả mảng chuỗi, chưa có field/path hoặc contract phân trang. UI frontend chưa tích hợp auth thật và proxy chưa chuyển tiếp cookie/Authorization.
+BFF có `GET /api/user/me`, tạo user, thay role user và CRUD role theo [bảng API RBAC](instructions/rbac.md). Chưa có `GET /api`. Response HTTP thành công là `{ statusCode, message, data, code, processId, duration }`, giữ `code: Success`. Frontend unwrap `data`; validation 400 trả mảng chuỗi, chưa có field/path hoặc contract phân trang. Next lấy access token từ cookie HttpOnly cho request BFF.
 
 BFF gọi Identity qua `IDENTITY_SERVICE_HOST` và `IDENTITY_SERVICE_PORT` (mặc định `localhost:5101`). Identity bind theo `GRPC_BIND_HOST`. Chỉ cho service tin cậy truy cập cổng gRPC nội bộ.

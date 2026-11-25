@@ -2,6 +2,7 @@ import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 
+import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
 
 const ERROR_METADATA = 'rpc-error-bin';
@@ -106,27 +107,33 @@ export function normalizeError(error: unknown): {
   return { statusCode, message: message ?? HTTP_MESSAGE.INTERNAL_SERVER_ERROR };
 }
 
-export function toGrpcError(error: unknown): {
-  code: GrpcStatus;
-  details: string;
-  metadata: Metadata;
-} {
-  const { statusCode, message } = normalizeError(error);
-  const codes: Record<number, GrpcStatus> = {
-    400: GrpcStatus.INVALID_ARGUMENT,
-    401: GrpcStatus.UNAUTHENTICATED,
-    403: GrpcStatus.PERMISSION_DENIED,
-    404: GrpcStatus.NOT_FOUND,
-    408: GrpcStatus.DEADLINE_EXCEEDED,
-    409: GrpcStatus.ALREADY_EXISTS,
-    422: GrpcStatus.INVALID_ARGUMENT,
-    429: GrpcStatus.RESOURCE_EXHAUSTED,
-    499: GrpcStatus.CANCELLED,
-    501: GrpcStatus.UNIMPLEMENTED,
-    502: GrpcStatus.UNAVAILABLE,
-    503: GrpcStatus.UNAVAILABLE,
-    504: GrpcStatus.DEADLINE_EXCEEDED,
-  };
+const httpGrpcStatuses: Record<number, GrpcStatus> = {
+  400: GrpcStatus.INVALID_ARGUMENT,
+  401: GrpcStatus.UNAUTHENTICATED,
+  403: GrpcStatus.PERMISSION_DENIED,
+  404: GrpcStatus.NOT_FOUND,
+  408: GrpcStatus.DEADLINE_EXCEEDED,
+  409: GrpcStatus.ALREADY_EXISTS,
+  422: GrpcStatus.INVALID_ARGUMENT,
+  429: GrpcStatus.RESOURCE_EXHAUSTED,
+  499: GrpcStatus.CANCELLED,
+  501: GrpcStatus.UNIMPLEMENTED,
+  502: GrpcStatus.UNAVAILABLE,
+  503: GrpcStatus.UNAVAILABLE,
+  504: GrpcStatus.DEADLINE_EXCEEDED,
+};
+
+export function toGrpcError(error: unknown) {
+  const normalized = normalizeError(error);
+  const isBusinessError =
+    normalized.statusCode < HttpStatus.INTERNAL_SERVER_ERROR &&
+    (error instanceof HttpException || error instanceof RpcException);
+  const statusCode = isBusinessError
+    ? normalized.statusCode
+    : Math.max(normalized.statusCode, HttpStatus.INTERNAL_SERVER_ERROR);
+  const message = isBusinessError
+    ? normalized.message
+    : CODE_ERROR.INTERNAL_SERVER_ERROR;
   const metadata = new Metadata();
   metadata.set(
     ERROR_METADATA,
@@ -134,7 +141,8 @@ export function toGrpcError(error: unknown): {
   );
 
   return {
-    code: codes[statusCode] ?? GrpcStatus.INTERNAL,
+    statusCode,
+    code: httpGrpcStatuses[statusCode] ?? GrpcStatus.INTERNAL,
     details:
       typeof message === 'string' ? message : 'Request validation failed',
     metadata,

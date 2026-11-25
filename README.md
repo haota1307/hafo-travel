@@ -1,5 +1,6 @@
 # Hafo Travel
 
+- [Tài liệu sản phẩm và kỹ thuật](documents/README.md) gồm hành trình đặt tour, đặc tả module, thứ tự triển khai, nghiệm thu và vận hành.
 - [Client](client/README.md): Next.js, giao diện public vi/en và template admin độc lập.
 - [Server](server/README.md): BFF NestJS, Identity quản lý hồ sơ và vai trò trong MongoDB. Xem [bản đồ năm service backend](server/instructions/services.md).
 - [Hướng dẫn frontend](client/documents/instructions.md).

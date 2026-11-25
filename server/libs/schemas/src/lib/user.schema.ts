@@ -21,6 +21,9 @@ export class User extends BaseSchema {
   @Prop({ type: String })
   userId: string;
 
+  @Prop({ type: String, select: false })
+  passwordHash?: string;
+
   @Prop({
     type: [{ type: Types.ObjectId, ref: 'Role' }],
     required: true,

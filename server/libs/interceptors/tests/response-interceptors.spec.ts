@@ -1,7 +1,13 @@
 import { Metadata, status as GrpcStatus } from '@grpc/grpc-js';
-import { BadRequestException, type ExecutionContext } from '@nestjs/common';
+import {
+  BadRequestException,
+  type ExecutionContext,
+  HttpException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { firstValueFrom, of } from 'rxjs';
 
+import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
 import { HTTP_MESSAGE } from '@common/constants/enum/http-message.enum';
 import { normalizeError, toGrpcError } from '@common/utils/error.util';
 import { requestGrpcData, PROCESS_ID_METADATA } from '@common/utils/rpc.util';
@@ -56,6 +62,38 @@ describe('gRPC and HTTP response boundaries', () => {
       message: messages,
     });
   });
+
+  it.each([
+    [
+      Object.assign(new Error('Driver details'), { code: 5 }),
+      500,
+      GrpcStatus.INTERNAL,
+      CODE_ERROR.INTERNAL_SERVER_ERROR,
+    ],
+    [
+      new ServiceUnavailableException('Internal service address'),
+      503,
+      GrpcStatus.UNAVAILABLE,
+      CODE_ERROR.INTERNAL_SERVER_ERROR,
+    ],
+    [
+      new HttpException('RATE_LIMITED', 429),
+      429,
+      GrpcStatus.RESOURCE_EXHAUSTED,
+      'RATE_LIMITED',
+    ],
+  ] as const)(
+    'writes the public error to both gRPC details and metadata (%p)',
+    (error, statusCode, code, message) => {
+      const failure = toGrpcError(error);
+
+      expect(failure).toMatchObject({ code, details: message });
+      expect(normalizeError({ code, metadata: failure.metadata })).toEqual({
+        statusCode,
+        message,
+      });
+    },
+  );
 
   it.each([
     [GrpcStatus.UNAUTHENTICATED, 401],

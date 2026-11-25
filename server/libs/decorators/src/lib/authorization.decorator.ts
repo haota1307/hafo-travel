@@ -1,5 +1,5 @@
 import { applyDecorators, SetMetadata } from '@nestjs/common';
-import { ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 import { MetadataKeys } from '@common/constants/common.constants';
 
@@ -11,6 +11,7 @@ export const Authorization = ({ secured = false }: { secured?: boolean }) => {
   if (secured) {
     return applyDecorators(
       setMetadata,
+      ApiBearerAuth(),
       ApiUnauthorizedResponse({ description: 'Authentication is required' }),
     );
   }

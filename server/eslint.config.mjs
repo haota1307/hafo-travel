@@ -64,6 +64,8 @@ export default [
         {
           enforceBuildableLibDependency: true,
           allow: [
+            '../../identity/src/app/modules/auth/controllers/auth.controller',
+            '../../identity/src/app/modules/auth/services/auth.service',
             '../../identity/src/app/modules/user/controllers/user.controller',
             '../../identity/src/app/modules/user/services/user.service',
             '../../identity/src/app/modules/user/repositories/user.repository',

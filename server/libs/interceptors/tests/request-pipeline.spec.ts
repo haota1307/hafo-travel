@@ -8,6 +8,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import type { JwtService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
 import { Response as ExpressResponse } from 'express';
 import { NEVER } from 'rxjs';
@@ -17,7 +18,6 @@ import { Authorization } from '@common/decorators/authorization.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
 import { PermissionGuard } from '@common/guards/permissions.guard';
 import { UserGuard } from '@common/guards/user.guard';
-import { AuthorizeResponse } from '@common/interfaces/common/authorization.interface';
 import { RequestContext } from '@common/interfaces/gateway/request-context.interface';
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware';
 import { normalizeError } from '@common/utils/error.util';
@@ -63,33 +63,40 @@ function context(
 
 describe('Auth and request pipeline', () => {
   let request: RequestContext;
-  const guard = new UserGuard(new Reflector());
+  const verifyAsync = jest.fn();
+  const jwt = { verifyAsync } as unknown as JwtService;
+  const guard = new UserGuard(new Reflector(), jwt);
 
   beforeEach(() => {
+    verifyAsync.mockClear();
     request = {
-      headers: { authorization: 'Bearer old-token' },
+      headers: {},
       processId: 'request-1',
     } as RequestContext;
   });
 
   afterEach(() => jest.restoreAllMocks());
 
-  it('honors public method override of secured controller metadata', () => {
-    expect(guard.canActivate(context(request, 'public'))).toBe(true);
+  it('honors public method override of secured controller metadata', async () => {
+    await expect(guard.canActivate(context(request, 'public'))).resolves.toBe(
+      true,
+    );
+    expect(verifyAsync).not.toHaveBeenCalled();
   });
 
   it.each(['secured', 'create'] as const)(
     'requires authentication for %s without secured metadata or with permissions on a public method',
-    (method) => {
+    async (method) => {
       const currentContext = {
         getHandler: () => DefaultController.prototype[method],
         getClass: () => DefaultController,
         switchToHttp: () => ({ getRequest: () => request }),
       } as unknown as ExecutionContext;
 
-      expect(() => guard.canActivate(currentContext)).toThrow(
+      await expect(guard.canActivate(currentContext)).rejects.toBeInstanceOf(
         UnauthorizedException,
       );
+      expect(verifyAsync).not.toHaveBeenCalled();
     },
   );
 
@@ -101,11 +108,15 @@ describe('Auth and request pipeline', () => {
   });
   it('denies missing permissions and accepts a matching permission', () => {
     const permissions = new PermissionGuard(new Reflector());
-    request.userData = new AuthorizeResponse({ valid: true });
+    request.userData = {
+      userId: 'user-1',
+      profileId: 'profile-1',
+      permissions: [],
+    };
     expect(() => permissions.canActivate(context(request, 'create'))).toThrow(
       'Permission denied',
     );
-    request.userData.MetadataKeys.permissions = [PERMISSION.USER_CREATE];
+    request.userData.permissions = [PERMISSION.USER_CREATE];
     expect(permissions.canActivate(context(request, 'create'))).toBe(true);
   });
   it('maps network error codes to numeric HTTP status', () => {

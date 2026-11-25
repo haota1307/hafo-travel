@@ -243,6 +243,60 @@ test("HTTP transport and BFF envelope contract", async (t) => {
   assert.equal(calls.at(-1).options.signal, controller.signal);
 });
 
+test("Concurrent authenticated reads rotate once and retry with the new session", async (t) => {
+  const originalFetch = globalThis.fetch;
+  const originalWindow = globalThis.window;
+  globalThis.window = {};
+  let active = false;
+  let rotations = 0;
+
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+
+    if (originalWindow === undefined) {
+      delete globalThis.window;
+    } else {
+      globalThis.window = originalWindow;
+    }
+  });
+
+  globalThis.fetch = async (url, options) => {
+    if (url === "/api/auth/refresh") {
+      assert.equal(options.method, "POST");
+      rotations++;
+      active = true;
+
+      return Response.json({ message: "OK" });
+    }
+
+    assert.ok(url.startsWith("/api/backend/"));
+
+    return active
+      ? Response.json({ statusCode: 200, message: "OK", data: "ok" })
+      : new Response(null, { status: 401 });
+  };
+
+  const results = await Promise.all([
+    http.getAuthenticated("/user/me"),
+    http.getAuthenticated("/role"),
+  ]);
+  assert.deepEqual(
+    results.map((result) => result.payload),
+    ["ok", "ok"],
+  );
+  assert.equal(rotations, 1);
+
+  globalThis.fetch = async () => new Response(null, { status: 403 });
+  await assert.rejects(
+    http.getAuthenticated("/role"),
+    (error) => error.status === 403,
+  );
+  await assert.rejects(
+    http.getAuthenticated("https://example.org/role"),
+    /relative BFF path/,
+  );
+});
+
 test("Both locales have matching keys and every demo ICU message formats", () => {
   const load = (file) =>
     JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8"));

@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import type { Types } from 'mongoose';
 
 import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
 import type { CreateUserRequest } from '@common/interfaces/grpc/identity/v1/identity';
@@ -36,6 +37,14 @@ export class UserService {
 
   getUserByUserId(userId: string) {
     return this.userRepository.getByUserId(userId);
+  }
+
+  getAuthProfileByEmail(email: string) {
+    return this.userRepository.getAuthProfileByEmail(email);
+  }
+
+  getAuthProfileById(profileId: Types.ObjectId) {
+    return this.userRepository.getAuthProfileById(profileId);
   }
 
   async setRoles(userId: string, roles: string[]) {

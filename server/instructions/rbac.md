@@ -10,14 +10,14 @@ Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, d
 
 ## Cơ chế kiểm tra
 
-- `UserGuard` trả 401 cho route cần xác thực cho đến khi có cơ chế đăng nhập. Chỉ route đánh dấu public và không yêu cầu permission mới qua được guard.
+- `UserGuard` yêu cầu bearer token cho route bảo vệ. BFF tự xác minh chữ ký HS256 bằng secret dùng chung, kiểm tra issuer, audience, thời gian hiệu lực và quyền trong JWT. Việc xác thực access token không cần gọi Identity, MongoDB hoặc Redis. Redis vẫn phục vụ giới hạn tần suất HTTP. Route public có khai báo permission vẫn yêu cầu xác thực.
 - `PermissionGuard` yêu cầu đủ tất cả permission khai báo, trả 401 khi thiếu xác thực và 403 khi thiếu quyền.
 - Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi lưu hồ sơ. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
 - Không xóa role đang được user sử dụng; API trả 409. Cần chuyển user sang role khác trước khi xóa. Role có thể có permission rỗng nếu user không được thực hiện tác vụ quản trị.
 
 ## HTTP API
 
-Các route HTTP dưới đây đều đang trả 401. Bảng mô tả contract của controller và quyền đã khai báo, với prefix mẫu `/api`.
+Các route dưới đây yêu cầu bearer hợp lệ và dùng prefix mẫu `/api`.
 
 | Method | Endpoint              | Quyền                               | Dữ liệu/kết quả                                         |
 | ------ | --------------------- | ----------------------------------- | ------------------------------------------------------- |
@@ -47,7 +47,41 @@ Người có `user.assign_roles` có thể cấp mọi role hiện có, gồm ad
 
 ## Dữ liệu và seed role
 
-Seed tại `apps/identity/src/seeds/role.json` khai báo quyền cho role administrator. Đăng nhập và cấp thông tin đăng nhập sẽ được triển khai sau.
+### Cấp thông tin đăng nhập
+
+Chạy công cụ từ `server` bằng Node trong phiên bản dự án. Hai biến `MONGODB_URL` và `IDENTITY_MONGODB_DB_NAME` chọn database đích. Truyền mật khẩu qua môi trường riêng của process hoặc secret manager. Bỏ biến mật khẩu sau khi chạy.
+
+1. Chạy `node tools/auth-storage.cjs migrate` trước khi khởi động phiên bản mới. Migration tạo collection phiên, các index tra cứu token, TTL và index bảo đảm một tài khoản bootstrap. Có thể chạy lại. Nếu có xung đột index hoặc email trùng, công cụ dừng để người vận hành đối chiếu dữ liệu.
+2. Trên DB mới, chạy `pnpm exec nx run identity:seed` để tạo role administrator. Với DB đang sử dụng, kiểm tra role đã tồn tại trước khi seed.
+3. Để tạo tài khoản quản trị đầu tiên, đặt `ADMIN_ACCOUNT` (email), `ADMIN_PASSWORD`, `ADMIN_FIRST_NAME`, `ADMIN_LAST_NAME` rồi chạy `node tools/provision-credentials.cjs administrator`. Email phải chưa thuộc hồ sơ khác. Lần chạy lại cùng tài khoản giữ nguyên mật khẩu.
+4. Để cấp mật khẩu lần đầu cho hồ sơ có sẵn, đặt `AUTH_PROFILE_ID` bằng MongoDB `_id` và `AUTH_PROFILE_PASSWORD`, chạy `node tools/provision-credentials.cjs profile`. Công cụ giữ nguyên role và mật khẩu đã cấp. Hồ sơ cần có email hợp lệ, `userId` và đúng một role tồn tại. Mật khẩu mới cho cả quản trị viên và người dùng cần ít nhất 8 ký tự và tối đa 1.024 byte UTF-8.
+
+### Khóa ký JWT
+
+Identity ký JWT bằng HS256 với hai khóa riêng. `AC_TOKEN_KEY` dùng để ký access JWT và được cấp cho BFF để xác minh audience `bff`. Chỉ Identity cần `RF_TOKEN_KEY` để ký và xác minh refresh JWT có audience `identity-refresh` và `tokenUse=refresh`.
+
+Khi chạy local, đặt hai giá trị khác nhau trong `server/.env`. Sinh độc lập mỗi khóa từ ít nhất 32 byte ngẫu nhiên cho từng môi trường. Có thể chạy `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"` hai lần. Khi chuyển từ khóa dùng chung, có thể giữ giá trị cũ cho `AC_TOKEN_KEY` và sinh mới `RF_TOKEN_KEY`. Access JWT đã cấp còn hiệu lực đến hạn. Người dùng có refresh JWT ký bằng khóa cũ cần đăng nhập lại khi gia hạn phiên.
+
+### API đăng nhập và vòng đời phiên
+
+| HTTP tại BFF | Dữ liệu gửi | Kết quả trong `data` |
+| --- | --- | --- |
+| `POST /api/auth/login` | `{ email, password }` | `{ accessToken, refreshToken, accessExpiresIn, refreshExpiresIn }` |
+| `POST /api/auth/refresh` | `{ refreshToken }` | Cặp token mới và thời gian còn lại tính bằng giây |
+| `GET /api/user/me` | Header `Authorization: Bearer <accessToken>` | Hồ sơ và role hiện tại từ Identity, `permissions` cấp cao nhất là quyền theo JWT |
+| `POST /api/auth/logout` | `{ refreshToken }` | `{ loggedOut: true }`, có thể gọi lặp với cùng token |
+
+Login giữ nguyên chữ hoa/thường của email theo hồ sơ. Email chưa có tài khoản, hồ sơ chưa cấp mật khẩu và mật khẩu sai đều trả 401 với cùng mã. Redis giới hạn mặc định 100 request mỗi phút theo địa chỉ kết nối và endpoint, riêng login thêm 10 lần mỗi phút theo email. Sau reverse proxy, nhiều người có thể dùng chung hạn mức IP. BFF trả 429 khi vượt hạn mức.
+
+Identity băm mật khẩu bằng scrypt với salt riêng. Khi login hoặc refresh, Identity đọc hồ sơ và quyền mới nhất rồi ký access JWT cho BFF. `AUTH_ACCESS_TTL_SECONDS` mặc định 300, thời hạn thực tế tối đa 5 phút và được giới hạn bởi thời gian còn lại của phiên.
+
+Refresh JWT có `jti` riêng cho mỗi lần cấp. `AUTH_REFRESH_TTL_SECONDS` mặc định 604800 (7 ngày), tính từ lần đăng nhập. Xoay token giữ nguyên mốc hết hạn đó. Khi refresh, Identity kiểm tra chữ ký và các claim rồi dùng bản băm SHA-256 của toàn bộ refresh JWT để tìm phiên còn hiệu lực trong MongoDB. Bản ghi phiên giữ bản băm refresh, ID hồ sơ và thời hạn. TTL index dọn phiên hết hạn.
+
+Hai yêu cầu refresh cùng token chỉ có một yêu cầu thành công. Sau refresh, chỉ refresh token mới có thể gia hạn tiếp. Access JWT đã cấp tiếp tục dùng được đến `exp`, kể cả sau logout hoặc khi quyền thay đổi. Cookie ở trình duyệt được xóa sau khi logout thành công. Trong 30 giây, refresh token ngay trước đó vẫn có thể thu hồi cùng phiên để xử lý logout đồng thời. Mất kết nối ngay sau khi server xoay token có thể yêu cầu người dùng đăng nhập lại. Mỗi lần đăng nhập tạo phiên độc lập, logout chỉ thu hồi phiên được gửi.
+
+Trình duyệt gọi Next `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` trên cùng origin. Hai route sau đọc refresh cookie phía server. Cookie dùng HttpOnly, SameSite=Lax và trong production có Secure cùng tiền tố `__Host-`. Next chỉ trả trạng thái trong JSON. Xem [cấu hình client](../../client/README.md).
+
+Seed tại `apps/identity/src/seeds/role.json` khai báo quyền cho role administrator. Hồ sơ chỉ có thể đăng nhập sau khi được cấp mật khẩu.
 
 Role name có unique index. Nếu database cũ đã có tên role trùng nhau, cần xử lý dữ liệu trùng trước khi áp dụng index; không tự xóa/merge role. Không chạy seed chế độ prune lên dữ liệu đang sử dụng.
 
@@ -57,4 +91,4 @@ Dữ liệu user cũ chưa có role hoặc có nhiều role cần được chuy�
 
 RBAC được áp dụng tại BFF HTTP. gRPC nội bộ chưa có TLS/workload identity hoặc kiểm tra quyền caller riêng; chỉ cho BFF/service tin cậy truy cập cổng 5101, không công bố chúng ra mạng không tin cậy. Khi triển khai service caller bên ngoài ranh giới này, phải bổ sung xác thực và ủy quyền tại service boundary.
 
-Frontend chưa tích hợp session/refresh và proxy chưa chuyển tiếp Authorization; chưa thể coi UI đã đăng nhập thật. Không lưu token vào localStorage để nối tạm luồng này.
+Next nhận thông tin đăng nhập qua route cùng origin và trả cookie HttpOnly. Browser gọi `/api/backend/user/me` để lấy hồ sơ. Khi vận hành, đặt Next sau HTTPS và chỉ cho các service tin cậy truy cập BFF, Identity và MongoDB. Ở máy phát triển, dùng `GRPC_BIND_HOST=127.0.0.1`. Trong container, chỉ bind lên mạng nội bộ có kiểm soát.

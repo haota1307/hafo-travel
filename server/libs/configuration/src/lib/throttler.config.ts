@@ -1,6 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { MetadataKeys } from '@common/constants/common.constants';
 
 export const ThrottlerProvider = ThrottlerModule.forRootAsync({
   imports: [ConfigModule],
@@ -10,6 +11,21 @@ export const ThrottlerProvider = ThrottlerModule.forRootAsync({
       {
         ttl: 60000,
         limit: 100,
+      },
+      {
+        name: 'account',
+        ttl: 60000,
+        limit: 10,
+        skipIf: (context) =>
+          !Reflect.getMetadata(
+            MetadataKeys.LOGIN_THROTTLE,
+            context.getHandler(),
+          ),
+        getTracker: (request) => {
+          const email: unknown = request['body']?.email;
+
+          return typeof email === 'string' ? email.trim() : '';
+        },
       },
     ],
     errorMessage: 'Too many requests, please try again later.',

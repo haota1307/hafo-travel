@@ -52,6 +52,6 @@ Các lệnh workspace kiểm tra phạm vi rộng hơn; chỉ chạy khi thay đ
 - Không tự dùng database thật hoặc chạy seed để kiểm chứng unit test. Test tích hợp dịch vụ thật cần môi trường và dữ liệu phù hợp với phạm vi được giao.
 - Báo rõ lệnh đã chạy, pass/fail và phần chưa kiểm tra. `No tests found` không phải test pass; kết quả Nx lấy từ cache cần được phân biệt khi cần bằng chứng chạy mới.
 - Các suite trong `libs/interceptors/tests/` kiểm tra HTTP envelope, status/error metadata gRPC, deadline/correlation và guard và logging.
-- Suite `apps/bff/tests/identity-http.spec.ts` kiểm tra HTTP 401 trên route bảo vệ, Swagger và contract gRPC Identity trên localhost. Các RPC dùng repository MongoDB được mock để kiểm tra tạo hồ sơ, gán role và CRUD role.
+- Suite `apps/bff/tests/identity-http.spec.ts` kiểm tra login, refresh, logout, bearer, 401/403, Swagger và contract gRPC Identity trên localhost. AuthService được thay bằng test double trong suite transport. `apps/identity/tests` kiểm tra nghiệp vụ mật khẩu và phiên. Kiểm thử Next qua HTTP với MongoDB và Redis thật dùng `client/test/auth-e2e.test.mjs` theo README client. Các RPC dùng repository MongoDB được mock để kiểm tra tạo hồ sơ, gán role và CRUD role.
 
 Sau khi sửa proto, chạy `pnpm proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build các app dùng contract bị ảnh hưởng để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role); runtime vẫn chịu module boundary thông thường.

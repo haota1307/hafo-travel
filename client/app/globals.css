@@ -118,6 +118,7 @@
 }
 
 .public-site,
+.account-screen,
 .template-scope {
   --radius: 0.75rem;
   --radius-md: calc(var(--radius) * 0.8);
@@ -177,6 +178,17 @@
   src: url(/public-site/fonts/inter-4.woff) format('woff');
 }
 
+.public-site,
+.account-screen {
+  --site-font: 'Public Inter', sans-serif;
+  --font-heading: var(--site-font);
+  --font-sans: var(--site-font);
+}
+
+.account-screen {
+  font-family: var(--font-sans);
+}
+
 .public-site {
   --brand-accent: #a68b5b;
   --button-clicked: #0b2c23;
@@ -189,11 +201,8 @@
   --white-10: var(--border);
   --icon-grey-40: #6d7d70;
   --site-background: var(--background);
-  --site-font: 'Public Inter', sans-serif;
   --site-unit: calc(100vw / 90);
   --site-control-height: 2.75rem;
-  --font-heading: var(--site-font);
-  --font-sans: var(--site-font);
 }
 
 .public-site .site-inverse {

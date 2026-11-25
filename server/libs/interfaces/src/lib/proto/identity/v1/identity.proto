@@ -11,6 +11,9 @@ service IdentityService {
   rpc CreateRole(CreateRoleRequest) returns (RoleResponse);
   rpc UpdateRole(UpdateRoleRequest) returns (RoleResponse);
   rpc DeleteRole(RoleIdRequest) returns (DeleteRoleResponse);
+  rpc Login(LoginRequest) returns (AuthTokenPair);
+  rpc RefreshSession(RefreshSessionRequest) returns (AuthTokenPair);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
 }
 
 message CreateUserRequest {
@@ -89,3 +92,25 @@ message RoleResponse {
 message DeleteRoleResponse {
   string message = 1;
 }
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthTokenPair {
+  string access_token = 1;
+  string refresh_token = 2;
+  uint32 access_expires_in = 3;
+  uint32 refresh_expires_in = 4;
+}
+
+message RefreshSessionRequest {
+  string refresh_token = 1;
+}
+
+message LogoutRequest {
+  string refresh_token = 1;
+}
+
+message LogoutResponse {}

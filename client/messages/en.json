@@ -1,4 +1,19 @@
 {
+  "auth": {
+    "account": "My account",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "home": "Back to home",
+    "loading": "Checking your session…",
+    "invalidEmail": "Enter a valid email address.",
+    "invalidPassword": "Enter your password (up to 1,024 characters).",
+    "invalidCredentials": "The email or password is incorrect.",
+    "limited": "Too many attempts. Please try again in a minute.",
+    "unavailable": "Could not complete the request. Please try again.",
+    "retry": "Try again"
+  },
   "template": {
     "123456789": "+123456789",
     "comingSoon": "Coming Soon!",

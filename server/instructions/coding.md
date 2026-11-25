@@ -86,11 +86,11 @@
 - gRPC controller trả message protobuf trực tiếp. BFF lấy dữ liệu cho HTTP: create-user lấy response.message thành chuỗi.
 - HttpResponseInterceptor bọc raw data một lần thành `{ statusCode, message, data, code, processId, duration }`; code thành công là Success. Không bọc ResponseDto trong controller.
 - Hai POST hiện trả HTTP 201, body thành công statusCode: 200. Không suy ra HTTP status từ body.
-- GrpcLoggingInterceptor đăng ký trước khi listen; chuyển exception thành gRPC status và binary trailer rpc-error-bin giữ HTTP status/message, kể cả mảng validation/Unicode.
+- GrpcLoggingInterceptor chuyển lỗi sang gRPC. Controller gọi service trực tiếp. Exception nghiệp vụ 4xx giữ status và message, kể cả mảng validation Unicode. Với lỗi nội bộ, interceptor trả `INTERNAL_SERVER_ERROR` trong cả details và trailer `rpc-error-bin`. Lỗi hạ tầng 503/504 giữ status để caller xử lý.
 - normalizeError đọc trailer khi có; nếu không có thì map UNAUTHENTICATED → 401, PERMISSION_DENIED → 403, NOT_FOUND → 404, UNAVAILABLE → 503, DEADLINE_EXCEEDED → 504; lỗi chưa xác định → 500.
 - Log chỉ metadata, method, status và thời gian; không body, password, token, JWT claim hoặc query chứa credentials.
 - Validation HTTP trả 400 với message: string[], chưa có field/path hay contract phân trang. Frontend unwrap data.
-- BFF mặc định yêu cầu xác thực; endpoint public phải khai báo rõ. User/role API kiểm tra permission theo [RBAC](rbac.md); tạo user yêu cầu đồng thời `user.create` và `user.assign_roles` bằng decorator. User có đúng một role; tạo/thay role nhận mảng `roles` đúng một phần tử. Proxy frontend chưa forward cookie/Authorization.
+- BFF mặc định yêu cầu xác thực; endpoint public phải khai báo rõ. User/role API kiểm tra permission theo [RBAC](rbac.md); tạo user yêu cầu đồng thời `user.create` và `user.assign_roles` bằng decorator. User có đúng một role; tạo/thay role nhận mảng `roles` đúng một phần tử. Next đọc access cookie và tự đặt bearer header khi gọi BFF.
 
 ## Config và bootstrap
 

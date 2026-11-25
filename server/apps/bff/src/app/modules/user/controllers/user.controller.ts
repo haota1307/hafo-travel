@@ -5,8 +5,10 @@ import {
   type OnModuleInit,
   Post,
   Get,
+  Header,
   Patch,
   Param,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -18,7 +20,7 @@ import { Authorization } from '@common/decorators/authorization.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
 import { ProcessId } from '@common/decorators/process-id.decorator';
 import { UserData } from '@common/decorators/user-data.decorator';
-import type { AuthorizedMetadata } from '@common/interfaces/common/authorization.interface';
+import type { AuthenticatedActor } from '@common/interfaces/common/authorization.interface';
 import { ResponseDto } from '@common/interfaces/gateway/response.interface';
 import { CreateUserRequestDto } from '@common/interfaces/gateway/user';
 import { SetUserRolesRequestDto } from '@common/interfaces/gateway/user/user-request.dto';
@@ -56,11 +58,29 @@ export class UserController implements OnModuleInit {
   }
 
   @Get('me')
+  @Header('Cache-Control', 'no-store')
   @ApiOperation({
-    summary: 'Get the authenticated profile, roles and effective permissions',
+    summary: 'Get the current profile and access-token permissions',
   })
-  me(@UserData() actor: AuthorizedMetadata) {
-    return { user: actor.user, permissions: actor.permissions };
+  me(@UserData() actor: AuthenticatedActor, @ProcessId() processId: string) {
+    return requestGrpc(
+      this.users.getUserById,
+      { userId: actor.userId },
+      { processId },
+    ).pipe(
+      map(({ user }) => {
+        if (
+          !user ||
+          user.id !== actor.profileId ||
+          user.userId !== actor.userId ||
+          user.roles.length !== 1
+        ) {
+          throw new UnauthorizedException('Authentication is required');
+        }
+
+        return { user, permissions: actor.permissions };
+      }),
+    );
   }
 
   @Patch(':userId/roles')

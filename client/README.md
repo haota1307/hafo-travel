@@ -20,7 +20,7 @@ pnpm dev
 - Locale mặc định vi; URL cũ /template điều hướng theo ngôn ngữ đã chọn.
 - Theme, font và layout của demo áp dụng cho cả hai locale. Popup nằm trong phạm vi của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
 - Chỉnh màu, font và bo góc của public và demo tại một chỗ. [app/globals.css](app/globals.css)
-- `/api/backend/*` proxy tới BFF `/api/*`. API hồ sơ và vai trò đang trả 401 trong khi chờ triển khai đăng nhập. Xem [RBAC](../server/instructions/rbac.md).
+- `/api/backend/*` proxy tới BFF `/api/*`. Các API hồ sơ và vai trò dùng phiên do Identity cấp. Xem [RBAC](../server/instructions/rbac.md).
 - HTTP wrapper nhận envelope `{ statusCode, message, data, processId, duration }` và unwrap thành `{ status, payload: data }`. Validation backend trả `message: string[]` không có field/path; chưa có contract phân trang.
 
 ```powershell
@@ -50,4 +50,8 @@ pnpm 12 đặt cấu hình tại `pnpm-workspace.yaml`: `allowBuilds` liệt kê
 - `cn` và `useIsMobile` dùng chung tại `lib/utils.ts`, `hooks/use-mobile.ts`.
 - Frontend dùng formatter Prettier mặc định; luôn dùng dấu ngoặc cho nhánh/vòng lặp và dòng trống giữa các bước xử lý.
 
-Đăng nhập trên template là mô phỏng. Identity quản lý hồ sơ và vai trò trong MongoDB. Proxy hiện chưa chuyển tiếp cookie/Authorization.
+Mở **Tài khoản của tôi** hoặc `/vi/auth/login` (tiếng Anh tại `/en/auth/login`) để đăng nhập, xem hồ sơ hiện tại và đăng xuất. Form trong template vẫn là demo. Đặt `API_URL` cho Next server và `CLIENT_URL` theo origin trình duyệt, bao gồm cổng. Production dùng HTTPS và cookie HttpOnly, Secure, SameSite=Lax. Có thể dùng `NEXT_PUBLIC_SITE_URL` làm origin khi chưa đặt `CLIENT_URL`. Xem [cách cấp tài khoản](../server/instructions/rbac.md).
+
+Để chạy kiểm thử xuyên suốt trên stack thử nghiệm, đặt `AUTH_TEST_ORIGIN`, `AUTH_TEST_EMAIL` và `AUTH_TEST_PASSWORD` trong môi trường của process, rồi chạy `node --test test/auth-e2e.test.mjs` từ `client`. Bài test đăng nhập với tài khoản thử, xoay token, thu hồi refresh token và kiểm tra access JWT đã cấp còn dùng được đến khi hết hạn.
+
+Khi chỉ có BFF và Identity đang chạy, đặt `API_URL` khớp với `GLOBAL_PREFIX` của BFF, build client rồi chạy cùng lệnh với `AUTH_TEST_ORIGIN` để trống. Suite tự mở Next trên một cổng loopback tạm thời và đóng khi hoàn tất.

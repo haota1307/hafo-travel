@@ -9,7 +9,7 @@ import {
 import { RpcException } from '@nestjs/microservices';
 import { catchError, type Observable, tap } from 'rxjs';
 
-import { normalizeError, toGrpcError } from '@common/utils/error.util';
+import { toGrpcError } from '@common/utils/error.util';
 import { PROCESS_ID_METADATA } from '@common/utils/rpc.util';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class GrpcLoggingInterceptor implements NestInterceptor {
         }),
       ),
       catchError((error: unknown) => {
-        const { statusCode } = normalizeError(error);
+        const { statusCode, ...grpcError } = toGrpcError(error);
         Logger.error({
           transport: 'gRPC',
           processId,
@@ -44,7 +44,7 @@ export class GrpcLoggingInterceptor implements NestInterceptor {
           durationMs: Date.now() - started,
         });
 
-        throw new RpcException(toGrpcError(error));
+        throw new RpcException(grpcError);
       }),
     );
   }

@@ -22,6 +22,7 @@ async function bootstrap() {
       .setTitle('Backend BFF API')
       .setDescription('The Backend BFF API description')
       .setVersion('1.0.0')
+      .addBearerAuth()
       .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config);

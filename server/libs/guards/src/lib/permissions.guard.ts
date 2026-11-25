@@ -29,14 +29,12 @@ export class PermissionGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<RequestContext>();
     const userData = request[MetadataKeys.USER_DATA];
 
-    if (!userData?.valid || !userData.MetadataKeys) {
+    if (!userData) {
       throw new UnauthorizedException('Authentication is required');
     }
 
-    const userPermissions = userData.MetadataKeys.permissions ?? [];
-
     const isValid = requiredPermissions.every((permission) =>
-      userPermissions.includes(permission),
+      userData.permissions.includes(permission),
     );
 
     if (!isValid) {

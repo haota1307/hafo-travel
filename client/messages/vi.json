@@ -1,4 +1,19 @@
 {
+  "auth": {
+    "account": "Tài khoản của tôi",
+    "signIn": "Đăng nhập",
+    "signOut": "Đăng xuất",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "home": "Về trang chủ",
+    "loading": "Đang kiểm tra phiên đăng nhập…",
+    "invalidEmail": "Nhập địa chỉ email hợp lệ.",
+    "invalidPassword": "Nhập mật khẩu, tối đa 1.024 ký tự.",
+    "invalidCredentials": "Email hoặc mật khẩu chưa đúng.",
+    "limited": "Bạn đã thử quá nhiều lần. Vui lòng thử lại sau một phút.",
+    "unavailable": "Chưa thể hoàn tất yêu cầu. Vui lòng thử lại.",
+    "retry": "Thử lại"
+  },
   "template": {
     "123456789": "+123456789",
     "comingSoon": "Sắp ra mắt!",
