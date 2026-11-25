@@ -21,6 +21,7 @@ pnpm dev
 - Trang chủ: http://localhost:3000/vi và /en.
 - Cụm trang public Hafo Travel: trang chủ, `/experiences`, `/contacts`, 6 hành trình Việt Nam và 2 trang pháp lý dưới mỗi locale, đầy đủ nội dung/metadata tiếng Việt và tiếng Anh. Nút VI/EN ở header giữ trang, query và hash khi đổi ngôn ngữ. `/trai-nghiem` và `/coaches` dưới mỗi locale redirect 308 trực tiếp tới `/experiences` cùng locale. Xem [cấu trúc và cách sửa](documents/public-site/README.md).
 - Demo: /vi/template, /en/template.
+- Bản mẫu quản trị du lịch mở tại `/vi/dashboard` hoặc `/en/dashboard`. Yêu cầu tư vấn, trạng thái nội dung và vai trò chỉnh thử được lưu trong phiên của tab trình duyệt. Các số liệu, chuyến đi và giao dịch là dữ liệu mẫu.
 - Locale mặc định vi; URL cũ /template điều hướng theo ngôn ngữ đã chọn.
 - Theme, font và layout của demo áp dụng cho cả hai locale. Popup nằm trong phạm vi của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
 - Chỉnh màu, font và bo góc của public và demo tại một chỗ. [app/globals.css](app/globals.css)

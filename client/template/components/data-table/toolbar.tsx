@@ -1,94 +1,32 @@
 "use client";
-
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { type Table } from "@/template/components/data-table/table-features";
-
+import {
+  DataTableToolbar as SharedToolbar,
+  type DataTableToolbarProps,
+} from "@/components/shared/data-table/toolbar";
 import { useI18n } from "@/template/i18n/provider";
-import { Button } from "@/template/components/ui/button";
-import { Input } from "@/template/components/ui/input";
-
-import { DataTableFacetedFilter } from "./faceted-filter";
-import { DataTableViewOptions } from "./view-options";
-
-type DataTableToolbarProps<TData extends object> = {
-  table: Table<TData>;
-  searchPlaceholder?: string;
-  searchKey?: string;
-  filters?: {
-    columnId: string;
-    title: string;
-    options: {
-      label: string;
-      value: string;
-      icon?: React.ComponentType<{ className?: string }>;
-    }[];
-  }[];
-};
-
+import { usePortalContainer } from "@/template/context/portal-container-provider";
 export function DataTableToolbar<TData extends object>({
-  table,
-  searchPlaceholder = "Filter...",
-  searchKey,
   filters = [],
-}: DataTableToolbarProps<TData>) {
+  searchPlaceholder = "Filter...",
+  ...props
+}: Omit<DataTableToolbarProps<TData>, "container" | "label">) {
   const { t } = useI18n();
-  const isFiltered =
-    table.state.columnFilters.length > 0 || table.state.globalFilter;
+  const container = usePortalContainer();
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
-        {searchKey ? (
-          <Input
-            placeholder={t(searchPlaceholder)}
-            value={
-              (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn(searchKey)?.setFilterValue(event.target.value)
-            }
-            className="h-8 w-37.5 lg:w-62.5"
-          />
-        ) : (
-          <Input
-            placeholder={t(searchPlaceholder)}
-            value={table.state.globalFilter ?? ""}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
-            className="h-8 w-37.5 lg:w-62.5"
-          />
-        )}
-        <div className="flex gap-x-2">
-          {filters.map((filter) => {
-            const column = table.getColumn(filter.columnId);
-
-            if (!column) {
-              return null;
-            }
-
-            return (
-              <DataTableFacetedFilter
-                key={filter.columnId}
-                column={column}
-                title={filter.title}
-                options={filter.options}
-              />
-            );
-          })}
-        </div>
-        {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              table.resetColumnFilters();
-              table.setGlobalFilter("");
-            }}
-            className="h-8 px-2 lg:px-3"
-          >
-            {t("Reset")} <Cross2Icon className="ms-2 h-4 w-4" />
-          </Button>
-        )}
-      </div>
-      <DataTableViewOptions table={table} />
-    </div>
+    <SharedToolbar
+      {...props}
+      label={t}
+      container={container}
+      searchPlaceholder={t(searchPlaceholder)}
+      filters={filters.map((filter) => ({
+        ...filter,
+        title: t(filter.title),
+        options: filter.options.map((option) => ({
+          ...option,
+          label: t(option.label),
+        })),
+      }))}
+    />
   );
 }

@@ -98,7 +98,6 @@ export function DataTableBulkActions<TData extends object>({
                   size="icon"
                   className="size-8"
                   aria-label={t("Update status")}
-                  title={t("Update status")}
                 >
                   <CircleArrowUp />
                   <span className="sr-only">{t("Update status")}</span>
@@ -134,7 +133,6 @@ export function DataTableBulkActions<TData extends object>({
                   size="icon"
                   className="size-8"
                   aria-label={t("Update priority")}
-                  title={t("Update priority")}
                 >
                   <ArrowUpDown />
                   <span className="sr-only">{t("Update priority")}</span>
@@ -169,7 +167,6 @@ export function DataTableBulkActions<TData extends object>({
               onClick={() => handleBulkExport()}
               className="size-8"
               aria-label={t("Export tasks")}
-              title={t("Export tasks")}
             >
               <Download />
               <span className="sr-only">{t("Export tasks")}</span>
@@ -188,7 +185,6 @@ export function DataTableBulkActions<TData extends object>({
               onClick={() => setShowDeleteConfirm(true)}
               className="size-8"
               aria-label={t("Delete selected tasks")}
-              title={t("Delete selected tasks")}
             >
               <Trash2 />
               <span className="sr-only">{t("Delete selected tasks")}</span>

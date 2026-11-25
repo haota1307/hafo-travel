@@ -3,6 +3,7 @@
 import { Languages } from 'lucide-react';
 
 import { useI18n } from '../i18n/provider';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -18,18 +19,18 @@ export function LanguageSwitch() {
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={t('Change language')}
-          title={t('Change language')}
-        >
-          <Languages className="size-4" />
-          <span className="hidden sm:inline">{locale === 'vi' ? 'Tiếng Việt' : 'English'}</span>
-          <span className="sm:hidden">{locale.toUpperCase()}</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" aria-label={t('Change language')}>
+              <Languages className="size-4" />
+              <span className="hidden sm:inline">{locale === 'vi' ? 'Tiếng Việt' : 'English'}</span>
+              <span className="sm:hidden">{locale.toUpperCase()}</span>
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{t('Change language')}</TooltipContent>
+      </Tooltip>
       <DropdownMenuContent align="end">
         <DropdownMenuRadioGroup
           value={locale}

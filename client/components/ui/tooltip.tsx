@@ -18,16 +18,22 @@ function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
 
 function TooltipContent({
   className,
+  portalContainer,
   side = 'top',
   sideOffset = 4,
   align = 'center',
   alignOffset = 0,
   children,
   ...props
-}: TooltipPrimitive.Popup.Props &
-  Pick<TooltipPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>) {
+}: TooltipPrimitive.Popup.Props & {
+  portalContainer?: TooltipPrimitive.Portal.Props['container'];
+} & Pick<TooltipPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>) {
+  if (portalContainer === null) {
+    return null;
+  }
+
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal container={portalContainer}>
       <TooltipPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}

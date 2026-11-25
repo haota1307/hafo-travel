@@ -49,6 +49,9 @@
 }
 
 :root {
+  --page-border: #143c321f;
+  --page-dark-foreground: #c9d0cc;
+  --page-dark-border: color-mix(in srgb, var(--page-dark-foreground) 12%, transparent);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -137,7 +140,7 @@
   --accent: #e5eade;
   --accent-foreground: var(--primary);
   --destructive: #a3362d;
-  --border: #143c321f;
+  --border: var(--page-border);
   --input: #143c3238;
   --ring: #315f4d;
 }
@@ -302,9 +305,10 @@
 
 .template-scope.dark {
   --background: #191e1c;
-  --foreground: #c9d0cc;
-  --card: #222926;
-  --popover: #2a332e;
+  --foreground: var(--page-dark-foreground);
+  --card: var(--background);
+  --popover: var(--background);
+  --sidebar: #222926;
   --primary: #819f8d;
   --secondary: #282f2b;
   --secondary-foreground: var(--foreground);
@@ -312,7 +316,7 @@
   --accent: #303c35;
   --accent-foreground: var(--foreground);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: color-mix(in srgb, var(--foreground) 12%, transparent);
+  --border: var(--page-dark-border);
   --input: color-mix(in srgb, var(--foreground) 20%, transparent);
   --ring: #748d7e;
   --chart-1: oklch(0.488 0.243 264.376);
@@ -336,11 +340,6 @@
 
 .template-scope .font-inter {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-}
-
-.template-scope * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
 }
 
 .template-scope button:not(:disabled),
@@ -410,6 +409,37 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    --scrollbar-thumb: var(--border);
+  }
+  :root:has(.public-site, .account-screen, .template-scope) {
+    --scrollbar-thumb: var(--page-border);
+  }
+  :root:has(.template-scope.dark) {
+    --scrollbar-thumb: var(--page-dark-border);
+    color-scheme: dark;
+  }
+  @media (forced-colors: none) {
+    @supports selector(::-webkit-scrollbar) {
+      ::-webkit-scrollbar {
+        width: 0.625rem;
+        height: 0.625rem;
+      }
+      ::-webkit-scrollbar-track,
+      ::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        border: 1px solid transparent;
+        border-radius: 9999px;
+        background: var(--scrollbar-thumb) padding-box;
+      }
+    }
+    @supports not selector(::-webkit-scrollbar) {
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) transparent;
+      }
+    }
   }
   body {
     @apply bg-background text-foreground;

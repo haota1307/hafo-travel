@@ -79,19 +79,22 @@ function ComboboxInput({
 
 function ComboboxContent({
   className,
+  portalContainer,
   side = 'bottom',
   sideOffset = 6,
   align = 'start',
   alignOffset = 0,
   anchor,
   ...props
-}: ComboboxPrimitive.Popup.Props &
+}: ComboboxPrimitive.Popup.Props & {
+  portalContainer?: ComboboxPrimitive.Portal.Props['container'];
+} &
   Pick<
     ComboboxPrimitive.Positioner.Props,
     'side' | 'align' | 'sideOffset' | 'alignOffset' | 'anchor'
   >) {
   return (
-    <ComboboxPrimitive.Portal>
+    <ComboboxPrimitive.Portal container={portalContainer}>
       <ComboboxPrimitive.Positioner
         side={side}
         sideOffset={sideOffset}

@@ -12,10 +12,7 @@ const { storeReactivityBindings } = requireTable(
   "@tanstack/table-core/store-reactivity-bindings",
 );
 const source = readFileSync(
-  new URL(
-    "../template/components/data-table/table-features.ts",
-    import.meta.url,
-  ),
+  new URL("../components/shared/data-table/table-features.ts", import.meta.url),
   "utf8",
 );
 const { outputText } = ts.transpileModule(source, {
@@ -28,14 +25,14 @@ const code = outputText.replace(
   /from (['"])@tanstack\/react-table\1/g,
   `from ${JSON.stringify(import.meta.resolve("@tanstack/react-table"))}`,
 );
-const { templateTableFeatures } = await import(
+const { dataTableFeatures } = await import(
   `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`
 );
 
 test("Template table preserves sorting, filtering, pagination, faceting and selection on v9", () => {
   const table = constructTable({
     features: {
-      ...templateTableFeatures,
+      ...dataTableFeatures,
       coreReactivityFeature: storeReactivityBindings(),
     },
     columns: [{ accessorKey: "name" }, { accessorKey: "rank" }],

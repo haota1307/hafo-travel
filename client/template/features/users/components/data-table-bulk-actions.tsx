@@ -79,7 +79,6 @@ export function DataTableBulkActions<TData extends object>({
               onClick={handleBulkInvite}
               className="size-8"
               aria-label={t("Invite selected users")}
-              title={t("Invite selected users")}
             >
               <Mail />
               <span className="sr-only">{t("Invite selected users")}</span>
@@ -98,7 +97,6 @@ export function DataTableBulkActions<TData extends object>({
               onClick={() => handleBulkStatusChange("active")}
               className="size-8"
               aria-label={t("Activate selected users")}
-              title={t("Activate selected users")}
             >
               <UserCheck />
               <span className="sr-only">{t("Activate selected users")}</span>
@@ -117,7 +115,6 @@ export function DataTableBulkActions<TData extends object>({
               onClick={() => handleBulkStatusChange("inactive")}
               className="size-8"
               aria-label={t("Deactivate selected users")}
-              title={t("Deactivate selected users")}
             >
               <UserX />
               <span className="sr-only">{t("Deactivate selected users")}</span>
@@ -136,7 +133,6 @@ export function DataTableBulkActions<TData extends object>({
               onClick={() => setShowDeleteConfirm(true)}
               className="size-8"
               aria-label={t("Delete selected users")}
-              title={t("Delete selected users")}
             >
               <Trash2 />
               <span className="sr-only">{t("Delete selected users")}</span>
