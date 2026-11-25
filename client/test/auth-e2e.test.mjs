@@ -30,7 +30,7 @@ test(
         await app.close();
       });
       origin = `http://127.0.0.1:${server.address().port}`;
-      process.env.CLIENT_URL = origin;
+      process.env.NEXT_PUBLIC_SITE_URL = origin;
       await app.prepare();
     }
 

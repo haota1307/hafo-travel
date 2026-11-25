@@ -79,18 +79,6 @@ export function DestinationSection() {
                 strokeDasharray="2 8"
                 opacity="0.35"
               />
-              {[150, 656, 1162].map((cx) => (
-                <g key={cx}>
-                  <circle
-                    cx={cx}
-                    cy="78"
-                    r="26"
-                    fill="currentColor"
-                    opacity="0.08"
-                  />
-                  <circle cx={cx} cy="78" r="6" fill="currentColor" />
-                </g>
-              ))}
             </svg>
           </div>
         </div>

@@ -31,7 +31,7 @@ export function RecordSheet({
   onClose: () => void;
 }) {
   const t = useTranslations("dashboard");
-  const { container, data, changeSetting } = useWorkspace();
+  const { container, data, changeSetting, destinations } = useWorkspace();
   const publicPath =
     section === "tours" && row
       ? "/" + row.id
@@ -39,11 +39,11 @@ export function RecordSheet({
         ? row?.values.path
         : undefined;
   const relatedPayments =
-    section === "bookings"
+    section === "bookings" && destinations.includes("payments")
       ? data.payments.filter((item) => item.values.booking === row?.id)
       : [];
   const relatedUsers =
-    section === "roles"
+    section === "roles" && destinations.includes("users")
       ? data.users.filter((item) => item.links?.role?.id === row?.id)
       : [];
 
@@ -103,7 +103,7 @@ export function RecordSheet({
                         {t(`fields.${key}`)}
                       </dt>
                       <dd className="break-words text-end font-medium">
-                        {link ? (
+                        {link && destinations.includes(link.section) ? (
                           <Link
                             className="text-primary underline-offset-2 hover:underline"
                             href={dashboardPath(link.section, link.id)}

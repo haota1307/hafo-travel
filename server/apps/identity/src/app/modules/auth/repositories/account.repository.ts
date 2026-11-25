@@ -35,6 +35,27 @@ export class AccountRepository {
       .exec();
   }
 
+  linkRegisteredAccount(email: string, googleSubject: string) {
+    return this.users
+      .findOneAndUpdate(
+        {
+          email,
+          $or: [
+            { emailVerifiedAt: { $type: 'date' } },
+            ...(email.endsWith('@gmail.com')
+              ? [{ initialAdministrator: true }]
+              : []),
+          ],
+          passwordHash: { $type: 'string' },
+          googleSubject: { $exists: false },
+        },
+        { $set: { googleSubject } },
+        { new: true, collation: { locale: 'simple' } },
+      )
+      .populate<{ roles: Role[] }>('roles')
+      .exec();
+  }
+
   async createClient(
     data: Pick<User, 'email' | 'firstName' | 'lastName'> &
       Pick<Partial<User>, 'googleSubject' | 'passwordHash'>,

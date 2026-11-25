@@ -10,6 +10,8 @@ import "@fontsource/inter/vietnamese-500.css";
 import "@fontsource/inter/vietnamese-600.css";
 import "@fontsource/inter/vietnamese-700.css";
 import { DashboardShell } from "@/features/dashboard/components/dashboard-shell";
+import { readPageSession } from "@/features/auth/components/page-access";
+import { accessibleDestinations } from "@/features/dashboard/sections";
 import { publicSiteConfig } from "@/features/public-site/site.config";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,10 +28,24 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const preferences = await cookies();
+  const [preferences, session] = await Promise.all([
+    cookies(),
+    readPageSession(),
+  ]);
+
+  if (!session || typeof session === "string") {
+    return children;
+  }
+
+  const destinations = accessibleDestinations(session.permissions);
+
+  if (!destinations.length) {
+    return children;
+  }
 
   return (
     <DashboardShell
+      destinations={destinations}
       initialDark={preferences.get("dashboard-theme")?.value === "dark"}
       sidebarOpen={preferences.get("sidebar_state")?.value !== "false"}
     >

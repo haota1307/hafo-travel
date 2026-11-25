@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useGetSession } from "@/features/auth/auth.queries";
 import {
   Sheet,
   SheetClose,
@@ -22,7 +23,7 @@ import { publicSiteConfig } from "../site.config";
 
 export function SiteHeader() {
   const t = useTranslations("publicSite");
-  const auth = useTranslations("auth");
+  const { data: session, isPending } = useGetSession();
   const pathname = usePathname();
   const portalContainer = usePublicPortalContainer();
   const headerRef = useRef<HTMLElement>(null);
@@ -32,8 +33,17 @@ export function SiteHeader() {
     { href: "/#retreats", label: t("retreats") },
     { href: "/experiences", label: t("experiences") },
     { href: "/contacts", label: t("contacts") },
-    { href: "/auth/login", label: auth("account") },
   ];
+  const accountLinks = session
+    ? [
+        session.permissions.includes("UI:dashboard")
+          ? { href: "/dashboard", label: t("manage") }
+          : { href: "/account", label: t("account") },
+      ]
+    : [
+        { href: "/auth/login", label: t("signIn") },
+        { href: "/auth/register", label: t("signUp") },
+      ];
 
   useEffect(() => {
     const header = headerRef.current;
@@ -50,7 +60,7 @@ export function SiteHeader() {
       return;
     }
 
-    const viewport = window.matchMedia("(min-width: 480px)");
+    const viewport = window.matchMedia("(min-width: 768px)");
     const closeOnResize = () => setMenuPath(null);
     viewport.addEventListener("change", closeOnResize);
 
@@ -94,10 +104,19 @@ export function SiteHeader() {
         <div className="header__actions">
           <div className="header__r">
             {navigation()}
-            <Link href="/#retreats" className="header__accent mobile-hidden">
-              <span className="button-sm color-white">{t("explore")}</span>
+            <div className="header__accent" aria-busy={isPending}>
+              {!isPending &&
+                accountLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="button-sm color-white"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               <div className="header__dec header__dec--3" />
-            </Link>
+            </div>
           </div>
           <LanguageSwitcher />
           <div className="header__burger">
@@ -142,12 +161,16 @@ export function SiteHeader() {
                     <X />
                   </SheetClose>
                   {navigation(true)}
-                  <PublicButton
-                    href="/#retreats"
-                    onClick={() => setMenuPath(null)}
-                  >
-                    {t("exploreRetreats")}
-                  </PublicButton>
+                  {!isPending &&
+                    accountLinks.map((link) => (
+                      <PublicButton
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMenuPath(null)}
+                      >
+                        {link.label}
+                      </PublicButton>
+                    ))}
                 </SheetContent>
               )}
             </Sheet>

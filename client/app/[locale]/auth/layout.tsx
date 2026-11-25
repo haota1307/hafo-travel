@@ -49,7 +49,7 @@ export default async function AuthLayout({
             {destination("location")}
           </figcaption>
         </figure>
-        <div className="mx-auto w-full max-w-sm py-3 sm:py-8 lg:col-start-1 lg:row-start-2 lg:self-center lg:pb-20">
+        <div className="mx-auto w-full min-w-0 max-w-sm py-3 sm:py-8 lg:col-start-1 lg:row-start-2 lg:self-center lg:pb-20">
           {children}
         </div>
       </div>

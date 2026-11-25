@@ -13,9 +13,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
 import { Link } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
 import { useAccountAction } from "../auth.queries";
+import { AuthErrorToast } from "./auth-error-toast";
+import { GoogleLoginButton } from "./google-login-button";
 import {
   EmailActionSchema,
   ResetPasswordSchema,
@@ -67,44 +70,48 @@ function EmailForm({ action }: { action: "register" | "forgot-password" }) {
   }
 
   return (
-    <form
-      noValidate
-      onSubmit={form.handleSubmit(({ email }) =>
-        mutation.mutate({ action, body: { email, locale } }),
-      )}
-    >
-      <FieldGroup>
-        <p>{t(action === "register" ? "registerHint" : "forgotHint")}</p>
-        <Field>
-          <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            aria-invalid={!!form.formState.errors.email}
-            {...form.register("email", {
-              setValueAs: (value: string) => value.trim(),
-            })}
-          />
-          {form.formState.errors.email && (
-            <FieldError>{t("invalidEmail")}</FieldError>
-          )}
-        </Field>
-        <Button disabled={mutation.isPending} type="submit">
-          {t("sendLink")}
-        </Button>
-        {mutation.isError && (
-          <p role="alert">
-            {t(
-              mutation.error instanceof HttpError &&
-                mutation.error.status === 429
-                ? "limited"
-                : "unavailable",
-            )}
-          </p>
+    <>
+      <form
+        noValidate
+        onSubmit={form.handleSubmit(({ email }) =>
+          mutation.mutate({ action, body: { email, locale } }),
         )}
-      </FieldGroup>
-    </form>
+      >
+        <FieldGroup>
+          <p>{t(action === "register" ? "registerHint" : "forgotHint")}</p>
+          <Field>
+            <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              aria-invalid={!!form.formState.errors.email}
+              {...form.register("email", {
+                setValueAs: (value: string) => value.trim(),
+              })}
+            />
+            {form.formState.errors.email && (
+              <FieldError>{t("invalidEmail")}</FieldError>
+            )}
+          </Field>
+          <Button disabled={mutation.isPending} type="submit">
+            {t("sendLink")}
+          </Button>
+          {mutation.isError && (
+            <AuthErrorToast
+              key={mutation.submittedAt}
+              message={t(
+                mutation.error instanceof HttpError &&
+                  mutation.error.status === 429
+                  ? "limited"
+                  : "unavailable",
+              )}
+            />
+          )}
+        </FieldGroup>
+      </form>
+      {action === "register" && <GoogleLoginButton text="signup_with" />}
+    </>
   );
 }
 
@@ -120,7 +127,7 @@ function PasswordForm({
     .object({
       firstName: verify ? VerifyEmailSchema.shape.firstName : z.string(),
       lastName: verify ? VerifyEmailSchema.shape.lastName : z.string(),
-      password: ResetPasswordSchema.shape.password,
+      password: z.string().min(1).pipe(ResetPasswordSchema.shape.password),
       confirmPassword: z.string().min(1),
     })
     .refine(({ password, confirmPassword }) => password === confirmPassword, {
@@ -143,32 +150,55 @@ function PasswordForm({
   return (
     <form
       noValidate
-      onSubmit={form.handleSubmit(({ firstName, lastName, password }) => {
-        const token = window.location.hash.slice(1);
+      onSubmit={form.handleSubmit(
+        ({ firstName, lastName, password }) => {
+          const token = window.location.hash.slice(1);
 
-        if (!token || token.length > 4096) {
-          form.setError("root", { type: "token" });
+          if (!token || token.length > 4096) {
+            form.setError("root", { type: "token" });
+            toast.add({ type: "error", title: t("badLink") });
 
-          return;
-        }
+            return;
+          }
 
-        const command = verify
-          ? ({
-              action,
-              body: { token, firstName, lastName, password },
-            } as const)
-          : ({ action, body: { token, password } } as const);
-        mutation.mutate(command, {
-          onSuccess: () => {
-            form.reset();
-            window.history.replaceState(
-              window.history.state,
-              "",
-              window.location.pathname,
-            );
-          },
-        });
-      })}
+          const command = verify
+            ? ({
+                action,
+                body: { token, firstName, lastName, password },
+              } as const)
+            : ({ action, body: { token, password } } as const);
+          mutation.mutate(command, {
+            onSuccess: () => {
+              form.reset();
+              window.history.replaceState(
+                window.history.state,
+                "",
+                window.location.pathname,
+              );
+            },
+          });
+        },
+        (errors) => {
+          const messages = [];
+
+          if (errors.firstName || errors.lastName) {
+            messages.push(t("nameRule"));
+          }
+          if (errors.password && errors.password.type !== "too_small") {
+            messages.push(t("passwordRule"));
+          }
+          if (
+            errors.confirmPassword &&
+            errors.confirmPassword.type !== "too_small"
+          ) {
+            messages.push(t("passwordMismatch"));
+          }
+
+          if (messages.length) {
+            toast.add({ type: "error", title: messages.join(" ") });
+          }
+        },
+      )}
     >
       <FieldGroup>
         {verify &&
@@ -184,9 +214,6 @@ function PasswordForm({
                 aria-invalid={!!form.formState.errors[name]}
                 {...form.register(name)}
               />
-              {form.formState.errors[name] && (
-                <FieldError>{t("nameRule")}</FieldError>
-              )}
             </Field>
           ))}
         <Field>
@@ -198,8 +225,8 @@ function PasswordForm({
             aria-invalid={!!form.formState.errors.password}
             {...form.register("password", { deps: "confirmPassword" })}
           />
-          {form.formState.errors.password && (
-            <FieldError>{t("passwordRule")}</FieldError>
+          {form.formState.errors.password?.type === "too_small" && (
+            <FieldError>{t("passwordRequired")}</FieldError>
           )}
         </Field>
         <Field>
@@ -212,19 +239,15 @@ function PasswordForm({
             autoComplete="new-password"
             aria-invalid={!!form.formState.errors.confirmPassword}
             aria-describedby={
-              form.formState.errors.confirmPassword
+              form.formState.errors.confirmPassword?.type === "too_small"
                 ? "confirm-password-error"
                 : undefined
             }
             {...form.register("confirmPassword")}
           />
-          {form.formState.errors.confirmPassword && (
+          {form.formState.errors.confirmPassword?.type === "too_small" && (
             <FieldError id="confirm-password-error">
-              {t(
-                form.formState.errors.confirmPassword.type === "too_small"
-                  ? "confirmPasswordRequired"
-                  : "passwordMismatch",
-              )}
+              {t("confirmPasswordRequired")}
             </FieldError>
           )}
         </Field>
@@ -232,19 +255,21 @@ function PasswordForm({
           {t(titles[action])}
         </Button>
         {(mutation.isError || form.formState.errors.root) && (
-          <div role="alert">
-            <p>
-              {t(
-                form.formState.errors.root ||
-                  (mutation.error instanceof HttpError &&
-                    mutation.error.status === 400)
-                  ? "badLink"
-                  : mutation.error instanceof HttpError &&
-                      mutation.error.status === 429
-                    ? "limited"
-                    : "unavailable",
-              )}
-            </p>
+          <div>
+            {mutation.isError && (
+              <AuthErrorToast
+                key={mutation.submittedAt}
+                message={t(
+                  mutation.error instanceof HttpError &&
+                    mutation.error.status === 400
+                    ? "badLink"
+                    : mutation.error instanceof HttpError &&
+                        mutation.error.status === 429
+                      ? "limited"
+                      : "unavailable",
+                )}
+              />
+            )}
             <Link
               className="text-primary underline"
               href={verify ? "/auth/register" : "/auth/forgot-password"}

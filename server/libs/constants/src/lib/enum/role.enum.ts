@@ -3,6 +3,15 @@ export enum ROLE {
 }
 
 export enum PERMISSION {
+  UI_DASHBOARD = 'UI:dashboard',
+  UI_DASHBOARD_INQUIRIES = 'UI:dashboard/inquiries',
+  UI_DASHBOARD_TOURS = 'UI:dashboard/tours',
+  UI_DASHBOARD_DEPARTURES = 'UI:dashboard/departures',
+  UI_DASHBOARD_BOOKINGS = 'UI:dashboard/bookings',
+  UI_DASHBOARD_PAYMENTS = 'UI:dashboard/payments',
+  UI_DASHBOARD_CONTENT = 'UI:dashboard/content',
+  UI_DASHBOARD_USERS = 'UI:dashboard/users',
+  UI_DASHBOARD_ROLES = 'UI:dashboard/roles',
   USER_CREATE = 'user.create',
   USER_GET_BY_ID = 'user.get_by_id',
   USER_GET_ALL = 'user.get_all',

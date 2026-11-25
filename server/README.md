@@ -39,6 +39,8 @@ Các app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGO
 
 RPC nội bộ `notification.v1.NotificationService/SendEmail` nhận `to`, `subject`, ít nhất một trong hai trường `text` hoặc `html`, và `idempotencyKey`. Dùng một khóa riêng cho mỗi email và giữ cùng khóa cùng nội dung khi thử lại. `emailId` là mã Resend trả về khi tiếp nhận thư. [Contract gRPC](libs/interfaces/src/lib/proto/notification/v1/notification.proto) · [API gửi email của Resend](https://resend.com/docs/api-reference/emails/send-email) · [Quy tắc chống gửi trùng](https://resend.com/docs/dashboard/emails/idempotency-keys).
 
+Đăng nhập Google tự liên kết theo email với tài khoản tự đăng ký đã xác minh. Quản trị viên bootstrap có thể đăng nhập bằng đúng Gmail đã dùng khi khởi tạo. Khi email mới, Identity tạo tài khoản với role `client`. Lần đăng nhập sau tìm lại hồ sơ theo Google subject.
+
 Khi nâng cấp môi trường đang có dữ liệu Identity, đổi tên biến `MONGODB_DB_NAME` thành `IDENTITY_MONGODB_DB_NAME` và giữ giá trị hiện tại. Nếu môi trường cũ dùng mặc định, đặt `IDENTITY_MONGODB_DB_NAME=backend_app` để tiếp tục đọc dữ liệu cũ. Môi trường mới mặc định dùng `identity`.
 
 Swagger theo cấu hình mẫu: http://localhost:3300/api/docs.
@@ -80,6 +82,8 @@ Nâng cấp toolchain đã chạy migration Nx; không chạy seed/migration dat
 Source ứng dụng giữ CommonJS, dùng `module`/`moduleResolution: nodenext` và target ES2023; Node 26 hỗ trợ require ESM của Nest 12. Các target Webpack CLI 7 dùng `--mode` và `NODE_ENV` rõ ràng cho production/development. Jest 30 bật VM Modules qua target default trong `nx.json`; spec dùng `isolatedModules: true` cho ts-jest, kiểm tra kiểu đầy đủ bằng `pnpm typecheck`.
 
 ## Tích hợp frontend
+
+Next đọc quyền từ `GET /api/user/me` để kiểm tra từng trang độc lập. Ví dụ, `UI:dashboard` mở trang tổng quan, `UI:dashboard/users` mở trang Người dùng. Với database đang sử dụng, cấp các mã tương ứng cho từng role qua API theo [hướng dẫn RBAC](instructions/rbac.md#cơ-chế-kiểm-tra).
 
 Client ở [../client](../client/README.md), cấu hình mẫu `API_URL=http://localhost:3300/api` theo `PORT=3300`, `GLOBAL_PREFIX=api` của `.env.example`. Nếu đổi cấu hình backend, cập nhật URL phía client tương ứng.
 

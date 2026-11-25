@@ -122,6 +122,7 @@
 
 .public-site,
 .account-screen,
+:root:has(.account-screen) [data-slot='toast-viewport'],
 .template-scope {
   --radius: 0.75rem;
   --radius-md: calc(var(--radius) * 0.8);
@@ -182,14 +183,25 @@
 }
 
 .public-site,
-.account-screen {
+.account-screen,
+:root:has(.account-screen) [data-slot='toast-viewport'] {
   --site-font: 'Public Inter', sans-serif;
   --font-heading: var(--site-font);
   --font-sans: var(--site-font);
 }
 
-.account-screen {
+.account-screen,
+:root:has(.account-screen) [data-slot='toast-viewport'] {
   font-family: var(--font-sans);
+}
+
+:root:has(.account-screen) [data-slot='toast'] {
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px var(--page-border);
+}
+
+:root:has(.account-screen) [data-slot='toast-content'] {
+  padding: 0.75rem 1rem;
 }
 
 .account-screen [data-slot='input']:enabled {

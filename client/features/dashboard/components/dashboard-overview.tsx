@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowRight,
@@ -24,6 +25,31 @@ import { useWorkspace } from "./workspace";
 import { sampleDate } from "../fixtures";
 import { dashboardPath } from "../sections";
 import { formatDate } from "../records";
+
+function OverviewLink({
+  href,
+  className,
+  children,
+  actionOnly = false,
+}: {
+  href: string;
+  className: string;
+  children: ReactNode;
+  actionOnly?: boolean;
+}) {
+  const { destinations } = useWorkspace();
+  const [path] = href.split("?");
+
+  if (destinations.some((page) => dashboardPath(page) === path)) {
+    return (
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    );
+  }
+
+  return actionOnly ? null : <div className={className}>{children}</div>;
+}
 
 export function DashboardOverview() {
   const locale = useLocale();
@@ -76,7 +102,7 @@ export function DashboardOverview() {
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, href }) => (
-          <Link
+          <OverviewLink
             key={label}
             href={href}
             className="group flex items-start justify-between rounded-xl border bg-card p-4 text-card-foreground transition-colors hover:border-primary/50 sm:p-5"
@@ -92,7 +118,7 @@ export function DashboardOverview() {
             <span className="rounded-lg bg-accent p-2 text-accent-foreground">
               <Icon className="size-4" />
             </span>
-          </Link>
+          </OverviewLink>
         ))}
       </div>
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(19rem,1fr)]">
@@ -101,13 +127,14 @@ export function DashboardOverview() {
             <h2 className="text-lg font-semibold tracking-tight">
               {t("recentInquiries")}
             </h2>
-            <Link
+            <OverviewLink
+              actionOnly
               href="/dashboard/inquiries"
               className={buttonVariants({ variant: "ghost", size: "sm" })}
             >
               {t("viewAll")}
               <ArrowRight />
-            </Link>
+            </OverviewLink>
           </div>
           <Table>
             <TableHeader>
@@ -121,12 +148,12 @@ export function DashboardOverview() {
               {data.inquiries.slice(0, 6).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="py-3 ps-5">
-                    <Link
+                    <OverviewLink
                       href={dashboardPath("inquiries", row.id)}
                       className="hover:underline"
                     >
                       <RecordIdentity section="inquiries" row={row} />
-                    </Link>
+                    </OverviewLink>
                   </TableCell>
                   <TableCell className="max-w-52 whitespace-normal">
                     {row.values.tour}
@@ -144,16 +171,17 @@ export function DashboardOverview() {
             <h2 className="text-lg font-semibold tracking-tight">
               {t("upcoming")}
             </h2>
-            <Link
+            <OverviewLink
+              actionOnly
               href="/dashboard/departures"
               className={buttonVariants({ variant: "ghost", size: "sm" })}
             >
               {t("viewAll")}
               <ArrowRight />
-            </Link>
+            </OverviewLink>
           </div>
           <div className="space-y-1 px-4 pb-3 sm:px-5">
-            <Link
+            <OverviewLink
               href={dashboardPath("departures", next.id)}
               className="group relative mb-2 flex min-h-40 items-end overflow-hidden rounded-lg bg-slate-800 p-4 text-white"
             >
@@ -174,9 +202,9 @@ export function DashboardOverview() {
                 </span>
                 <span className="text-lg font-semibold">{next.title}</span>
               </span>
-            </Link>
+            </OverviewLink>
             {upcoming.slice(0, 3).map((item) => (
-              <Link
+              <OverviewLink
                 key={item.id}
                 href={dashboardPath("departures", item.id)}
                 className="flex items-center gap-3 border-b py-3 last:border-0 hover:text-primary"
@@ -199,7 +227,7 @@ export function DashboardOverview() {
                   </span>
                 </span>
                 <StatusBadge status={item.status!} />
-              </Link>
+              </OverviewLink>
             ))}
           </div>
         </section>

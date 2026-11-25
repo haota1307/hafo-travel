@@ -38,6 +38,9 @@ export class User extends BaseSchema {
   @Prop({ type: Date })
   emailVerifiedAt?: Date;
 
+  @Prop({ type: Boolean, immutable: true, select: false })
+  initialAdministrator?: boolean;
+
   @Prop({
     type: [{ type: Types.ObjectId, ref: 'Role' }],
     required: true,

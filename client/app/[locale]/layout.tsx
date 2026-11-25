@@ -1,31 +1,36 @@
-import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { routing } from '@/i18n/routing';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { QueryProvider } from '@/components/providers/query-provider';
-import '../globals.css';
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import { Geist, Geist_Mono } from "next/font/google";
+import { QueryProvider } from "@/components/providers/query-provider";
+import { Toaster } from "@/components/ui/toast";
+import "../globals.css";
 
 const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
-  const t = await getTranslations({ locale, namespace: 'home' });
+  const t = await getTranslations({ locale, namespace: "home" });
 
-  return { title: t('title'), description: t('description') };
+  return { title: t("title"), description: t("description") };
 }
 
 export default async function RootLayout({
@@ -50,7 +55,9 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <Toaster>
+            <QueryProvider>{children}</QueryProvider>
+          </Toaster>
         </NextIntlClientProvider>
       </body>
     </html>

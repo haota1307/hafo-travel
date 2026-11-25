@@ -3,7 +3,14 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Bell, Languages, Moon, ArrowRight, Sun } from "lucide-react";
+import {
+  Bell,
+  Languages,
+  Moon,
+  ArrowRight,
+  Sun,
+  UserRound,
+} from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +56,7 @@ import {
 import { publicSiteConfig } from "@/features/public-site/site.config";
 import {
   dashboardPath,
-  navigation,
+  type Destination,
   normalizeSearch,
   sectionIcons,
 } from "../sections";
@@ -58,15 +65,16 @@ import { cn } from "@/lib/utils";
 
 function DashboardSidebar() {
   const t = useTranslations("dashboard");
+  const auth = useTranslations("auth");
   const pathname = usePathname();
-  const { container } = useWorkspace();
+  const { container, destinations, navigation } = useWorkspace();
   const { setOpenMobile } = useSidebar();
 
   return (
     <Sidebar variant="inset" collapsible="icon" portalContainer={container}>
       <SidebarHeader className="mb-2">
         <Link
-          href="/dashboard"
+          href={dashboardPath(destinations[0])}
           onClick={() => setOpenMobile(false)}
           className="flex h-14 items-center gap-2.5 rounded-lg px-2 group-data-[collapsible=icon]:px-0"
           aria-label={publicSiteConfig.name}
@@ -120,17 +128,21 @@ function DashboardSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border">
-        <div className="flex items-center gap-2.5 px-2 py-2 group-data-[collapsible=icon]:px-0">
-          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-sidebar-accent text-xs font-bold">
-            MA
-          </span>
-          <div className="min-w-0 text-sm group-data-[collapsible=icon]:hidden">
-            <p className="font-medium">Trần Minh Anh</p>
-            <p className="text-xs text-muted-foreground">
-              {t("sampleWorkspace")}
-            </p>
-          </div>
-        </div>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              render={<Link href="/account" />}
+              aria-label={auth("account")}
+              tooltip={{
+                children: auth("account"),
+                portalContainer: container,
+              }}
+            >
+              <UserRound />
+              <span>{auth("account")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
@@ -138,7 +150,7 @@ function DashboardSidebar() {
 
 function PageSearch() {
   const t = useTranslations("dashboard");
-  const { container } = useWorkspace();
+  const { container, navigation } = useWorkspace();
   const [open, setOpen] = useState(false);
   const common = useTranslations("template");
   const router = useRouter();
@@ -301,10 +313,12 @@ function Toolbar({
 }
 
 export function DashboardShell({
+  destinations,
   initialDark,
   sidebarOpen,
   children,
 }: {
+  destinations: Destination[];
   initialDark: boolean;
   sidebarOpen: boolean;
   children: React.ReactNode;
@@ -326,7 +340,7 @@ export function DashboardShell({
         dark ? "dark scheme-dark" : "light scheme-light",
       )}
     >
-      <WorkspaceProvider container={container}>
+      <WorkspaceProvider container={container} destinations={destinations}>
         <SidebarProvider defaultOpen={sidebarOpen}>
           <DashboardSidebar />
           <SidebarInset className="@container/content min-w-0">

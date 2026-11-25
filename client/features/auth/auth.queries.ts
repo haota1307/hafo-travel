@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocale } from "next-intl";
+import { getPathname } from "@/i18n/navigation";
 import { authApiRequest } from "./auth.api";
 
 export const authQueryKeys = { session: ["auth", "session"] as const };
@@ -14,15 +16,16 @@ export function useGetSession() {
 function useSignIn<T>(
   mutationFn: (input: T) => ReturnType<typeof authApiRequest.login>,
 ) {
-  const client = useQueryClient();
+  const locale = useLocale();
 
   return useMutation({
     mutationFn,
-    onSuccess: async () => {
-      client.removeQueries({
-        predicate: (query) => query.queryKey[0] !== "auth",
-      });
-      await client.invalidateQueries({ queryKey: authQueryKeys.session });
+    onSuccess: () => {
+      const loginPath = getPathname({ locale, href: "/auth/login" });
+      const search =
+        window.location.pathname === loginPath ? window.location.search : "";
+
+      window.location.replace(loginPath + search);
     },
   });
 }

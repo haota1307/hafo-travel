@@ -4,6 +4,8 @@ Next.js App Router, React Query, Zod 4, next-intl và bộ UI demo. Dùng cấu 
 
 ## Đăng ký và khôi phục tài khoản
 
+Chọn **Đăng nhập bằng Google** để vào tài khoản đã đăng ký bằng cùng email đã xác minh hoặc tạo tài khoản mới. Nếu dùng Google với địa chỉ ngoài Gmail và Google Workspace, mở email xác nhận trong lần liên kết hoặc tạo tài khoản đầu tiên.
+
 Từ trang `/[locale]/auth/login`, chọn đăng ký hoặc quên mật khẩu. Mở email để hoàn tất thao tác. Đặt `AUTH_PUBLIC_ORIGIN` phía Identity trùng với origin public của Next. Với Google, cấu hình OAuth client loại Web application và thêm origin của Next vào Authorized JavaScript origins. Điền cùng Web client ID vào `NEXT_PUBLIC_GOOGLE_CLIENT_ID` phía client và `GOOGLE_CLIENT_ID` phía Identity trước khi build/chạy. [Cấu hình backend](../server/README.md) · [Hướng dẫn của Google](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid).
 
 ## Chạy local
@@ -55,8 +57,12 @@ pnpm 12 đặt cấu hình tại `pnpm-workspace.yaml`: `allowBuilds` liệt kê
 - `cn` và `useIsMobile` dùng chung tại `lib/utils.ts`, `hooks/use-mobile.ts`.
 - Frontend dùng formatter Prettier mặc định; luôn dùng dấu ngoặc cho nhánh/vòng lặp và dòng trống giữa các bước xử lý.
 
-Mở **Tài khoản của tôi** hoặc `/vi/auth/login` (tiếng Anh tại `/en/auth/login`) để đăng nhập, xem hồ sơ hiện tại và đăng xuất. Form trong template vẫn là demo. Đặt `API_URL` cho Next server và `CLIENT_URL` theo origin trình duyệt, bao gồm cổng. Production dùng HTTPS và cookie HttpOnly, Secure, SameSite=Lax. Có thể dùng `NEXT_PUBLIC_SITE_URL` làm origin khi chưa đặt `CLIENT_URL`. Xem [cách cấp tài khoản](../server/instructions/rbac.md).
+Mở `/[locale]/auth/login` để đăng nhập và `/[locale]/account` để xem hồ sơ hoặc đăng xuất. Mỗi trang dashboard có quyền độc lập khớp với đường dẫn sau locale. Ví dụ, `UI:dashboard` mở trang tổng quan và `UI:dashboard/users` mở trang Người dùng. Mở trực tiếp một trang thiếu quyền sẽ chuyển về trang chủ cùng ngôn ngữ. Sau đăng nhập, ứng dụng ưu tiên đường dẫn đã yêu cầu nếu được phép, sau đó đến trang đầu tiên được cấp quyền theo thứ tự menu. Nếu role chưa có quyền UI nào trong dashboard, ứng dụng chuyển về trang chủ.
+
+Đặt `API_URL` cho Next server. Đặt `NEXT_PUBLIC_SITE_URL` theo origin của frontend, ví dụ `http://localhost:3000` khi chạy local. Next.js dùng giá trị này cho metadata và kiểm tra origin của yêu cầu ghi. Khi triển khai, đặt origin HTTPS chính thức cho cả lúc build và lúc chạy. Cookie production dùng HttpOnly, Secure và SameSite=Lax. Xem [cách cấp tài khoản và quyền](../server/instructions/rbac.md).
 
 Để chạy kiểm thử xuyên suốt trên stack thử nghiệm, đặt `AUTH_TEST_ORIGIN`, `AUTH_TEST_EMAIL` và `AUTH_TEST_PASSWORD` trong môi trường của process, rồi chạy `node --test test/auth-e2e.test.mjs` từ `client`. Bài test đăng nhập với tài khoản thử, xoay token, thu hồi refresh token và kiểm tra access JWT đã cấp còn dùng được đến khi hết hạn.
+
+Sau khi build client, chạy `node --test test/dashboard-access.test.mjs` để kiểm tra chuyển hướng dashboard, login và register theo locale và quyền hiện tại. Bài test tự mở Next và BFF mô phỏng trên cổng loopback tạm thời.
 
 Khi chỉ có BFF và Identity đang chạy, đặt `API_URL` khớp với `GLOBAL_PREFIX` của BFF, build client rồi chạy cùng lệnh với `AUTH_TEST_ORIGIN` để trống. Suite tự mở Next trên một cổng loopback tạm thời và đóng khi hoàn tất.

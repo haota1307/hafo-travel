@@ -7,10 +7,9 @@ export const refreshCookie = `${prefix}session_refresh`;
 export const jwtPattern = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 
 export function sameOriginWrite(request: NextRequest) {
+  const { NEXT_PUBLIC_SITE_URL } = process.env;
   const origin =
-    process.env.CLIENT_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (production ? undefined : request.nextUrl.origin);
+    NEXT_PUBLIC_SITE_URL || (production ? undefined : request.nextUrl.origin);
 
   if (!origin || request.headers.get("sec-fetch-site") === "cross-site") {
     return false;

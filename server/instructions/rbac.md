@@ -10,6 +10,8 @@ Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, d
 
 ## Cơ chế kiểm tra
 
+Quyền UI và quyền API dùng chung trường `permissions` của role. Mỗi mã UI cấp quyền cho đúng một trang. Ví dụ, role chỉ có `UI:dashboard/users` vào được trang Người dùng. Trang tổng quan yêu cầu riêng `UI:dashboard`. BFF trả các mã này qua `GET /user/me` và kiểm tra quyền nghiệp vụ riêng cho từng API. Seed cấp đầy đủ quyền trang dashboard cho role administrator trên DB mới. Với DB đang dùng, người có `role.update` cập nhật từng role bằng `PUT /role/:id` với tên, mô tả và danh sách quyền mong muốn. Giữ các quyền hiện có khi bổ sung quyền mới. Cập nhật qua API để làm mới cache quyền của role.
+
 - `UserGuard` yêu cầu bearer token cho route bảo vệ. BFF xác minh chữ ký HS256, issuer, audience và thời hạn. Access JWT chứa `sub`, `profileId` và `roleId` tại thời điểm cấp. BFF tra role hiện tại theo `userId` và permissions theo `roleId`. Hai giá trị được cache riêng trong Redis để các user cùng role dùng chung danh sách quyền. Route public có khai báo permission vẫn yêu cầu xác thực.
 - Khi thiếu cache, BFF lấy dữ liệu từ Identity qua gRPC. Identity đánh dấu key trước khi ghi thay đổi role hoặc gán lại role cho user. Trong lúc ghi, request đọc trực tiếp từ Identity. Khi ghi xong, Identity xóa key liên quan. Request sau đó nhận quyền mới ngay cả khi dùng access token đã cấp. Kết quả đọc bắt đầu trước khi đổi quyền không thể ghi đè cache mới.
 - BFF và Identity phải dùng chung Redis trong cùng môi trường. TTL của cache phân quyền lấy từ `REDIS_TTL` (giây). Nếu Redis lỗi khi đọc quyền, guard tra Identity. Nếu Identity không thể đánh dấu key trên Redis trước khi ghi, thao tác thay đổi phân quyền trả 503.
@@ -95,9 +97,9 @@ Trình duyệt gọi Next `POST /api/auth/login`, `/api/auth/refresh`, `/api/aut
 
 Identity ký token liên kết 30 phút với audience riêng cho từng thao tác. Token nằm trong fragment của liên kết để Next chỉ nhận token qua POST khi người dùng gửi form. Đăng ký lưu email chữ thường, tạo hồ sơ khi người nhận chọn mật khẩu. Unique index email ngăn tạo lại tài khoản. Yêu cầu mới được gửi từ màn hình đăng ký hoặc quên mật khẩu. Sau khi đổi mật khẩu, các liên kết khôi phục và refresh token phiên bản cũ hết hiệu lực. Access token đã cấp còn hiệu lực tối đa 5 phút.
 
-Với tài khoản Google dùng địa chỉ bên thứ ba ngoài Gmail và Google Workspace, lần đăng ký đầu tiên cần mở liên kết email rồi chọn lại đúng tài khoản Google.
+Với tài khoản Google dùng địa chỉ bên thứ ba ngoài Gmail và Google Workspace, lần tạo hoặc liên kết tài khoản đầu tiên cần mở liên kết email rồi chọn lại đúng tài khoản Google.
 
-Google tra tài khoản bằng `sub` đã được xác minh. Tài khoản Google mới phải có email Google đã xác minh và được gán role `client`. Trùng email của một tài khoản khác trả 409 để người dùng đăng nhập bằng phương thức hiện có. Tài khoản chỉ dùng Google khôi phục quyền truy cập qua Google.
+Google tra tài khoản bằng `sub` đã được xác minh. Khi chưa có liên kết, Identity dùng email đã xác minh để liên kết với tài khoản tự đăng ký bằng mật khẩu hoặc tạo tài khoản mới với role `client`. Với quản trị viên bootstrap có `initialAdministrator: true`, Gmail đã được Google xác minh và khớp chính xác với email lưu trong hồ sơ cũng đủ để liên kết. Liên kết giữ nguyên hồ sơ, mật khẩu và quyền. Hồ sơ không đủ điều kiện hoặc đã liên kết Google khác trả 409. Tài khoản chỉ dùng Google khôi phục quyền truy cập qua Google.
 
 Migration `node tools/auth-storage.cjs migrate` tạo index duy nhất cho Google subject và thêm role `client` với danh sách quyền rỗng nếu thiếu. Seed cho DB mới chứa cả `administrator` và `client`. Hai endpoint gửi mail dùng cùng giới hạn theo email như login.
 

@@ -210,25 +210,25 @@ export class AccountService {
     );
 
     if (!user) {
-      if (!(await this.accounts.existingEmail(email))) {
-        if (!emailToken && !email.endsWith('@gmail.com') && !profile.hd) {
-          const confirmation = await this.issueToken(
-            'verify-google',
-            profile.sub,
-            { email },
-          );
-          await this.mail.send(
-            'verify-google',
-            email,
-            confirmation,
-            locale || 'vi',
-            context,
-          );
+      if (!emailToken && !email.endsWith('@gmail.com') && !profile.hd) {
+        const confirmation = await this.issueToken(
+          'verify-google',
+          profile.sub,
+          { email },
+        );
+        await this.mail.send(
+          'verify-google',
+          email,
+          confirmation,
+          locale || 'vi',
+          context,
+        );
 
-          throw new ForbiddenException('GOOGLE_EMAIL_CONFIRMATION_REQUIRED');
-        }
+        throw new ForbiddenException('GOOGLE_EMAIL_CONFIRMATION_REQUIRED');
+      }
 
-        try {
+      try {
+        if (!(await this.accounts.existingEmail(email))) {
           user = await this.accounts.createClient({
             email,
             googleSubject: profile.sub,
@@ -236,14 +236,24 @@ export class AccountService {
               profile.given_name || profile.name || email.split('@')[0],
             lastName: profile.family_name || '',
           });
+        }
+      } catch (error) {
+        if (!duplicateKey(error)) {
+          throw error;
+        }
+      }
+
+      if (!user) {
+        try {
+          user = await this.accounts.linkRegisteredAccount(email, profile.sub);
         } catch (error) {
           if (!duplicateKey(error)) {
             throw error;
           }
         }
-      }
 
-      user ??= await this.accounts.byGoogleSubject(profile.sub);
+        user ??= await this.accounts.byGoogleSubject(profile.sub);
+      }
 
       if (!user) {
         throw new ConflictException(

@@ -58,6 +58,23 @@ export function dashboardPath(section: Destination, id?: string) {
   return id ? `${base}?record=${encodeURIComponent(id)}` : base;
 }
 
+export function accessibleDestinations(permissions: readonly string[]) {
+  const destinations: Destination[] = ["overview", ...sections];
+
+  return destinations.filter((page) =>
+    permissions.includes(`UI:${dashboardPath(page).slice(1)}`),
+  );
+}
+
+export function visibleNavigation(destinations: Destination[]) {
+  return navigation
+    .map((group) => ({
+      ...group,
+      pages: group.pages.filter((page) => destinations.includes(page)),
+    }))
+    .filter((group) => group.pages.length > 0);
+}
+
 export function isSection(value: string): value is Section {
   return sections.some((section) => section === value);
 }

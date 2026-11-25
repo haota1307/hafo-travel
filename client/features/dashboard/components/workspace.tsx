@@ -15,6 +15,7 @@ import {
   type LocalInquiry,
 } from "../records";
 import { inquiries } from "../fixtures";
+import { visibleNavigation, type Destination } from "../sections";
 
 const storageKey = "dashboard-preview-inquiries-v1";
 const empty: SampleChanges = { inquiries: {}, added: [] };
@@ -71,6 +72,8 @@ function updateChanges(transform: (previous: SampleChanges) => SampleChanges) {
 }
 
 type Workspace = {
+  destinations: Destination[];
+  navigation: ReturnType<typeof visibleNavigation>;
   data: DashboardData;
   container: HTMLDivElement | null;
   inquiryState: (id: string) => InquiryUpdate | undefined;
@@ -86,9 +89,11 @@ type Workspace = {
 const WorkspaceContext = createContext<Workspace | null>(null);
 
 export function WorkspaceProvider({
+  destinations,
   container,
   children,
 }: {
+  destinations: Destination[];
   container: HTMLDivElement | null;
   children: React.ReactNode;
 }) {
@@ -150,6 +155,8 @@ export function WorkspaceProvider({
   return (
     <WorkspaceContext.Provider
       value={{
+        destinations,
+        navigation: visibleNavigation(destinations),
         data,
         container,
         inquiryState,
