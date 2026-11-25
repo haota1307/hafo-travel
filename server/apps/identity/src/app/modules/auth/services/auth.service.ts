@@ -56,7 +56,18 @@ export class AuthService {
     const user = await this.users.getAuthProfileByEmail(normalizedEmail);
     const matches = await verifyPassword(password, user?.passwordHash);
 
-    if (!matches || !this.hasValidRole(user)) {
+    if (!matches) {
+      throw new UnauthorizedException(CODE_ERROR.INVALID_CREDENTIALS);
+    }
+
+    return this.startSession(user, permissionsLookupStartedAt);
+  }
+
+  async startSession(
+    user: UserWithRoles | null,
+    permissionsLookupStartedAt: number,
+  ): Promise<AuthTokenPair> {
+    if (!this.hasValidRole(user)) {
       throw new UnauthorizedException(CODE_ERROR.INVALID_CREDENTIALS);
     }
 
@@ -72,6 +83,9 @@ export class AuthService {
 
     await this.sessions.create({
       profileId: user._id,
+      ...(user.credentialVersion && {
+        credentialVersion: user.credentialVersion,
+      }),
       refreshHash: this.hashRefreshToken(pair.refreshToken),
       refreshExpiresAt,
     });
@@ -97,7 +111,10 @@ export class AuthService {
     const permissionsLookupStartedAt = Date.now();
     const user = await this.users.getAuthProfileById(session.profileId);
 
-    if (!this.hasValidRole(user)) {
+    if (
+      !this.hasValidRole(user) ||
+      session.credentialVersion !== user.credentialVersion
+    ) {
       throw new UnauthorizedException(CODE_ERROR.UNAUTHORIZED);
     }
 

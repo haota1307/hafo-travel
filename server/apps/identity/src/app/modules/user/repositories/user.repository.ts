@@ -34,10 +34,23 @@ export class UserRepository {
     return this.userModel.findOne({ email }).exec();
   }
 
-  getAuthProfileByEmail(email: string) {
-    return this.userModel
+  async getAuthProfileByEmail(email: string) {
+    const exact = await this.userModel
       .findOne({ email })
       .collation({ locale: 'simple' })
+      .select('+passwordHash')
+      .populate<{ roles: Role[] }>('roles')
+      .exec();
+
+    if (exact || email === email.toLowerCase()) {
+      return exact;
+    }
+
+    return this.userModel
+      .findOne({
+        email: email.toLowerCase(),
+        emailVerifiedAt: { $exists: true },
+      })
       .select('+passwordHash')
       .populate<{ roles: Role[] }>('roles')
       .exec();

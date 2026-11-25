@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import {
+  accountActionSchemas,
+  GoogleLoginSchema,
+  isAccountAction,
+  LoginSchema,
+} from "@/features/auth/auth.schema";
 import { getApiBaseUrl } from "@/lib/api-url";
 import {
   accessCookie,
@@ -30,7 +36,10 @@ export async function POST(
 ) {
   const { action } = await context.params;
 
-  if (!["login", "refresh", "logout"].includes(action)) {
+  if (
+    !isAccountAction(action) &&
+    !["login", "google", "refresh", "logout"].includes(action)
+  ) {
     return reply(404, "NOT_FOUND");
   }
   if (!sameOriginWrite(request)) {
@@ -40,21 +49,21 @@ export async function POST(
   const refreshToken = request.cookies.get(refreshCookie)?.value;
   let body: unknown = { refreshToken };
 
-  if (action === "login") {
-    try {
-      const input = await request.json();
+  if (action === "login" || action === "google" || isAccountAction(action)) {
+    const schema =
+      action === "login"
+        ? LoginSchema
+        : action === "google"
+          ? GoogleLoginSchema
+          : accountActionSchemas[action];
+    const input = await request.json().catch(() => null);
+    const parsed = schema.safeParse(input);
 
-      if (
-        typeof input?.email !== "string" ||
-        typeof input?.password !== "string"
-      ) {
-        return reply(400, "INVALID_LOGIN");
-      }
-
-      body = { email: input.email.trim(), password: input.password };
-    } catch {
-      return reply(400, "INVALID_LOGIN");
+    if (!parsed.success) {
+      return reply(400, "INVALID_AUTH_REQUEST");
     }
+
+    body = parsed.data;
   } else if (action === "refresh" && !refreshToken) {
     return reply(401, "SESSION_EXPIRED");
   }
@@ -83,6 +92,10 @@ export async function POST(
         }
 
         return response;
+      }
+
+      if (isAccountAction(action)) {
+        return result;
       }
 
       if (action !== "logout") {

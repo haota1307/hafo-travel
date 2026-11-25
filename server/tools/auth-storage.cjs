@@ -1,3 +1,6 @@
+const { ObjectId } = require('mongoose').mongo;
+
+const roleSeed = require('../apps/identity/src/seeds/role.json');
 const {
   AUTH_SESSIONS_COLLECTION,
 } = require('../libs/constants/src/lib/auth-storage.constants.ts');
@@ -32,7 +35,20 @@ async function migrate() {
     );
     await removeLegacyAccessFields(sessions);
 
+    const clientRole = roleSeed.data.find((role) => role.name === 'client');
+    await db.collection('role').updateOne(
+      { name: clientRole.name },
+      {
+        $setOnInsert: { ...clientRole, _id: new ObjectId(clientRole._id.$oid) },
+      },
+      { upsert: true },
+    );
+
     const users = db.collection('users');
+    await users.createIndex(
+      { googleSubject: 1 },
+      { unique: true, sparse: true },
+    );
     await users.createIndex(
       { email: 1 },
       { unique: true, collation: { locale: 'simple' } },

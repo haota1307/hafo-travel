@@ -1,13 +1,17 @@
 import { ArrowLeft, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import { AccountScreen } from "@/features/auth/components/account-screen";
+import type { ReactNode } from "react";
 import { PublicImage } from "@/features/public-site/components/public-image";
 import { publicImages } from "@/features/public-site/data/image-assets";
 import { publicSiteConfig } from "@/features/public-site/site.config";
 import { Link } from "@/i18n/navigation";
 
-export default async function LoginPage() {
+export default async function AuthLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [auth, destination] = await Promise.all([
     getTranslations("auth"),
     getTranslations("publicSite.experienceProfiles.ninhBinh"),
@@ -46,7 +50,7 @@ export default async function LoginPage() {
           </figcaption>
         </figure>
         <div className="mx-auto w-full max-w-sm py-3 sm:py-8 lg:col-start-1 lg:row-start-2 lg:self-center lg:pb-20">
-          <AccountScreen />
+          {children}
         </div>
       </div>
     </main>

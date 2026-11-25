@@ -27,13 +27,15 @@ Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và c
 1. Chạy `pnpm install --frozen-lockfile`.
 2. Tạo `.env` từ `.env.example`, điền thông tin kết nối và [hai khóa riêng cho access JWT và refresh JWT](instructions/rbac.md#khóa-ký-jwt). Dùng database riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
 3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
-4. Chạy `pnpm dev-lite` để bật BFF và Identity.
+4. Chạy `pnpm dev-lite` để bật BFF, Identity và Notification.
 
 Từ thư mục `server`, dùng `pnpm exec nx serve booking` để xem riêng một app mới hoặc `pnpm dev` để chạy cả sáu app. Booking, Payment và AI Agent chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
 
 Các app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
 
 Để gửi email, điền `RESEND_API_KEY` có quyền gửi và `RESEND_FROM_EMAIL` là địa chỉ gửi trên domain đã xác minh với Resend vào `server/.env`. Chạy riêng app bằng `pnpm exec nx serve notification`. App lắng nghe gRPC ở cổng `5105`. Khi chưa cấu hình Resend, app vẫn khởi động và trả `UNAVAILABLE` cho yêu cầu gửi.
+
+Đăng ký và khôi phục tài khoản dùng `AUTH_PUBLIC_ORIGIN` để tạo liên kết về client. Chạy `node tools/auth-storage.cjs migrate` để chuẩn bị index và role `client`. Đăng nhập Google dùng `GOOGLE_CLIENT_ID` cùng giá trị với `NEXT_PUBLIC_GOOGLE_CLIENT_ID` của client. Xem [luồng tự đăng ký và khôi phục](instructions/rbac.md#tự-đăng-ký-và-khôi-phục-tài-khoản).
 
 RPC nội bộ `notification.v1.NotificationService/SendEmail` nhận `to`, `subject`, ít nhất một trong hai trường `text` hoặc `html`, và `idempotencyKey`. Dùng một khóa riêng cho mỗi email và giữ cùng khóa cùng nội dung khi thử lại. `emailId` là mã Resend trả về khi tiếp nhận thư. [Contract gRPC](libs/interfaces/src/lib/proto/notification/v1/notification.proto) · [API gửi email của Resend](https://resend.com/docs/api-reference/emails/send-email) · [Quy tắc chống gửi trùng](https://resend.com/docs/dashboard/emails/idempotency-keys).
 

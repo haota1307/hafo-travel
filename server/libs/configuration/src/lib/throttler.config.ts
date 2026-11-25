@@ -24,7 +24,7 @@ export const ThrottlerProvider = ThrottlerModule.forRootAsync({
         getTracker: (request) => {
           const email: unknown = request['body']?.email;
 
-          return typeof email === 'string' ? email.trim() : '';
+          return typeof email === 'string' ? email.trim().toLowerCase() : '';
         },
       },
     ],

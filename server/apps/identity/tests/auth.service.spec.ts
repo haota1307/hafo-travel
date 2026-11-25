@@ -240,6 +240,27 @@ describe('AuthService', () => {
     },
   );
 
+  it('rejects refresh sessions issued before the password changed', async () => {
+    const initial = await service.login({ email: EMAIL, password: PASSWORD });
+    const original = user;
+
+    try {
+      user = { ...original, credentialVersion: 'changed' };
+
+      await expect(
+        service.refreshSession(initial.refreshToken),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(sessions.rotate).not.toHaveBeenCalled();
+
+      const current = await service.login({ email: EMAIL, password: PASSWORD });
+      await expect(
+        service.refreshSession(current.refreshToken),
+      ).resolves.toHaveProperty('accessToken');
+    } finally {
+      user = original;
+    }
+  });
+
   it('allows only one refresh winner and keeps the absolute session expiry', async () => {
     const initial = await service.login({ email: EMAIL, password: PASSWORD });
     const elapsedSeconds = ACCESS_TOKEN_MAX_AGE_SECONDS + 1;

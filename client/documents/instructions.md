@@ -33,6 +33,7 @@ proxy.ts                      Locale middleware
 ```
 
 - Page mỏng; nghiệp vụ nằm trong `features/<domain>`, không đưa nghiệp vụ thật vào dữ liệu demo.
+- Input một dòng và Button mặc định cao 36px (`h-9`). Form dùng kích thước từ `components/ui`; chỉ chọn biến thể kích thước khi thiết kế yêu cầu.
 - `app/globals.css` là nơi chỉnh màu, font và bo góc của public và demo admin. Theme áp dụng theo `.public-site` và `.template-scope`.
 - Cụm public dùng `app/[locale]/(public)` và `features/public-site/`. Assets local tại `public/public-site/`. Mọi selector và biến CSS riêng của public giới hạn trong `.public-site`, dùng font `Public Inter` và tiền tố `site-` cho tên kỹ thuật. Đơn vị fluid `--site-unit` áp dụng trong `.public-site` để giữ kích thước chữ mặc định của `html`. Không import template/provider admin vào public. Đọc [tài liệu public](public-site/README.md) khi sửa cụm này.
 - Ảnh public dùng ID và vai trò trong `data/image-assets.ts`; `photo-assets.json` lưu nguồn, tác giả, license, alt vi/en, kích thước và crop. Chỉ dùng ảnh thật đã xác minh; giữ caption đúng địa điểm. Không tạo hồ sơ nhân sự hoặc đánh giá khách hàng mẫu.
@@ -84,6 +85,8 @@ Server không dùng React Query hook. Component không gọi fetch trực tiếp
 Backend BFF trả `{ statusCode, message, data, code, processId, duration }` khi thành công, với `code: Success`. `message` là `string | string[]`; HTTP status lấy từ response HTTP. RPC nội bộ dùng gRPC/protobuf; BFF map về dữ liệu HTTP và bọc `ResponseDto` một lần. Frontend tiếp tục dùng HTTP.
 
 BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../server/instructions/rbac.md). BFF kiểm tra chữ ký và quyền được cấp trong access JWT. `GET /user/me` lấy hồ sơ hiện tại từ Identity và trả quyền hiệu lực của JWT ở `data.permissions`. Tạo hồ sơ dùng tên, email và đúng một role.
+
+Các action đăng ký, xác thực email, quên/đặt lại mật khẩu và Google dùng cùng Next handler `/api/auth/[action]`. Form ở `features/auth`, route ở `/[locale]/auth`, dữ liệu đi qua schema, API object và React Query. Hai màn hình nhận liên kết đọc token từ fragment khi submit. Google Identity Services trả credential cho mutation; route Next ghi cookie phiên sau khi Identity xác minh.
 
 ### Lỗi và form
 

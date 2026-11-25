@@ -12,9 +12,11 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
 import { useGetSession, useLogin, useLogout } from "../auth.queries";
 import { LoginSchema, type LoginInput } from "../auth.schema";
+import { GoogleLoginButton } from "./google-login-button";
 
 export function AccountScreen() {
   const t = useTranslations("auth");
@@ -58,7 +60,7 @@ export function AccountScreen() {
             <p>{user.email}</p>
           </div>
           <Button
-            className="h-12 w-full text-base"
+            className="w-full text-base"
             disabled={logout.isPending}
             onClick={() => logout.mutate()}
           >
@@ -66,60 +68,73 @@ export function AccountScreen() {
           </Button>
         </section>
       ) : (
-        <form
-          noValidate
-          onSubmit={form.handleSubmit((body) =>
-            login.mutate(body, { onSuccess: () => form.reset() }),
-          )}
-        >
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
-              <Input
-                id="email"
-                className="h-12 bg-card px-4 text-base"
-                type="email"
-                autoComplete="username"
-                aria-invalid={!!form.formState.errors.email}
-                aria-describedby={
-                  form.formState.errors.email ? "email-error" : undefined
-                }
-                {...form.register("email", {
-                  setValueAs: (value: string) => value.trim(),
-                })}
-              />
-              {form.formState.errors.email && (
-                <FieldError id="email-error">{t("invalidEmail")}</FieldError>
-              )}
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
-              <Input
-                id="password"
-                className="h-12 bg-card px-4 text-base"
-                type="password"
-                autoComplete="current-password"
-                aria-invalid={!!form.formState.errors.password}
-                aria-describedby={
-                  form.formState.errors.password ? "password-error" : undefined
-                }
-                {...form.register("password")}
-              />
-              {form.formState.errors.password && (
-                <FieldError id="password-error">
-                  {t("invalidPassword")}
-                </FieldError>
-              )}
-            </Field>
-            <Button
-              className="mt-1 h-12 w-full text-base"
-              type="submit"
-              disabled={login.isPending}
-            >
-              {t("signIn")}
-            </Button>
-          </FieldGroup>
-        </form>
+        <div className="space-y-5">
+          <form
+            noValidate
+            onSubmit={form.handleSubmit((body) =>
+              login.mutate(body, { onSuccess: () => form.reset() }),
+            )}
+          >
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
+                <Input
+                  id="email"
+                  className="px-4 text-base"
+                  type="email"
+                  autoComplete="username"
+                  aria-invalid={!!form.formState.errors.email}
+                  aria-describedby={
+                    form.formState.errors.email ? "email-error" : undefined
+                  }
+                  {...form.register("email", {
+                    setValueAs: (value: string) => value.trim(),
+                  })}
+                />
+                {form.formState.errors.email && (
+                  <FieldError id="email-error">{t("invalidEmail")}</FieldError>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
+                <Input
+                  id="password"
+                  className="px-4 text-base"
+                  type="password"
+                  autoComplete="current-password"
+                  aria-invalid={!!form.formState.errors.password}
+                  aria-describedby={
+                    form.formState.errors.password
+                      ? "password-error"
+                      : undefined
+                  }
+                  {...form.register("password")}
+                />
+                {form.formState.errors.password && (
+                  <FieldError id="password-error">
+                    {t("invalidPassword")}
+                  </FieldError>
+                )}
+              </Field>
+              <Button
+                className="mt-1 w-full text-base"
+                type="submit"
+                disabled={login.isPending}
+              >
+                {t("signIn")}
+              </Button>
+            </FieldGroup>
+          </form>
+          <div className="flex flex-wrap justify-between gap-3 text-sm font-medium text-primary">
+            <Link href="/auth/register" className="hover:underline">
+              {t("register")}
+            </Link>
+            <Link href="/auth/forgot-password" className="hover:underline">
+              {t("forgot")}
+            </Link>
+          </div>
+          <GoogleLoginButton />
+        </div>
       )}
       {error && (
         <p role="alert" className="text-sm text-destructive">

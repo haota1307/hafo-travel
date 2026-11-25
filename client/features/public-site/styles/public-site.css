@@ -99,9 +99,7 @@
 
 .public-site .public-button {
   gap: 12px;
-  height: auto;
-  min-height: var(--site-control-height);
-  padding: 12px 24px;
+  padding-inline: 24px;
 }
 
 .public-site .featured-item__button .public-button {
@@ -737,9 +735,6 @@
   background: var(--card);
   padding-inline: 0.875rem;
   font-size: 1rem;
-}
-.public-site .contact-form [data-slot="input"] {
-  min-height: var(--site-control-height);
 }
 .public-site .retreat-price {
   flex-wrap: wrap;

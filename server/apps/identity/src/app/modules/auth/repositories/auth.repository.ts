@@ -20,7 +20,7 @@ export class AuthSessionRepository {
   create(
     session: Pick<
       AuthSession,
-      'profileId' | 'refreshHash' | 'refreshExpiresAt'
+      'profileId' | 'refreshHash' | 'refreshExpiresAt' | 'credentialVersion'
     >,
   ) {
     return this.sessionModel.create(session);
@@ -29,7 +29,7 @@ export class AuthSessionRepository {
   getByRefreshHash(refreshHash: string, now: Date) {
     return this.sessionModel
       .findOne({ refreshHash, refreshExpiresAt: { $gt: now } })
-      .select('profileId refreshExpiresAt')
+      .select('profileId refreshExpiresAt credentialVersion')
       .exec();
   }
 

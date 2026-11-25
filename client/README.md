@@ -2,6 +2,10 @@
 
 Next.js App Router, React Query, Zod 4, next-intl và bộ UI demo. Dùng cấu trúc root, alias `@/*`, không có `src/`.
 
+## Đăng ký và khôi phục tài khoản
+
+Từ trang `/[locale]/auth/login`, chọn đăng ký hoặc quên mật khẩu. Mở email để hoàn tất thao tác. Đặt `AUTH_PUBLIC_ORIGIN` phía Identity trùng với origin public của Next. Với Google, cấu hình OAuth client loại Web application và thêm origin của Next vào Authorized JavaScript origins. Điền cùng Web client ID vào `NEXT_PUBLIC_GOOGLE_CLIENT_ID` phía client và `GOOGLE_CLIENT_ID` phía Identity trước khi build/chạy. [Cấu hình backend](../server/README.md) · [Hướng dẫn của Google](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid).
+
 ## Chạy local
 
 Node.js 26.13.0 LTS, pnpm 12.18.0; kích hoạt Node theo `.nvmrc` ở root trước khi chạy:

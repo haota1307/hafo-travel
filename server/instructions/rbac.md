@@ -71,7 +71,7 @@ Khi chạy local, đặt hai giá trị khác nhau trong `server/.env`. Sinh đ�
 | `GET /api/user/me` | Header `Authorization: Bearer <accessToken>` | Hồ sơ và role hiện tại từ Identity, `permissions` cấp cao nhất là quyền theo JWT |
 | `POST /api/auth/logout` | `{ refreshToken }` | `{ loggedOut: true }`, có thể gọi lặp với cùng token |
 
-Login giữ nguyên chữ hoa/thường của email theo hồ sơ. Email chưa có tài khoản, hồ sơ chưa cấp mật khẩu và mật khẩu sai đều trả 401 với cùng mã. Redis giới hạn mặc định 100 request mỗi phút theo địa chỉ kết nối và endpoint, riêng login thêm 10 lần mỗi phút theo email. Sau reverse proxy, nhiều người có thể dùng chung hạn mức IP. BFF trả 429 khi vượt hạn mức.
+Login ưu tiên email khớp chính xác của hồ sơ cũ. Tài khoản tự đăng ký dùng email chữ thường. Email chưa có tài khoản, hồ sơ chưa cấp mật khẩu và mật khẩu sai đều trả 401 với cùng mã. Redis giới hạn mặc định 100 request mỗi phút theo địa chỉ kết nối và endpoint, riêng login thêm 10 lần mỗi phút theo email. Sau reverse proxy, nhiều người có thể dùng chung hạn mức IP. BFF trả 429 khi vượt hạn mức.
 
 Identity băm mật khẩu bằng scrypt với salt riêng. Khi login hoặc refresh, Identity đọc hồ sơ và quyền mới nhất rồi ký access JWT cho BFF. `AUTH_ACCESS_TTL_SECONDS` mặc định 300, thời hạn thực tế tối đa 5 phút và được giới hạn bởi thời gian còn lại của phiên.
 
@@ -81,7 +81,23 @@ Hai yêu cầu refresh cùng token chỉ có một yêu cầu thành công. Sau 
 
 Trình duyệt gọi Next `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` trên cùng origin. Hai route sau đọc refresh cookie phía server. Cookie dùng HttpOnly, SameSite=Lax và trong production có Secure cùng tiền tố `__Host-`. Next chỉ trả trạng thái trong JSON. Xem [cấu hình client](../../client/README.md).
 
-Seed tại `apps/identity/src/seeds/role.json` khai báo quyền cho role administrator. Hồ sơ chỉ có thể đăng nhập sau khi được cấp mật khẩu.
+### Tự đăng ký và khôi phục tài khoản
+
+| POST tại BFF | Body | Kết quả |
+| --- | --- | --- |
+| `/api/auth/register` | `email, locale?` | Gửi liên kết xác thực cho email mới qua Notification. |
+| `/api/auth/verify-email` | `token, firstName, lastName, password` | Tạo tài khoản đã xác thực với đúng role `client`. |
+| `/api/auth/forgot-password` | `email, locale?` | Gửi liên kết cho tài khoản có mật khẩu. Response thành công giống nhau khi email không đủ điều kiện. |
+| `/api/auth/reset-password` | `token, password` | Đổi mật khẩu và phiên bản thông tin đăng nhập trong cùng thao tác MongoDB. |
+| `/api/auth/google` | `credential, emailToken?, locale?` | Xác minh ID token Google cho đúng client ID và cấp cặp token phiên hiện có. |
+
+Identity ký token liên kết 30 phút với audience riêng cho từng thao tác. Token nằm trong fragment của liên kết để Next chỉ nhận token qua POST khi người dùng gửi form. Đăng ký lưu email chữ thường, tạo hồ sơ khi người nhận chọn mật khẩu. Unique index email ngăn tạo lại tài khoản. Yêu cầu mới được gửi từ màn hình đăng ký hoặc quên mật khẩu. Sau khi đổi mật khẩu, các liên kết khôi phục và refresh token phiên bản cũ hết hiệu lực. Access token đã cấp còn hiệu lực tối đa 5 phút.
+
+Với tài khoản Google dùng địa chỉ bên thứ ba ngoài Gmail và Google Workspace, lần đăng ký đầu tiên cần mở liên kết email rồi chọn lại đúng tài khoản Google.
+
+Google tra tài khoản bằng `sub` đã được xác minh. Tài khoản Google mới phải có email Google đã xác minh và được gán role `client`. Trùng email của một tài khoản khác trả 409 để người dùng đăng nhập bằng phương thức hiện có. Tài khoản chỉ dùng Google khôi phục quyền truy cập qua Google.
+
+Migration `node tools/auth-storage.cjs migrate` tạo index duy nhất cho Google subject và thêm role `client` với danh sách quyền rỗng nếu thiếu. Seed cho DB mới chứa cả `administrator` và `client`. Hai endpoint gửi mail dùng cùng giới hạn theo email như login.
 
 Role name có unique index. Nếu database cũ đã có tên role trùng nhau, cần xử lý dữ liệu trùng trước khi áp dụng index; không tự xóa/merge role. Không chạy seed chế độ prune lên dữ liệu đang sử dụng.
 

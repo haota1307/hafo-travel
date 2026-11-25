@@ -8,6 +8,7 @@ Sơ đồ dưới đây thể hiện luồng đích. Mũi tên gRPC biểu thị
 flowchart LR
     Web[Web và admin] --> BFF
     BFF --> Identity
+    Identity -->|Email xác thực và đặt lại mật khẩu| Notification
     subgraph Booking
         Catalog[catalog]
         Reservation[departure và reservation]
@@ -81,4 +82,4 @@ Từ thư mục `server`, chạy `pnpm exec nx run identity:seed` hoặc `pnpm e
 
 ## Chạy thử
 
-Từ `server` dùng `pnpm exec nx serve booking`, thay `booking` bằng tên app cần xem. `pnpm dev-lite` chạy BFF và Identity; `pnpm dev` chạy cả sáu app. Có thể đổi cổng từng service qua `<SERVICE>_SERVICE_PORT` trong [cấu hình mẫu](../.env.example). Với AI Agent, dùng `AI_AGENT_SERVICE_PORT`.
+Từ `server` dùng `pnpm exec nx serve booking`, thay `booking` bằng tên app cần xem. `pnpm dev-lite` chạy BFF, Identity và Notification; `pnpm dev` chạy cả sáu app. Có thể đổi cổng từng service qua `<SERVICE>_SERVICE_PORT` trong [cấu hình mẫu](../.env.example). Với AI Agent, dùng `AI_AGENT_SERVICE_PORT`.

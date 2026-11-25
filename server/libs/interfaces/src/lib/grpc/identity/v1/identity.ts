@@ -80,6 +80,31 @@ export interface DeleteRoleResponse {
   message: string;
 }
 
+export interface EmailActionRequest {
+  email: string;
+  locale: string;
+}
+
+export interface VerifyEmailRequest {
+  token: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+export interface GoogleLoginRequest {
+  credential: string;
+  emailToken?: string | undefined;
+  locale?: string | undefined;
+}
+
+export type AccountActionResponse = Record<string, never>;
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -137,6 +162,26 @@ export interface IdentityServiceClient {
     request: RoleIdRequest,
     metadata?: Metadata,
   ): Observable<DeleteRoleResponse>;
+  register(
+    request: EmailActionRequest,
+    metadata?: Metadata,
+  ): Observable<AccountActionResponse>;
+  verifyEmail(
+    request: VerifyEmailRequest,
+    metadata?: Metadata,
+  ): Observable<AccountActionResponse>;
+  forgotPassword(
+    request: EmailActionRequest,
+    metadata?: Metadata,
+  ): Observable<AccountActionResponse>;
+  resetPassword(
+    request: ResetPasswordRequest,
+    metadata?: Metadata,
+  ): Observable<AccountActionResponse>;
+  googleLogin(
+    request: GoogleLoginRequest,
+    metadata?: Metadata,
+  ): Observable<AuthTokenPair>;
   login(request: LoginRequest, metadata?: Metadata): Observable<AuthTokenPair>;
   refreshSession(
     request: RefreshSessionRequest,
@@ -196,6 +241,38 @@ export interface IdentityServiceController {
     | Promise<DeleteRoleResponse>
     | Observable<DeleteRoleResponse>
     | DeleteRoleResponse;
+  register(
+    request: EmailActionRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<AccountActionResponse>
+    | Observable<AccountActionResponse>
+    | AccountActionResponse;
+  verifyEmail(
+    request: VerifyEmailRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<AccountActionResponse>
+    | Observable<AccountActionResponse>
+    | AccountActionResponse;
+  forgotPassword(
+    request: EmailActionRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<AccountActionResponse>
+    | Observable<AccountActionResponse>
+    | AccountActionResponse;
+  resetPassword(
+    request: ResetPasswordRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<AccountActionResponse>
+    | Observable<AccountActionResponse>
+    | AccountActionResponse;
+  googleLogin(
+    request: GoogleLoginRequest,
+    metadata?: Metadata,
+  ): Promise<AuthTokenPair> | Observable<AuthTokenPair> | AuthTokenPair;
   login(
     request: LoginRequest,
     metadata?: Metadata,
@@ -221,6 +298,11 @@ export const IDENTITY_SERVICE_METHODS = {
   CREATE_ROLE: 'CreateRole',
   UPDATE_ROLE: 'UpdateRole',
   DELETE_ROLE: 'DeleteRole',
+  REGISTER: 'Register',
+  VERIFY_EMAIL: 'VerifyEmail',
+  FORGOT_PASSWORD: 'ForgotPassword',
+  RESET_PASSWORD: 'ResetPassword',
+  GOOGLE_LOGIN: 'GoogleLogin',
   LOGIN: 'Login',
   REFRESH_SESSION: 'RefreshSession',
   LOGOUT: 'Logout',

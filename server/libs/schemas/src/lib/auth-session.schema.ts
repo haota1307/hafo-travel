@@ -14,6 +14,9 @@ export class AuthSession extends BaseSchema {
   @Prop({ type: Types.ObjectId, required: true })
   profileId: Types.ObjectId;
 
+  @Prop({ type: String })
+  credentialVersion?: string;
+
   @Prop({ type: String, required: true })
   refreshHash: string;
 

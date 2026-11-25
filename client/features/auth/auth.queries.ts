@@ -11,11 +11,13 @@ export function useGetSession() {
   });
 }
 
-export function useLogin() {
+function useSignIn<T>(
+  mutationFn: (input: T) => ReturnType<typeof authApiRequest.login>,
+) {
   const client = useQueryClient();
 
   return useMutation({
-    mutationFn: authApiRequest.login,
+    mutationFn,
     onSuccess: async () => {
       client.removeQueries({
         predicate: (query) => query.queryKey[0] !== "auth",
@@ -23,6 +25,18 @@ export function useLogin() {
       await client.invalidateQueries({ queryKey: authQueryKeys.session });
     },
   });
+}
+
+export function useLogin() {
+  return useSignIn(authApiRequest.login);
+}
+
+export function useGoogleLogin() {
+  return useSignIn(authApiRequest.google);
+}
+
+export function useAccountAction() {
+  return useMutation({ mutationFn: authApiRequest.accountAction });
 }
 
 export function useLogout() {

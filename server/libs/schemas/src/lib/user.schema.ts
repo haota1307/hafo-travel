@@ -12,7 +12,12 @@ export class User extends BaseSchema {
   @Prop({ type: String, required: true })
   firstName: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({
+    type: String,
+    required: function (this: User) {
+      return !this.googleSubject;
+    },
+  })
   lastName: string;
 
   @Prop({ type: String, required: true, unique: true })
@@ -23,6 +28,15 @@ export class User extends BaseSchema {
 
   @Prop({ type: String, select: false })
   passwordHash?: string;
+
+  @Prop({ type: String, unique: true, sparse: true, select: false })
+  googleSubject?: string;
+
+  @Prop({ type: String })
+  credentialVersion?: string;
+
+  @Prop({ type: Date })
+  emailVerifiedAt?: Date;
 
   @Prop({
     type: [{ type: Types.ObjectId, ref: 'Role' }],

@@ -189,6 +189,10 @@
   font-family: var(--font-sans);
 }
 
+.account-screen [data-slot='input']:enabled {
+  background-color: var(--card);
+}
+
 .public-site {
   --brand-accent: #a68b5b;
   --button-clicked: #0b2c23;
@@ -202,7 +206,6 @@
   --icon-grey-40: #6d7d70;
   --site-background: var(--background);
   --site-unit: calc(100vw / 90);
-  --site-control-height: 2.75rem;
 }
 
 .public-site .site-inverse {

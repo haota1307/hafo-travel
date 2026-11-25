@@ -18,14 +18,12 @@ export function PublicButton({
   href,
   children,
   className,
-  size = "lg",
   withArrow = true,
   ...props
 }: PublicButtonProps) {
   return (
     <Button
       {...props}
-      size={size}
       className={cn("public-button", className)}
       {...(href ? { nativeButton: false, render: <Link href={href} /> } : {})}
     >
