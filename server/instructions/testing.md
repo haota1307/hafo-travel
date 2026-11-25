@@ -34,7 +34,7 @@ Khi chuyển test, sửa import tương đối và tìm lại tham chiếu setup
 
 ```sh
 pnpm exec nx test interceptors --runInBand
-pnpm exec nx test authorizer --runInBand
+pnpm exec nx test bff --runInBand
 pnpm exec nx lint interceptors
 pnpm exec nx build bff
 pnpm typecheck
@@ -49,9 +49,9 @@ Các lệnh workspace kiểm tra phạm vi rộng hơn; chỉ chạy khi thay đ
 
 - Test tự quản lý tài nguyên: đóng Nest app, gRPC client/server, timer và khôi phục mock trong teardown/finally. gRPC test dùng localhost và port động nếu phù hợp.
 - Dừng đúng process do mình bật để test khi hoàn tất, không kill tất cả `node.exe` hoặc các service của người dùng. Không dùng `--forceExit` để che tài nguyên chưa đóng.
-- Không tự dùng database/Keycloak thật hoặc chạy seed để kiểm chứng unit test. Test tích hợp dịch vụ thật cần môi trường và dữ liệu phù hợp với phạm vi được giao.
+- Không tự dùng database thật hoặc chạy seed để kiểm chứng unit test. Test tích hợp dịch vụ thật cần môi trường và dữ liệu phù hợp với phạm vi được giao.
 - Báo rõ lệnh đã chạy, pass/fail và phần chưa kiểm tra. `No tests found` không phải test pass; kết quả Nx lấy từ cache cần được phân biệt khi cần bằng chứng chạy mới.
-- Các suite trong `libs/interceptors/tests/` kiểm tra HTTP envelope, status/error metadata gRPC, deadline/correlation và pipeline auth/cache/logging. Suite `apps/authorizer/tests/keycloak-http.service.spec.ts` dùng HTTP mock kiểm tra header Location khi tạo user.
-- Suite `apps/bff/tests/authorizer-http.spec.ts` khởi tạo BFF HTTP và hai server gRPC bằng controller/service thật trên cổng localhost động. Kiểm tra login/validation/Swagger, tạo user lồng Keycloak, JWT ký bằng key test/JWKS mock, lookup thiếu user, cache expiry, deadline/correlation và lỗi HTTP giữ nguyên; bổ sung 401/403, CRUD role, đổi role, role không tồn tại và cập nhật quyền khi token đã cache. Tạo user phải có cả hai quyền; HTTP/gRPC từ chối mảng role rỗng hoặc nhiều phần tử; role đang được gán không được xóa. MongoDB repository, Keycloak HTTP và cache được mock; không chứng minh tích hợp dịch vụ ngoài thật. Hook khởi tạo có ngân sách 30 giây để nạp module ESM và bật HTTP/gRPC; test riêng giữ timeout mặc định.
+- Các suite trong `libs/interceptors/tests/` kiểm tra HTTP envelope, status/error metadata gRPC, deadline/correlation và guard và logging.
+- Suite `apps/bff/tests/identity-http.spec.ts` kiểm tra HTTP 401 trên route bảo vệ, Swagger và contract gRPC Identity trên localhost. Các RPC dùng repository MongoDB được mock để kiểm tra tạo hồ sơ, gán role và CRUD role.
 
-Sau khi sửa proto, chạy `pnpm proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build ba app để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role/authorizer); runtime vẫn chịu module boundary thông thường.
+Sau khi sửa proto, chạy `pnpm proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build cả hai app để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role); runtime vẫn chịu module boundary thông thường.

@@ -7,8 +7,7 @@ Hướng dẫn cho AI và quy ước phát triển: [instructions](instructions/
 ## Thành phần giữ lại
 
 - `apps/bff`: HTTP gateway, Swagger, validation, logging và guards.
-- `apps/authorizer`: đăng nhập Keycloak, kiểm tra JWT, gRPC theo protobuf v1.
-- `apps/user-access`: tạo/tra cứu người dùng, gán role và CRUD role, lưu MongoDB.
+- `apps/identity`: tạo/tra cứu người dùng, gán role và CRUD role, lưu MongoDB.
 - `libs`: cấu hình, constants, decorators, entities, guards, interceptors, interfaces, middlewares, schemas và utils.
 - BaseEntity + TypeORM/PostgreSQL cho module mới; BaseSchema + MongoDB cho dữ liệu hiện tại.
 - Redis, Docker providers, seed vai trò, ESLint, Prettier và Jest.
@@ -24,44 +23,42 @@ Dependency được ghim stable trong `package.json` và `pnpm-lock.yaml`: Nx 24
 Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và các ngoại lệ version được ghim. Override schematics của `@nx/nest` lên 12.0.13; peer ngoại lệ chỉ cho phép Nest 12.4.2 với `@nx/nest` và webpack-dev-server 6.1.0 với `@nx/webpack` vì metadata Nx 24.0.6 còn khai báo major cũ. Giữ kiểm tra peer chung và kiểm chứng build/test/generator khi sửa các ngoại lệ. Công cụ seed dùng MongoDB driver từ `mongoose.mongo`.
 
 1. Chạy `pnpm install --frozen-lockfile`.
-2. Tạo `.env` từ `.env.example`, điền thông tin kết nối và cấu hình Keycloak. Dùng database/realm riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
-3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Keycloak 26.8.2, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `keycloak-26`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
-4. Trong Keycloak tại http://localhost:8180, tạo realm/client khớp .env. Luồng hiện có dùng client secret, client_credentials và password grant: cấu hình client authentication, service account có quyền quản lý người dùng và direct access grants tương ứng. Realm/client không được tự seed.
-5. Tạo tài khoản quản trị trong Keycloak, điền bốn biến `BOOTSTRAP_ADMIN_*` trong `.env`, rồi chạy `node --env-file=.env tools/bootstrap-admin.cjs` để tạo/cập nhật role administrator và liên kết hồ sơ MongoDB. Xem [RBAC](instructions/rbac.md) về đầu vào và ảnh hưởng tới quyền. Công cụ không tạo tài khoản Keycloak và không tự chạy khi app khởi động. Seed JSON chỉ tạo role, không đủ để đăng nhập quản trị.
-6. Chạy `pnpm dev-lite` để bật ba service bff, user-access và authorizer.
+2. Tạo `.env` từ `.env.example`, điền thông tin kết nối. Dùng database riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
+3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
+4. Chạy `pnpm dev-lite` để bật BFF và Identity.
 
 Swagger theo cấu hình mẫu: http://localhost:3300/api/docs.
 
-Compose mặc định bật cả năm dịch vụ, không cần profile. MongoDB dùng cổng 27017, Redis 6379, PostgreSQL 5432, Keycloak http://localhost:8180 và pgAdmin http://localhost:5050.
+Compose mặc định bật bốn dịch vụ, không cần profile. MongoDB dùng cổng 27017, Redis 6379, PostgreSQL 5432, và pgAdmin http://localhost:5050.
 
-PostgreSQL 18 mount volume tại `/var/lib/postgresql`; Keycloak 26 dùng `KC_BOOTSTRAP_ADMIN_USERNAME`/`KC_BOOTSTRAP_ADMIN_PASSWORD`. Các thư mục dữ liệu cũ như `postgres_data` (PostgreSQL 17) được giữ nguyên trong `docker/docker_data`. Nếu cần dữ liệu cũ, thực hiện backup và migration riêng trước khi đổi volume; seed role chỉ chạy lên database mới được chọn rõ. Khi chuyển thư mục dữ liệu đang dùng, dừng container trước khi di chuyển và giữ đúng phiên bản database.
+PostgreSQL 18 mount volume tại `/var/lib/postgresql`. Các thư mục dữ liệu cũ như `postgres_data` (PostgreSQL 17) được giữ nguyên trong `docker/docker_data`. Nếu cần dữ liệu cũ, thực hiện backup và migration riêng trước khi đổi volume; seed role chỉ chạy lên database mới được chọn rõ. Khi chuyển thư mục dữ liệu đang dùng, dừng container trước khi di chuyển và giữ đúng phiên bản database.
 
 ## Phát triển nghiệp vụ mới
 
 Thêm module/service theo cấu trúc controller → service → repository. Contract ở `libs/interfaces/src/lib/proto/<service>/v1`; chạy `pnpm proto:generate` và commit type sinh trong `libs/interfaces/src/lib/grpc`. Buf/ts-proto giữ contract, bỏ helper decorator/comment không dùng, sinh hằng số tên RPC `<SERVICE>_METHODS` từ proto và chạy formatter.
 
-Authorizer và User-access dùng `NestFactory.createMicroservice`, chỉ mở gRPC. BFF giữ HTTP/Swagger, lấy typed client qua `GrpcProvider` và `ClientGrpc.getService` trong `onModuleInit`. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`, package/service/method khớp proto; config lấy đường dẫn từ `protobufFileName` được sinh cùng contract.
+Identity dùng `NestFactory.createMicroservice`, chỉ mở gRPC. BFF giữ HTTP/Swagger, lấy typed client qua `GrpcProvider` và `ClientGrpc.getService` trong `onModuleInit`. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`, package/service/method khớp proto; config lấy đường dẫn từ `protobufFileName` được sinh cùng contract.
 
-Các app dùng `createConfiguration(Configuration)` để validate một lần. `GrpcConfiguration` chứa client options; `grpcServerOptions` chọn bind host riêng. Cả ba bundle copy cây proto vào `dist/apps/<app>/proto`, giữ đường dẫn import. HTTP DTO thuộc `gateway`; schema MongoDB được map rõ sang UserProfile/RoleProfile trước khi trả gRPC.
+Các app dùng `createConfiguration(Configuration)` để validate một lần. `GrpcConfiguration` chứa client options; `grpcServerOptions` chọn bind host riêng. Cả hai bundle copy cây proto vào `dist/apps/<app>/proto`, giữ đường dẫn import. HTTP DTO thuộc `gateway`; schema MongoDB được map rõ sang UserProfile/RoleProfile trước khi trả gRPC.
 
 BFF dùng `requestGrpc` lấy raw protobuf response; `HttpResponseInterceptor` bọc một lần thành `ResponseDto`. Create-user lấy `response.message` để giữ data dạng chuỗi. Service nội bộ dùng `requestGrpcData` trả Promise. Metadata `x-process-id` giữ correlation ID; `grpcCallContext(metadata, call)` truyền deadline còn lại qua các chặng.
 
 RPC mặc định tối đa 10 giây, không vượt deadline nhận vào và không tự retry. Hủy RPC đang chờ không bảo đảm rollback/dừng side effect đã chạy. `GrpcLoggingInterceptor` chuyển exception thành gRPC status cùng trailer `rpc-error-bin`; `normalizeError` khôi phục HTTP status/message, giữ mảng validation/Unicode. Status gRPC chuẩn được map sang HTTP, gồm UNAUTHENTICATED → 401, UNAVAILABLE → 503, DEADLINE_EXCEEDED → 504. Log chỉ metadata, method, status và thời gian.
 
-`UserGuard` yêu cầu token mặc định; login được đánh dấu public bằng `Authorization({ secured: false })`. Endpoint có permission vẫn cần xác thực. Redis cache JWT cùng user và permissions tối đa 30 phút, không vượt thời hạn JWT; token không có `exp` được xác thực mỗi lần và không cache. Cache hit có cùng version dùng lại kết quả, không gọi gRPC. Đổi role user hoặc cập nhật role qua BFF đổi khóa `user-token:version`, khiến mọi token cache cũ phải xác minh lại ở request tiếp theo; kết quả RPC cũ ghi muộn vẫn bị invalidation. Redis lỗi thì xác thực qua Authorizer. Ghi quyền trực tiếp ngoài BFF chưa tự invalidation; xem [cơ chế kiểm tra](instructions/rbac.md#cơ-chế-kiểm-tra). Cấu hình số dùng `envNumber`: ưu tiên tham số truyền vào, sau đó biến môi trường, rồi mặc định; giá trị sai bị từ chối lúc khởi tạo.
+BFF trả HTTP 401 cho các route cần xác thực, kể cả khi request có bearer token. Chưa có API đăng nhập. Redis tiếp tục phục vụ giới hạn tần suất request.
 
 TypeORM đã bỏ entity sản phẩm và dùng autoLoadEntities. Đăng ký entity mới qua TypeOrmModule.forFeature và bổ sung TYPEORM_CONFIG/TypeOrmProviders ở service sử dụng. synchronize mặc định tắt; quản lý schema bằng migration của dự án mới.
 
-RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `PermissionGuard` và decorator `Permissions`. Tạo user cần đồng thời `user.create` và `user.assign_roles`; đổi role cần `user.assign_roles`. Trường `roles` giữ dạng mảng nhưng bắt buộc đúng một phần tử. Không xóa role đang được user sử dụng. Role có CRUD và danh mục permission. Tên administrator không có bypass đặc biệt. Xem [contract, cơ chế cache và bootstrap](instructions/rbac.md). gRPC chưa kiểm tra quyền caller, phải nằm trong mạng riêng cho service tin cậy.
+RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `PermissionGuard` và decorator `Permissions`. Tạo user cần đồng thời `user.create` và `user.assign_roles`; đổi role cần `user.assign_roles`. Trường `roles` giữ dạng mảng nhưng bắt buộc đúng một phần tử. Không xóa role đang được user sử dụng. Role có CRUD và danh mục permission. Tên administrator không có bypass đặc biệt. Xem [contract và quyền truy cập](instructions/rbac.md). gRPC chưa kiểm tra quyền caller, phải nằm trong mạng riêng cho service tin cậy.
 
 ## Kiểm tra
 
-App và library dùng TypeScript strict chung; ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Import chia nhóm Node.js → package ngoài → `@common/...` → đường dẫn tương đối, cách nhóm bằng một dòng trống và xếp theo đường dẫn trong mỗi nhóm; xem [quy ước triển khai](instructions/coding.md). Test Keycloak response ở `apps/authorizer/tests/` dùng mock HTTP, không gọi hệ thống thật.
+App và library dùng TypeScript strict chung; ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Import chia nhóm Node.js → package ngoài → `@common/...` → đường dẫn tương đối, cách nhóm bằng một dòng trống và xếp theo đường dẫn trong mỗi nhóm; xem [quy ước triển khai](instructions/coding.md).
 
-- `pnpm build`: build ba service còn lại.
+- `pnpm build`: build BFF và Identity.
 - `pnpm typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
 - `pnpm lint`: kiểm tra lint workspace.
-- `pnpm test`: chạy suite BFF/authorizer/interceptors qua Nx; HTTP/Swagger/validation và hai server gRPC dùng localhost, MongoDB/Keycloak/JWKS/cache được mock.
+- `pnpm test` chạy các suite BFF và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
 - `pnpm exec nx run-many -t test`: chạy các test được bổ sung cho dự án mới.
 
 Nâng cấp toolchain đã chạy migration Nx; không chạy seed/migration database, không khởi động container và không xóa dữ liệu hiện có.
@@ -72,6 +69,6 @@ Source ứng dụng giữ CommonJS, dùng `module`/`moduleResolution: nodenext` 
 
 Client ở [../client](../client/README.md), cấu hình mẫu `API_URL=http://localhost:3300/api` theo `PORT=3300`, `GLOBAL_PREFIX=api` của `.env.example`. Nếu đổi cấu hình backend, cập nhật URL phía client tương ứng.
 
-BFF có login public, `GET /api/user/me`, tạo user, thay role user và CRUD role theo [bảng API RBAC](instructions/rbac.md). Chưa có `GET /api`. Response HTTP thành công là `{ statusCode, message, data, code, processId, duration }`, giữ `code: Success`. Frontend unwrap `data`; validation 400 trả mảng chuỗi, chưa có field/path hoặc contract phân trang. UI frontend chưa tích hợp auth thật và proxy chưa chuyển tiếp cookie/Authorization.
+BFF có `GET /api/user/me`, tạo user, thay role user và CRUD role theo [bảng API RBAC](instructions/rbac.md). Chưa có `GET /api`. Response HTTP thành công là `{ statusCode, message, data, code, processId, duration }`, giữ `code: Success`. Frontend unwrap `data`; validation 400 trả mảng chuỗi, chưa có field/path hoặc contract phân trang. UI frontend chưa tích hợp auth thật và proxy chưa chuyển tiếp cookie/Authorization.
 
-Client gọi Authorizer bằng `AUTHORIZER_SERVICE_HOST`/`AUTHORIZER_SERVICE_PORT` (mặc định `localhost:5100`), User-access bằng `USER_ACCESS_SERVICE_HOST`/`USER_ACCESS_SERVICE_PORT` (`localhost:5101`). Server bind bằng `GRPC_BIND_HOST`, mặc định `0.0.0.0`. Các biến `TCP_*`, `AUTHORIZER_PORT`, `USER_ACCESS_PORT` cũ không còn dùng; cập nhật `.env` theo `.env.example`, giữ secret/kết nối riêng. Transport nội bộ hiện chưa cấu hình TLS/service identity; cần chốt trước production.
+BFF gọi Identity qua `IDENTITY_SERVICE_HOST` và `IDENTITY_SERVICE_PORT` (mặc định `localhost:5101`). Identity bind theo `GRPC_BIND_HOST`. Chỉ cho service tin cậy truy cập cổng gRPC nội bộ.

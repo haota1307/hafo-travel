@@ -7,9 +7,7 @@ import { UserController } from './controllers/user.controller';
 
 @Module({
   imports: [
-    ClientsModule.registerAsync([
-      GrpcProvider(GRPC_SERVICES.USER_ACCESS_SERVICE),
-    ]),
+    ClientsModule.registerAsync([GrpcProvider(GRPC_SERVICES.IDENTITY_SERVICE)]),
   ],
   controllers: [UserController],
   providers: [],

@@ -136,7 +136,7 @@ test("HTTP transport and BFF envelope contract", async (t) => {
         statusCode: 200,
         message: "Success",
         code: "Success",
-        data: { accessToken: "token", refreshToken: "refresh" },
+        data: { id: 1 },
         processId: "request-1",
         duration: "1 ms",
       },
@@ -149,13 +149,12 @@ test("HTTP transport and BFF envelope contract", async (t) => {
     return reply();
   };
   assert.deepEqual(
-    await http.post("/authorizer/login", {
-      username: "user",
-      password: "password",
+    await http.post("/items", {
+      name: "Example",
     }),
-    { status: 201, payload: { accessToken: "token", refreshToken: "refresh" } },
+    { status: 201, payload: { id: 1 } },
   );
-  assert.equal(calls.at(-1).url, "http://backend.test/api/authorizer/login");
+  assert.equal(calls.at(-1).url, "http://backend.test/api/items");
   globalThis.window = {};
   await http.get("/items?page=2");
   assert.equal(calls.at(-1).url, "/api/backend/items?page=2");

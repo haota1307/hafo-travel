@@ -2,7 +2,7 @@
 
 - [Tài liệu dự án](documents/README.md): phạm vi, nghiệp vụ, kiến trúc microservice/Kafka, AI agent và các quyết định cần xác nhận.
 - [Client](client/README.md): Next.js, giao diện public vi/en và template admin độc lập.
-- [Server](server/README.md): BFF NestJS, authorizer Keycloak và user-access MongoDB.
+- [Server](server/README.md): BFF NestJS, Identity quản lý hồ sơ và vai trò trong MongoDB.
 - [Hướng dẫn frontend](client/documents/instructions.md).
 - [Hướng dẫn backend](server/instructions/README.md).
 

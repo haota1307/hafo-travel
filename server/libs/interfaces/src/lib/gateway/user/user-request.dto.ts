@@ -31,11 +31,6 @@ export class CreateUserRequestDto {
   @ArrayMaxSize(1)
   @IsArray()
   roles: string[];
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  password: string;
 }
 
 export class SetUserRolesRequestDto {

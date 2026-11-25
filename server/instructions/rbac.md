@@ -2,7 +2,7 @@
 
 ## Mô hình hiện tại
 
-Keycloak quản lý thông tin đăng nhập và phát hành token. MongoDB lưu hồ sơ ứng dụng, role và permission. Quyền ứng dụng không lấy từ role trong JWT Keycloak.
+Identity lưu hồ sơ, role và permission trong MongoDB. Hồ sơ mới có `userId` dạng UUID do Identity cấp.
 
 Một user có đúng một role; một role có nhiều permission. Quyền hiệu lực lấy từ role đó. Contract giữ trường `roles` dạng mảng nhưng bắt buộc đúng một phần tử khi tạo user hoặc thay role; kiểm tra tại HTTP DTO, service gRPC và schema MongoDB. Tên `administrator` không tự bỏ qua kiểm tra quyền; seed cấp danh sách permission cụ thể cho role này.
 
@@ -10,21 +10,17 @@ Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, d
 
 ## Cơ chế kiểm tra
 
-- `UserGuard` yêu cầu token mặc định. Endpoint public phải gắn `Authorization({ secured: false })`; login là public. Endpoint có `Permissions` vẫn cần xác thực dù được đánh dấu public.
+- `UserGuard` trả 401 cho route cần xác thực cho đến khi có cơ chế đăng nhập. Chỉ route đánh dấu public và không yêu cầu permission mới qua được guard.
 - `PermissionGuard` yêu cầu đủ tất cả permission khai báo, trả 401 khi thiếu xác thực và 403 khi thiếu quyền.
-- Redis cache kết quả xác minh JWT cùng user và permissions tối đa 30 phút, không vượt `exp`. Cache hit có cùng `cacheVersion` dùng lại toàn bộ kết quả, không gọi Authorizer hoặc User-access. Token không có `exp` không được cache; cache cũ chưa có version phải xác minh lại.
-- Sau khi đổi role user hoặc cập nhật role thành công qua BFF, controller đổi khóa Redis `user-token:version` (không TTL). Các token cache thuộc version cũ đều phải xác minh lại ở request tiếp theo; không cần đăng nhập lại. Cache entry cũ tự hết TTL. Version được đọc trước RPC xác minh nên kết quả RPC cũ ghi muộn không thể hồi sinh cache sau invalidation. Request đã vượt qua guard trước thay đổi có thể tiếp tục xử lý.
-- Redis lỗi thì guard xác minh qua Authorizer và không tin kết quả cache đã đọc dở. Lỗi ghi version được trả về caller, không báo cập nhật quyền thành công khi chưa hoàn tất invalidation; dữ liệu MongoDB có thể đã cập nhật trước lỗi này. Thao tác đổi quyền trực tiếp qua gRPC, MongoDB hoặc bootstrap không đi qua BFF phải đổi cùng version Redis hoặc vô hiệu hóa cache riêng; hiện các luồng đó chưa tự invalidation. Khi bổ sung endpoint đổi/xóa user hoặc quyền, phải áp dụng invalidation tương tự.
-- Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi tạo tài khoản Keycloak. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
+- Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi lưu hồ sơ. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
 - Không xóa role đang được user sử dụng; API trả 409. Cần chuyển user sang role khác trước khi xóa. Role có thể có permission rỗng nếu user không được thực hiện tác vụ quản trị.
 
 ## HTTP API
 
-Đường dẫn dưới đây dùng prefix mẫu `/api`. Response giữ envelope chung, `data` chứa dữ liệu nêu trong bảng.
+Các route HTTP dưới đây đều đang trả 401. Bảng mô tả contract của controller và quyền đã khai báo, với prefix mẫu `/api`.
 
 | Method | Endpoint              | Quyền                               | Dữ liệu/kết quả                                         |
 | ------ | --------------------- | ----------------------------------- | ------------------------------------------------------- |
-| POST   | `/authorizer/login`   | Public                              | `{ username, password }` → accessToken/refreshToken     |
 | GET    | `/user/me`            | Đăng nhập                           | `{ user, permissions }`; user có roles đầy đủ           |
 | POST   | `/user`               | `user.create` + `user.assign_roles` | Tạo user với đúng một role; kết quả là chuỗi thông báo  |
 | PATCH  | `/user/:userId/roles` | `user.assign_roles`                 | `{ roles: [roleId] }` thay role hiện tại; trả hồ sơ mới |
@@ -35,7 +31,7 @@ Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, d
 | PUT    | `/role/:id`           | `role.update`                       | Thay toàn bộ name/description/permissions               |
 | DELETE | `/role/:id`           | `role.delete`                       | Xóa role chưa được sử dụng; role đang được gán trả 409  |
 
-`:userId` là ID tài khoản Keycloak, tương ứng `user.userId`, không phải `user.id` của MongoDB. `:id` và phần tử trong `roles` là ID MongoDB của role.
+`:userId` là trường `user.userId` của hồ sơ. `:id` và phần tử trong `roles` là ID MongoDB của role.
 
 Body tạo/thay role:
 
@@ -49,28 +45,16 @@ Body tạo/thay role:
 
 Người có `user.assign_roles` có thể cấp mọi role hiện có, gồm administrator. Người có quyền tạo/sửa role có thể cấp mọi permission trong danh mục. Đây là các quyền quản trị nhạy cảm; không tự gán cho vai trò sản phẩm khi chưa chốt yêu cầu.
 
-## Khởi tạo quản trị đầu tiên
+## Dữ liệu và seed role
 
-Không mở API public để tạo admin đầu tiên. Tạo tài khoản trong realm Keycloak đã cấu hình, đặt mật khẩu và lấy ID tài khoản. Công cụ dưới đây liên kết hồ sơ MongoDB với ID được cung cấp; không gọi Keycloak để xác minh hoặc tạo tài khoản.
-
-Trong `.env` riêng, điền `MONGODB_URL`, `MONGODB_DB_NAME` và bốn biến `BOOTSTRAP_ADMIN_KEYCLOAK_ID`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_FIRST_NAME`, `BOOTSTRAP_ADMIN_LAST_NAME`. Không commit file này. Chạy từ `server` khi đã chọn đúng database:
-
-```sh
-node --env-file=.env tools/bootstrap-admin.cjs
-```
-
-Công cụ cập nhật/tạo role administrator bằng danh sách permission trong seed, bao gồm `user.assign_roles`, và đặt role duy nhất của user được chỉ định thành administrator. Role trước đó của user được thay thế. Việc cập nhật role ảnh hưởng mọi user đang mang role administrator. Công cụ từ chối khi email/Keycloak ID xung đột với hồ sơ có sẵn. Chạy lại với cùng đầu vào không tạo thêm user/role trong trường hợp dữ liệu hiện tại không trùng khóa. Công cụ không chạy tự động khi app khởi động và chưa được chạy trên dữ liệu thật trong thay đổi này.
+Seed tại `apps/identity/src/seeds/role.json` khai báo quyền cho role administrator. Đăng nhập và cấp thông tin đăng nhập sẽ được triển khai sau.
 
 Role name có unique index. Nếu database cũ đã có tên role trùng nhau, cần xử lý dữ liệu trùng trước khi áp dụng index; không tự xóa/merge role. Không chạy seed chế độ prune lên dữ liệu đang sử dụng.
 
 Dữ liệu user cũ chưa có role hoặc có nhiều role cần được chuyển về đúng một role hợp lệ. Thay đổi này không tự chạy migration hoặc sửa dữ liệu đang dùng.
 
-Sau đó đăng nhập qua `/authorizer/login`, dùng `Authorization: Bearer <accessToken>` gọi `/user/me`, rồi quản lý role/user qua API hoặc Swagger.
-
 ## Ranh giới hiện tại và kiểm chứng
 
-RBAC được áp dụng tại BFF HTTP. gRPC nội bộ chưa có TLS/workload identity hoặc kiểm tra quyền caller riêng; chỉ cho BFF/service tin cậy truy cập cổng 5100/5101, không công bố chúng ra mạng không tin cậy. Khi triển khai service caller bên ngoài ranh giới này, phải bổ sung xác thực và ủy quyền tại service boundary.
+RBAC được áp dụng tại BFF HTTP. gRPC nội bộ chưa có TLS/workload identity hoặc kiểm tra quyền caller riêng; chỉ cho BFF/service tin cậy truy cập cổng 5101, không công bố chúng ra mạng không tin cậy. Khi triển khai service caller bên ngoài ranh giới này, phải bổ sung xác thực và ủy quyền tại service boundary.
 
 Frontend chưa tích hợp session/refresh và proxy chưa chuyển tiếp Authorization; chưa thể coi UI đã đăng nhập thật. Không lưu token vào localStorage để nối tạm luồng này.
-
-Test BFF chạy HTTP và gRPC thật trên localhost, dùng JWT ký bằng key test; MongoDB, Keycloak/JWKS và Redis được mock. Test kiểm tra 401/403, CRUD role, validation role, gán/thu hồi quyền và cache. Kết quả local không chứng minh cấu hình dịch vụ thật đã hoạt động. Luồng tạo Keycloak rồi lưu MongoDB vẫn không có transaction chung.

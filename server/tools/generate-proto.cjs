@@ -101,9 +101,16 @@ async function generate() {
       .join('\n');
     const declarations = statements
       .filter((statement) => !ts.isImportDeclaration(statement))
-      .map((statement) =>
-        printer.printNode(ts.EmitHint.Unspecified, statement, source),
-      )
+      .map((statement) => {
+        if (
+          ts.isInterfaceDeclaration(statement) &&
+          statement.members.length === 0
+        ) {
+          return `export type ${statement.name.text} = Record<string, never>;`;
+        }
+
+        return printer.printNode(ts.EmitHint.Unspecified, statement, source);
+      })
       .join('\n\n');
     const definitions = loadSync(join(input, file), { includeDirs: [input] });
     const constants = statements

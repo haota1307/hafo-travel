@@ -20,7 +20,7 @@ pnpm dev
 - Locale mặc định vi; URL cũ /template điều hướng theo ngôn ngữ đã chọn.
 - Theme, font và layout của demo áp dụng cho cả hai locale. Popup nằm trong phạm vi của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
 - Chỉnh màu, font và bo góc của public và demo tại một chỗ. [app/globals.css](app/globals.css)
-- `/api/backend/*` proxy tới BFF `/api/*`. Backend có login, hồ sơ hiện tại, tạo user, gán role và CRUD role theo [RBAC](../server/instructions/rbac.md); chỉ login public. Proxy chưa forward Authorization nên chưa dùng được API bảo vệ từ browser. Chưa có endpoint gốc `GET /`.
+- `/api/backend/*` proxy tới BFF `/api/*`. API hồ sơ và vai trò đang trả 401 trong khi chờ triển khai đăng nhập. Xem [RBAC](../server/instructions/rbac.md).
 - HTTP wrapper nhận envelope `{ statusCode, message, data, processId, duration }` và unwrap thành `{ status, payload: data }`. Validation backend trả `message: string[]` không có field/path; chưa có contract phân trang.
 
 ```powershell
@@ -50,4 +50,4 @@ pnpm 12 đặt cấu hình tại `pnpm-workspace.yaml`: `allowBuilds` liệt kê
 - `cn` và `useIsMobile` dùng chung tại `lib/utils.ts`, `hooks/use-mobile.ts`.
 - Frontend dùng formatter Prettier mặc định; luôn dùng dấu ngoặc cho nhánh/vòng lặp và dòng trống giữa các bước xử lý.
 
-Frontend chưa tích hợp auth thật; backend đã có Keycloak và user/role MongoDB. Proxy hiện không forward cookie/Authorization. Không đưa mock submit hoặc nghiệp vụ ngoài yêu cầu vào tính năng mới.
+Đăng nhập trên template là mô phỏng. Identity quản lý hồ sơ và vai trò trong MongoDB. Proxy hiện chưa chuyển tiếp cookie/Authorization.

@@ -7,9 +7,7 @@ import { RoleController } from './controllers/role.controller';
 
 @Module({
   imports: [
-    ClientsModule.registerAsync([
-      GrpcProvider(GRPC_SERVICES.USER_ACCESS_SERVICE),
-    ]),
+    ClientsModule.registerAsync([GrpcProvider(GRPC_SERVICES.IDENTITY_SERVICE)]),
   ],
   controllers: [RoleController],
 })

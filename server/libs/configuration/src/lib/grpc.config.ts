@@ -10,31 +10,20 @@ import {
 import { IsNotEmpty, IsObject } from 'class-validator';
 
 import {
-  AUTHORIZER_V1_PACKAGE_NAME,
-  protobufFileName as authorizerProtoFile,
-} from '@common/interfaces/grpc/authorizer/v1/authorizer';
-import {
-  USERACCESS_V1_PACKAGE_NAME,
-  protobufFileName as userAccessProtoFile,
-} from '@common/interfaces/grpc/user-access/v1/user-access';
+  IDENTITY_V1_PACKAGE_NAME,
+  protobufFileName as identityProtoFile,
+} from '@common/interfaces/grpc/identity/v1/identity';
 import { envNumber } from '@common/utils/env-number.util';
 
 export enum GRPC_SERVICES {
-  AUTHORIZER_SERVICE = 'GRPC_AUTHORIZER_SERVICE',
-  USER_ACCESS_SERVICE = 'GRPC_USER_ACCESS_SERVICE',
+  IDENTITY_SERVICE = 'GRPC_IDENTITY_SERVICE',
 }
 
 const definitions = {
-  [GRPC_SERVICES.AUTHORIZER_SERVICE]: {
-    package: AUTHORIZER_V1_PACKAGE_NAME,
-    file: authorizerProtoFile,
-    prefix: 'AUTHORIZER_SERVICE',
-    port: 5100,
-  },
-  [GRPC_SERVICES.USER_ACCESS_SERVICE]: {
-    package: USERACCESS_V1_PACKAGE_NAME,
-    file: userAccessProtoFile,
-    prefix: 'USER_ACCESS_SERVICE',
+  [GRPC_SERVICES.IDENTITY_SERVICE]: {
+    package: IDENTITY_V1_PACKAGE_NAME,
+    file: identityProtoFile,
+    prefix: 'IDENTITY_SERVICE',
     port: 5101,
   },
 };
@@ -88,11 +77,7 @@ export function grpcServerOptions(service: GRPC_SERVICES): GrpcOptions {
 export class GrpcConfiguration {
   @IsNotEmpty()
   @IsObject()
-  GRPC_AUTHORIZER_SERVICE = grpcOptions(GRPC_SERVICES.AUTHORIZER_SERVICE);
-
-  @IsNotEmpty()
-  @IsObject()
-  GRPC_USER_ACCESS_SERVICE = grpcOptions(GRPC_SERVICES.USER_ACCESS_SERVICE);
+  GRPC_IDENTITY_SERVICE = grpcOptions(GRPC_SERVICES.IDENTITY_SERVICE);
 }
 
 export function GrpcProvider(

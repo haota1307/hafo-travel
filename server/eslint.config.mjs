@@ -57,23 +57,19 @@ export default [
     },
   },
   {
-    files: ['**/tests/authorizer-http.spec.ts'],
+    files: ['**/tests/identity-http.spec.ts'],
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
         {
           enforceBuildableLibDependency: true,
           allow: [
-            '../../authorizer/src/app/modules/authorizer/controllers/authorizer.controller',
-            '../../authorizer/src/app/modules/authorizer/services/authorizer.service',
-            '../../authorizer/src/app/modules/keycloak/controllers/keycloak.controller',
-            '../../authorizer/src/app/modules/keycloak/services/keycloak-http.service',
-            '../../user-access/src/app/modules/user/controllers/user.controller',
-            '../../user-access/src/app/modules/user/services/user.service',
-            '../../user-access/src/app/modules/user/repositories/user.repository',
-            '../../user-access/src/app/modules/role/controllers/role.controller',
-            '../../user-access/src/app/modules/role/services/role.service',
-            '../../user-access/src/app/modules/role/repositories/role.repository',
+            '../../identity/src/app/modules/user/controllers/user.controller',
+            '../../identity/src/app/modules/user/services/user.service',
+            '../../identity/src/app/modules/user/repositories/user.repository',
+            '../../identity/src/app/modules/role/controllers/role.controller',
+            '../../identity/src/app/modules/role/services/role.service',
+            '../../identity/src/app/modules/role/repositories/role.repository',
           ],
           depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }],
         },

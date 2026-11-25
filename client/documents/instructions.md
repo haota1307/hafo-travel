@@ -82,7 +82,7 @@ Server không dùng React Query hook. Component không gọi fetch trực tiếp
 
 Backend BFF trả `{ statusCode, message, data, code, processId, duration }` khi thành công, với `code: Success`. `message` là `string | string[]`; HTTP status lấy từ response HTTP. RPC nội bộ dùng gRPC/protobuf; BFF map về dữ liệu HTTP và bọc `ResponseDto` một lần. Frontend tiếp tục dùng HTTP.
 
-Endpoint hiện có: `POST /authorizer/login` public trả `data: { accessToken, refreshToken }`; `GET /user/me` yêu cầu token và trả `{ user, permissions }`; `POST /user` cần cả `user.create` và `user.assign_roles`. User có đúng một role; tạo user và `PATCH /user/:userId/roles` đều yêu cầu `roles: [roleId]`. Đổi role dùng ID user Keycloak; CRUD `/role` và `GET /role/permissions` yêu cầu quyền tương ứng. Không xóa role đang được gán, lỗi 409. Contract đầy đủ ở [RBAC backend](../../server/instructions/rbac.md). Chưa có `GET /` hoặc API booking/liên hệ. `http.post<{ accessToken: string; refreshToken: string }>("/authorizer/login", credentials)` là transport, chưa phải tích hợp đăng nhập trong UI.
+BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../server/instructions/rbac.md). Các route này trả 401 trong khi chờ triển khai đăng nhập. Tạo hồ sơ dùng tên, email và đúng một role.
 
 ### Lỗi và form
 
@@ -144,13 +144,13 @@ Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, 
 
 ## Auth và database
 
-Frontend chưa tích hợp auth thật; login trong template chỉ mô phỏng. Backend có đăng nhập/xác thực JWT qua Keycloak và RBAC user → đúng một role → permissions trong MongoDB. API BFF yêu cầu token mặc định; đổi role hoặc sửa permission cập nhật quyền ở lần kiểm tra tiếp theo kể cả khi JWT được cache. PostgreSQL/TypeORM là nền tùy chọn. Không xem proxy hoặc ẩn nút là authorization. Proxy hiện không forward cookie/Authorization nên chưa hỗ trợ gọi API bảo vệ từ browser. Khi triển khai UI đăng nhập cần xác định session, truyền thông tin xác thực và refresh theo contract riêng; ưu tiên cookie HTTP-only, không lưu token localStorage. Không tự đổi phạm vi quyền hoặc bổ sung auth trong refactor clean code.
+Login trong template là mô phỏng. BFF chưa cung cấp đăng nhập. Identity lưu hồ sơ và quyền trong MongoDB. Proxy hiện chưa chuyển tiếp cookie/Authorization. Khi triển khai đăng nhập, cần thống nhất contract phiên giữa client và BFF.
 
 ## Kiểm tra và cập nhật tài liệu
 
 - Chỉ doc: rà nội dung/link/diff. Code: lint phạm vi ảnh hưởng; API/type/route/dependency cần build và kiểm tra tập trung tương ứng.
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test:base` là các lệnh kiểm tra nền tảng. `pnpm format`/`pnpm format:check` dùng Prettier. Test base dùng Node test runner và API TypeScript 6 đã cài, gồm public i18n và hồi quy bảng demo v9; không thêm test framework. Ngoại lệ peer của ba plugin ESLint 10 chỉ cho phép version cụ thể trong `pnpm-workspace.yaml`, không tắt rule khi nâng dependency.
-- Smoke bằng HTTP backend/proxy và route locale khi cần; test transport/validation bằng fixture contract BFF, không cần gọi Keycloak/MongoDB thật cho unit test.
+- Smoke bằng HTTP backend/proxy và route locale khi cần; test transport/validation bằng fixture contract BFF, không cần gọi MongoDB thật cho unit test.
 - Không xem build hoặc HTTP SSR là bằng chứng tương tác/visual browser. Không dùng Computer Use khi chưa được yêu cầu.
 - Dừng process tự bật để kiểm tra; không chạy lại kiểm tra đã đạt nếu không có thay đổi liên quan. Commit lockfile cùng dependency.
 - Contract/API/i18n thay đổi phải cập nhật cả instructions FE/BE nếu liên quan; README chứa lệnh chạy, instructions chứa convention. Không tự ghi memory theo task nếu chưa được yêu cầu.

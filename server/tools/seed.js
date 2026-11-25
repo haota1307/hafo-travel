@@ -15,6 +15,7 @@ function mapData(_data) {
       } else {
         acc[key] = value;
       }
+
       return acc;
     }, {});
   });
@@ -30,15 +31,18 @@ async function processFile(filePath, mode, db) {
 
   if (mode === 'prune') {
     await collection.deleteMany({});
+
     if (seedData.length > 0) {
       await collection.insertMany(seedData);
     }
+
     console.log(
       `✅ [${seed.collection}] pruned & inserted ${seedData.length} docs`,
     );
   } else if (mode === 'migrate') {
     for (const doc of seedData) {
       const exists = await collection.findOne(doc);
+
       if (!exists) {
         await collection.insertOne(doc);
         console.log(
@@ -47,6 +51,7 @@ async function processFile(filePath, mode, db) {
         );
       }
     }
+
     console.log(`✅ [${seed.collection}] migration completed`);
   } else {
     console.error('❌ Invalid mode, use "prune" or "migrate"');
@@ -55,7 +60,7 @@ async function processFile(filePath, mode, db) {
 
 // Hàm khởi chạy chính
 async function bootstrap() {
-  const dirPath = process.argv[2]; // Ví dụ: apps/user-access/seeder
+  const dirPath = process.argv[2];
   const mode = process.argv[3] || 'migrate'; // prune | migrate
 
   if (!dirPath) {
@@ -64,6 +69,7 @@ async function bootstrap() {
   }
 
   const absoluteDir = path.resolve(dirPath);
+
   if (!fs.existsSync(absoluteDir)) {
     console.error(`❌ Seeder directory not found: ${absoluteDir}`);
     process.exit(1);

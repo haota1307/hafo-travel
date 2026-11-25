@@ -22,15 +22,6 @@ async function bootstrap() {
       .setTitle('Backend BFF API')
       .setDescription('The Backend BFF API description')
       .setVersion('1.0.0')
-      .addBearerAuth({
-        description:
-          'Default JWT Authorization (paste token with or without "Bearer" prefix)',
-        type: 'http',
-        in: 'header',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'Authorization',
-      })
       .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config);

@@ -1,6 +1,3 @@
-import { randomUUID } from 'node:crypto';
-
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -14,37 +11,34 @@ import {
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { Cache } from 'cache-manager';
-import { concatMap, map } from 'rxjs';
+import { map } from 'rxjs';
 
 import { GRPC_SERVICES } from '@common/configuration/grpc.config';
-import { USER_TOKEN_CACHE_VERSION_KEY } from '@common/constants/common.constants';
 import { PERMISSION } from '@common/constants/enum/role.enum';
-import { Authorization } from '@common/decorators/authorizer.decorator';
+import { Authorization } from '@common/decorators/authorization.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
 import { ProcessId } from '@common/decorators/process-id.decorator';
 import { SaveRoleRequestDto } from '@common/interfaces/gateway/role/role-request.dto';
 import {
-  USER_ACCESS_SERVICE_NAME,
-  type UserAccessServiceClient,
-} from '@common/interfaces/grpc/user-access/v1/user-access';
+  IDENTITY_SERVICE_NAME,
+  type IdentityServiceClient,
+} from '@common/interfaces/grpc/identity/v1/identity';
 import { requestGrpc } from '@common/utils/rpc.util';
 
 @ApiTags('Role')
 @Authorization({ secured: true })
 @Controller('role')
 export class RoleController implements OnModuleInit {
-  private users: UserAccessServiceClient;
+  private users: IdentityServiceClient;
 
   constructor(
-    @Inject(GRPC_SERVICES.USER_ACCESS_SERVICE)
-    private readonly userAccessClient: ClientGrpc,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(GRPC_SERVICES.IDENTITY_SERVICE)
+    private readonly identityClient: ClientGrpc,
   ) {}
 
   onModuleInit() {
-    this.users = this.userAccessClient.getService<UserAccessServiceClient>(
-      USER_ACCESS_SERVICE_NAME,
+    this.users = this.identityClient.getService<IdentityServiceClient>(
+      IDENTITY_SERVICE_NAME,
     );
   }
 
@@ -99,17 +93,7 @@ export class RoleController implements OnModuleInit {
         permissions: body.permissions,
       },
       { processId },
-    ).pipe(
-      concatMap(async (response) => {
-        await this.cacheManager.set(
-          USER_TOKEN_CACHE_VERSION_KEY,
-          randomUUID(),
-          0,
-        );
-
-        return response.role;
-      }),
-    );
+    ).pipe(map((response) => response.role));
   }
 
   @Delete(':id')

@@ -1,6 +1,6 @@
 # Hướng dẫn phát triển dự án dành cho AI
 
-Đây là bộ khung backend Nx + NestJS, gồm đăng nhập, phân quyền và người dùng. Phạm vi nghiệp vụ dựa trên yêu cầu hiện tại và source; không suy diễn từ tên repository hoặc mã kế thừa.
+Đây là bộ khung backend Nx + NestJS, gồm BFF, hồ sơ người dùng và phân quyền. Phạm vi nghiệp vụ dựa trên yêu cầu hiện tại và source; không suy diễn từ tên repository hoặc mã kế thừa.
 
 ## Cách sử dụng
 
@@ -39,9 +39,7 @@
 
 ## Giới hạn hiện trạng cần biết
 
-- BFF mặc định yêu cầu xác thực; login được khai báo public. User/role API áp dụng permission theo [RBAC](rbac.md).
-- Role có CRUD và user có API thay role; quyền ứng dụng nằm trong MongoDB, Keycloak phụ trách danh tính.
-- Authorizer có RPC Login, VerifyUserToken, CreateKeycloakUser; User-access có tạo/tra cứu user, gán role và CRUD role. Contract đã có nhưng vẫn cần kiểm chứng Keycloak/MongoDB thật.
-- Tạo user gọi Keycloak rồi lưu MongoDB; không có transaction chung giữa hai hệ thống. Không mô tả luồng này là atomic.
+- BFF trả 401 cho API cần xác thực trong khi chờ triển khai đăng nhập. Xem [RBAC](rbac.md).
+- Identity quản lý hồ sơ, gán role và CRUD role trong MongoDB.
 - TypeORM/BaseEntity là phần nền dùng lại; không có nghĩa các service hiện đang lưu user bằng PostgreSQL.
-- Build/lint/test local không chứng minh tích hợp MongoDB, Redis hoặc Keycloak thật đã hoạt động.
+- Build/lint/test local không chứng minh tích hợp MongoDB hoặc Redis thật đã hoạt động.

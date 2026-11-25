@@ -1,22 +1,19 @@
 import { EventEmitter } from 'node:events';
 
-import { status as GrpcStatus } from '@grpc/grpc-js';
 import {
   BadRequestException,
   ExecutionContext,
   HttpException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
-import type { ClientGrpc } from '@nestjs/microservices';
-import { Cache } from 'cache-manager';
 import { Response as ExpressResponse } from 'express';
-import { NEVER, of, throwError } from 'rxjs';
+import { NEVER } from 'rxjs';
 
 import { PERMISSION } from '@common/constants/enum/role.enum';
-import { USER_TOKEN_CACHE_VERSION_KEY } from '@common/constants/common.constants';
-import { Authorization } from '@common/decorators/authorizer.decorator';
+import { Authorization } from '@common/decorators/authorization.decorator';
 import { Permissions } from '@common/decorators/permission.decorator';
 import { PermissionGuard } from '@common/guards/permissions.guard';
 import { UserGuard } from '@common/guards/user.guard';
@@ -65,195 +62,37 @@ function context(
 }
 
 describe('Auth and request pipeline', () => {
-  const now = 1700000000000;
   let request: RequestContext;
-  let verifyUserToken: jest.Mock;
-  let cache: { get: jest.Mock; set: jest.Mock; del: jest.Mock };
-  let guard: UserGuard;
-  const authorized = (exp?: number) =>
-    new AuthorizeResponse({
-      valid: true,
-      cacheVersion: 'version-1',
-      MetadataKeys: {
-        jwt:
-          exp === undefined
-            ? { sub: 'keycloak-1' }
-            : { exp, sub: 'keycloak-1' },
-        user: undefined,
-        userId: 'user-1',
-        permissions: [],
-      },
-    });
+  const guard = new UserGuard(new Reflector());
 
   beforeEach(() => {
-    jest.spyOn(Date, 'now').mockReturnValue(now);
-    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     request = {
-      headers: { authorization: 'Bearer test-token' },
+      headers: { authorization: 'Bearer old-token' },
       processId: 'request-1',
     } as RequestContext;
-    verifyUserToken = jest.fn(() =>
-      of({
-        valid: true,
-        metadata: {
-          userId: 'user-1',
-          user: undefined,
-          permissions: [],
-          jwtJson: JSON.stringify({ exp: now / 1000 + 60 }),
-        },
-      }),
-    );
-    cache = {
-      get: jest.fn(async (key: string) =>
-        key === USER_TOKEN_CACHE_VERSION_KEY ? 'version-1' : undefined,
-      ),
-      set: jest.fn().mockResolvedValue(undefined),
-      del: jest.fn().mockResolvedValue(undefined),
-    };
-    guard = new UserGuard(
-      new Reflector(),
-      { getService: () => ({ verifyUserToken }) } as unknown as ClientGrpc,
-      cache as unknown as Cache,
-    );
-    guard.onModuleInit();
   });
+
   afterEach(() => jest.restoreAllMocks());
 
   it('honors public method override of secured controller metadata', () => {
     expect(guard.canActivate(context(request, 'public'))).toBe(true);
-    expect(verifyUserToken).not.toHaveBeenCalled();
-  });
-  it('limits token cache lifetime to JWT expiry', async () => {
-    await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(cache.set).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ valid: true }),
-      60000,
-    );
-  });
-  it('uses a valid unexpired cache without an RPC call', async () => {
-    const cached = authorized(now / 1000 + 10);
-    cached.MetadataKeys.permissions = [PERMISSION.USER_CREATE];
-    cache.get.mockResolvedValueOnce(cached);
-    await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(verifyUserToken).not.toHaveBeenCalled();
-    expect(request.userData).toBe(cached);
-    expect(request.userData?.MetadataKeys.permissions).toEqual([
-      PERMISSION.USER_CREATE,
-    ]);
-  });
-  it('revokes permissions even when an old authorization response is cached', async () => {
-    const cached = authorized(now / 1000 + 10);
-    cached.MetadataKeys.permissions = [PERMISSION.USER_CREATE];
-    cache.get.mockImplementation(async (key: string) =>
-      key === USER_TOKEN_CACHE_VERSION_KEY ? 'version-2' : cached,
-    );
-
-    await expect(guard.canActivate(context(request, 'create'))).resolves.toBe(
-      true,
-    );
-    const permissions = new PermissionGuard(new Reflector());
-    expect(verifyUserToken).toHaveBeenCalledTimes(1);
-
-    expect(() => permissions.canActivate(context(request, 'create'))).toThrow(
-      'Permission denied',
-    );
-  });
-
-  it('rejects a removed user after the authorization cache is invalidated', async () => {
-    cache.get.mockImplementation(async (key: string) =>
-      key === USER_TOKEN_CACHE_VERSION_KEY
-        ? 'version-2'
-        : authorized(now / 1000 + 10),
-    );
-    verifyUserToken.mockReturnValue(of({ valid: false }));
-
-    await expect(guard.canActivate(context(request))).rejects.toMatchObject({
-      status: 401,
-    });
   });
 
   it.each(['secured', 'create'] as const)(
     'requires authentication for %s without secured metadata or with permissions on a public method',
-    async (method) => {
-      request.headers.authorization = '';
+    (method) => {
       const currentContext = {
         getHandler: () => DefaultController.prototype[method],
         getClass: () => DefaultController,
         switchToHttp: () => ({ getRequest: () => request }),
       } as unknown as ExecutionContext;
 
-      await expect(guard.canActivate(currentContext)).rejects.toMatchObject({
-        status: 401,
-      });
+      expect(() => guard.canActivate(currentContext)).toThrow(
+        UnauthorizedException,
+      );
     },
   );
-  it('rejects an expired cached token if authorizer rejects it', async () => {
-    cache.get.mockResolvedValueOnce(authorized(now / 1000 - 1));
-    verifyUserToken.mockReturnValue(
-      throwError(() => ({
-        code: GrpcStatus.UNAUTHENTICATED,
-        details: 'Expired token',
-      })),
-    );
-    await expect(guard.canActivate(context(request))).rejects.toMatchObject({
-      status: 401,
-    });
-    expect(cache.del).toHaveBeenCalled();
-    expect(request.userData).toBeUndefined();
-  });
-  it('does not cache tokens without an expiration', async () => {
-    verifyUserToken.mockReturnValue(
-      of({
-        valid: true,
-        metadata: { userId: 'user-1', permissions: [], jwtJson: '{}' },
-      }),
-    );
-    await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(cache.set).not.toHaveBeenCalled();
-  });
-  it('still verifies identity when the cache fails', async () => {
-    cache.get.mockRejectedValue(new Error('Redis unavailable'));
-    cache.set.mockRejectedValue(new Error('Redis unavailable'));
-    await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(verifyUserToken).toHaveBeenCalledTimes(1);
-  });
 
-  it('does not reuse legacy cache entries without an authorization version', async () => {
-    const cached = authorized(now / 1000 + 10);
-    delete cached.cacheVersion;
-    cache.get.mockResolvedValueOnce(cached);
-
-    await expect(guard.canActivate(context(request))).resolves.toBe(true);
-    expect(verifyUserToken).toHaveBeenCalledTimes(1);
-    expect(cache.del).toHaveBeenCalledWith(
-      guard.generateTokenCacheKey('test-token'),
-    );
-  });
-
-  it('keeps the version read before verification when invalidation occurs during an RPC', async () => {
-    verifyUserToken.mockImplementationOnce(() => {
-      cache.get.mockImplementation(async (key: string) =>
-        key === USER_TOKEN_CACHE_VERSION_KEY ? 'version-2' : undefined,
-      );
-
-      return of({
-        valid: true,
-        metadata: {
-          userId: 'user-1',
-          permissions: [PERMISSION.USER_CREATE],
-          jwtJson: JSON.stringify({ exp: now / 1000 + 60 }),
-        },
-      });
-    });
-    await guard.canActivate(context(request));
-    const cached = cache.set.mock.calls[0][1];
-    expect(cached.cacheVersion).toBe('version-1');
-    cache.get.mockResolvedValueOnce(cached);
-    await guard.canActivate(context(request));
-
-    expect(verifyUserToken).toHaveBeenCalledTimes(2);
-  });
   it('returns 401 for permissions without a user instead of crashing', () => {
     const permissions = new PermissionGuard(new Reflector());
     expect(() => permissions.canActivate(context(request, 'create'))).toThrow(
@@ -262,7 +101,7 @@ describe('Auth and request pipeline', () => {
   });
   it('denies missing permissions and accepts a matching permission', () => {
     const permissions = new PermissionGuard(new Reflector());
-    request.userData = authorized(now / 1000 + 60);
+    request.userData = new AuthorizeResponse({ valid: true });
     expect(() => permissions.canActivate(context(request, 'create'))).toThrow(
       'Permission denied',
     );
@@ -281,13 +120,13 @@ describe('Auth and request pipeline', () => {
     });
   });
   it('times out RPC requests that never return', async () => {
-    verifyUserToken.mockReturnValue(NEVER);
-    await expect(
-      requestGrpcData(verifyUserToken, {}, {}, 5),
-    ).rejects.toBeInstanceOf(HttpException);
-    await expect(
-      requestGrpcData(verifyUserToken, {}, {}, 5),
-    ).rejects.toMatchObject({ status: 504 });
+    const rpc = jest.fn(() => NEVER);
+    await expect(requestGrpcData(rpc, {}, {}, 5)).rejects.toBeInstanceOf(
+      HttpException,
+    );
+    await expect(requestGrpcData(rpc, {}, {}, 5)).rejects.toMatchObject({
+      status: 504,
+    });
   });
   it('logs HTTP completion once without exposing body or query credentials', () => {
     const log = jest.spyOn(Logger, 'log').mockImplementation(() => undefined);
