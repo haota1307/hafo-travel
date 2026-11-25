@@ -16,7 +16,6 @@ import "@fontsource/manrope/vietnamese-400.css";
 import "@fontsource/manrope/vietnamese-500.css";
 import "@fontsource/manrope/vietnamese-600.css";
 import "@fontsource/manrope/vietnamese-700.css";
-import "./template.css";
 import { TemplateProviders } from "@/template/providers";
 
 export async function generateMetadata(): Promise<Metadata> {

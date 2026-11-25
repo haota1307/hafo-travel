@@ -18,7 +18,8 @@ pnpm dev
 - Cụm trang public Hafo Travel: trang chủ, `/experiences`, `/contacts`, 6 hành trình Việt Nam và 2 trang pháp lý dưới mỗi locale, đầy đủ nội dung/metadata tiếng Việt và tiếng Anh. Nút VI/EN ở header giữ trang, query và hash khi đổi ngôn ngữ. `/trai-nghiem` và `/coaches` dưới mỗi locale redirect 308 trực tiếp tới `/experiences` cùng locale. Xem [cấu trúc và cách sửa](documents/public-site/README.md).
 - Demo: /vi/template, /en/template.
 - Locale mặc định vi; URL cũ /template điều hướng theo ngôn ngữ đã chọn.
-- Theme/font/layout của demo dùng chung giữa hai locale; popup nằm trong scope của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
+- Theme, font và layout của demo áp dụng cho cả hai locale. Popup nằm trong phạm vi của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
+- Chỉnh màu, font và bo góc của public và demo tại một chỗ. [app/globals.css](app/globals.css)
 - `/api/backend/*` proxy tới BFF `/api/*`. Backend có login, hồ sơ hiện tại, tạo user, gán role và CRUD role theo [RBAC](../server/instructions/rbac.md); chỉ login public. Proxy chưa forward Authorization nên chưa dùng được API bảo vệ từ browser. Chưa có endpoint gốc `GET /`.
 - HTTP wrapper nhận envelope `{ statusCode, message, data, processId, duration }` và unwrap thành `{ status, payload: data }`. Validation backend trả `message: string[]` không có field/path; chưa có contract phân trang.
 
@@ -45,7 +46,7 @@ pnpm 12 đặt cấu hình tại `pnpm-workspace.yaml`: `allowBuilds` liệt kê
 - `app/` giữ routing/layout; `features/<domain>/` sở hữu API, query hooks, schema và component nghiệp vụ khi có yêu cầu.
 - `components/ui/` là bộ Base UI chuẩn cho tính năng mới. Component tổng hợp dùng chung đặt trong `components/shared/` khi cần.
 - `template/` chứa toàn bộ demo, Radix UI, mock và adapter i18n; code ứng dụng không import demo. ESLint kiểm tra ranh giới này.
-- `features/public-site/` chứa giao diện public độc lập; routes nằm trong `app/[locale]/(public)`, assets ở `public/public-site/`. Control dùng chung shadcn/Base UI; CSS, semantic tokens và portal được scope riêng để giữ style admin. Sáu retreat dùng một page component và dữ liệu riêng. Form liên hệ chưa kết nối API.
+- `features/public-site/` chứa giao diện public độc lập. Route nằm trong `app/[locale]/(public)` và assets ở `public/public-site/`. Control dùng chung shadcn/Base UI. CSS và portal public nằm trong phạm vi `.public-site`. Sáu retreat dùng một page component và dữ liệu riêng. Form liên hệ chưa kết nối API.
 - `cn` và `useIsMobile` dùng chung tại `lib/utils.ts`, `hooks/use-mobile.ts`.
 - Frontend dùng formatter Prettier mặc định; luôn dùng dấu ngoặc cho nhánh/vòng lặp và dòng trống giữa các bước xử lý.
 

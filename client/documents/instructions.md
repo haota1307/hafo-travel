@@ -14,9 +14,10 @@
 Dự án dùng thư mục root, không có `src/`; alias `@/*` trỏ về root.
 
 ```text
+app/globals.css                Tailwind và theme của public và demo admin
 app/[locale]/                  Page/layout theo ngôn ngữ
 app/[locale]/(public)/         Cụm trang public: home, experiences, contacts, retreat và pháp lý
-app/[locale]/template/         Bộ demo admin, giữ CSS và assets hiện có
+app/[locale]/template/         Layout của demo admin
 app/api/backend/[[...path]]/   Proxy backend, không có locale prefix
 components/providers/         QueryProvider dùng chung
 components/ui/                Primitive Base UI chuẩn cho tính năng mới
@@ -32,7 +33,8 @@ proxy.ts                      Locale middleware
 ```
 
 - Page mỏng; nghiệp vụ nằm trong `features/<domain>`, không đưa nghiệp vụ thật vào dữ liệu demo.
-- Cụm public dùng `app/[locale]/(public)` và `features/public-site/`; assets local tại `public/public-site/`. Mọi selector/biến CSS giới hạn trong `.public-site`, font tên `Public Inter`, tên kỹ thuật dùng tiền tố `site-`; đơn vị fluid qua `--site-unit`, không thay `html` font-size hay `app/globals.css`. Không import template/provider admin vào public. Đọc [tài liệu public](public-site/README.md) khi sửa cụm này.
+- `app/globals.css` là nơi chỉnh màu, font và bo góc của public và demo admin. Theme áp dụng theo `.public-site` và `.template-scope`.
+- Cụm public dùng `app/[locale]/(public)` và `features/public-site/`. Assets local tại `public/public-site/`. Mọi selector và biến CSS riêng của public giới hạn trong `.public-site`, dùng font `Public Inter` và tiền tố `site-` cho tên kỹ thuật. Đơn vị fluid `--site-unit` áp dụng trong `.public-site` để giữ kích thước chữ mặc định của `html`. Không import template/provider admin vào public. Đọc [tài liệu public](public-site/README.md) khi sửa cụm này.
 - Ảnh public dùng ID và vai trò trong `data/image-assets.ts`; `photo-assets.json` lưu nguồn, tác giả, license, alt vi/en, kích thước và crop. Chỉ dùng ảnh thật đã xác minh; giữ caption đúng địa điểm. Không tạo hồ sơ nhân sự hoặc đánh giá khách hàng mẫu.
 - Nội dung Hafo Travel là bộ sưu tập gợi ý hành trình Việt Nam; toàn bộ nội dung public và metadata dùng namespace `publicSite` vi/en. Chưa có API liên hệ/booking; form chỉ validation và báo chưa khả dụng, không gửi Webflow hoặc giả lập thành công. Chỉ thêm tích hợp khi có yêu cầu/contract thật.
 - Control public tái sử dụng `components/ui` (Button, Field/Input/Textarea, Sheet, Popover, Carousel, Card, Breadcrumb, Separator). Theme qua semantic tokens cục bộ; không đưa lại widget/reset/class Webflow. Popup dùng `portalContainer` của SheetContent/PopoverContent và `usePublicPortalContainer`, chờ root hiện tại mount. Chi tiết retreat dùng chung `pages/retreat-page.tsx`, nội dung ở `data/retreats/`.
@@ -137,7 +139,7 @@ Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, 
 - Route retreat sinh đủ cặp `{ locale, retreatSlug }` trong `generateStaticParams`; public layout và retreat page gọi `setRequestLocale` trước khi dùng i18n để hỗ trợ prerender. Không chỉ sinh slug khi route còn segment `[locale]`.
 - Demo giữ `useI18n`/`Trans` như adapter tương thích: ánh xạ nhãn cũ qua `source-message-keys.json` sang namespace `template`; nội dung dữ liệu không biết giữ nguyên. Bộ messages chỉ có một nguồn tại `messages/`.
 - Key đã chuyển là định danh cố định; thay wording bằng sửa value. Feature mới dùng key trực tiếp, không mở rộng pattern source-text của demo. Adapter giữ dateLocale và định dạng số/ngày/tiền; mặc định currency USD như demo, nghiệp vụ thật truyền currency rõ ràng.
-- Theme/font/direction và CSS scope demo giữ nguyên, không đưa thêm theme provider toàn ứng dụng.
+- Provider của demo quản lý theme, font và hướng đọc trong layout demo. Bảng màu sáng và tối dùng `.template-scope.light` và `.template-scope.dark` trong `app/globals.css`.
 - Cookie `template-*` dùng `path=/` để đọc được trên cả `/vi/template` và `/en/template`; reset xóa cả path `/` và path cũ `/template`.
 
 ## Auth và database

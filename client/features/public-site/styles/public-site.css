@@ -1,6 +1,4 @@
-@import "./fonts.css";
 @import "./measured.css";
-@import "./tokens.css";
 @import "./interactions.css";
 
 .public-site {
@@ -102,7 +100,7 @@
 .public-site .public-button {
   gap: 12px;
   height: auto;
-  min-height: 44px;
+  min-height: var(--site-control-height);
   padding: 12px 24px;
 }
 
@@ -503,10 +501,6 @@
     var(--background)
   );
 }
-.public-site .intro .public-button {
-  --primary: #f7f5ef;
-  --primary-foreground: #143c32;
-}
 .public-site .intro .intro__headline {
   margin-bottom: 20px;
 }
@@ -516,13 +510,6 @@
   color: var(--foreground);
 }
 .public-site .header.header--on-hero:not(.is-active) {
-  --foreground: #f7f5ef;
-  --white-100: #f7f5ef;
-  --white-20: #f7f5ef40;
-  --secondary: #f7f5ef22;
-  --secondary-foreground: #f7f5ef;
-  --accent: #f7f5ef22;
-  --accent-foreground: #f7f5ef;
   background: transparent;
 }
 .public-site .header__r {
@@ -748,7 +735,11 @@
 .public-site .contact-form [data-slot="input"],
 .public-site .contact-form [data-slot="textarea"] {
   background: var(--card);
-  font-size: 15px;
+  padding-inline: 0.875rem;
+  font-size: 1rem;
+}
+.public-site .contact-form [data-slot="input"] {
+  min-height: var(--site-control-height);
 }
 .public-site .retreat-price {
   flex-wrap: wrap;

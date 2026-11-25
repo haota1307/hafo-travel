@@ -42,7 +42,7 @@ features/public-site/
     image-assets.ts         ID ảnh, vai trò section và kích thước
     photo-assets.json       Nguồn, tác giả, license, alt, kích thước, điểm crop
     legacy-routes.ts        URL tương thích cũ
-  styles/                   Token, font, layout và tương tác scope public
+  styles/                   Layout và tương tác scope public
   metadata.ts               Metadata theo locale và origin cấu hình
   site.config.ts            Nhận diện, liên hệ và đơn vị tiền
 messages/vi.json, en.json    Nội dung public trong namespace publicSite
@@ -63,7 +63,9 @@ public/public-site/                Logo, icon, ảnh WebP và font có license
 
 ## Style và ảnh
 
-CSS riêng nằm trong `.public-site`; màu sáng/tối dùng semantic tokens cục bộ và `.site-inverse`. Font `Public Inter` được phục vụ local, giữ license Inter. Đơn vị fluid là `--site-unit`; không sửa font-size của `html`, CSS global hoặc theme admin.
+Theme public đặt trong `.public-site` với `.site-inverse` cho các vùng nền tối. [app/globals.css](../../app/globals.css)
+
+CSS của bố cục và tương tác nằm trong `features/public-site/styles/` và áp dụng trong `.public-site`. Font `Public Inter` và license Inter được lưu local. Đơn vị fluid `--site-unit` áp dụng trong layout public, giữ font-size mặc định trên `html`.
 
 Ảnh nội dung qua `PublicImage`/Next Image có width, height và sizes; ảnh raster dùng tối ưu của Next. Hero dùng hai lớp từ cùng một ảnh thật để giữ cấu trúc nhiều lớp mà không tạo địa điểm giả. Các ảnh nội dung khác được chọn riêng theo vai trò. Nguồn và mapping đầy đủ trong [ASSETS](ASSETS.md); màu, logo và font trong [BRAND](BRAND.md).
 
