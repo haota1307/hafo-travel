@@ -54,4 +54,4 @@ Các lệnh workspace kiểm tra phạm vi rộng hơn; chỉ chạy khi thay đ
 - Các suite trong `libs/interceptors/tests/` kiểm tra HTTP envelope, status/error metadata gRPC, deadline/correlation và guard và logging.
 - Suite `apps/bff/tests/identity-http.spec.ts` kiểm tra HTTP 401 trên route bảo vệ, Swagger và contract gRPC Identity trên localhost. Các RPC dùng repository MongoDB được mock để kiểm tra tạo hồ sơ, gán role và CRUD role.
 
-Sau khi sửa proto, chạy `pnpm proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build cả hai app để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role); runtime vẫn chịu module boundary thông thường.
+Sau khi sửa proto, chạy `pnpm proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build các app dùng contract bị ảnh hưởng để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role); runtime vẫn chịu module boundary thông thường.

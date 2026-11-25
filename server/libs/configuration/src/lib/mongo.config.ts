@@ -1,9 +1,10 @@
-import { envNumber } from '@common/utils/env-number.util';
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Connection } from 'mongoose';
+
+import { envNumber } from '@common/utils/env-number.util';
 
 export class MongoConfig {
   @IsString()
@@ -26,27 +27,26 @@ export class MongoConfig {
   @IsOptional()
   SOCKET_TIMEOUT_MS?: number;
 
-  constructor(data?: Partial<MongoConfig>) {
+  constructor(data: Partial<MongoConfig> & { DB_NAME: string }) {
     this.URL =
-      data?.URL ||
+      data.URL ||
       process.env['MONGODB_URL'] ||
       'mongodb://root:password@localhost:27017/';
 
-    this.DB_NAME =
-      data?.DB_NAME || process.env['MONGODB_DB_NAME'] || 'backend_app';
+    this.DB_NAME = data.DB_NAME;
 
-    this.POOL_SIZE = envNumber('MONGO_POOL_SIZE', 10, data?.POOL_SIZE, 1);
+    this.POOL_SIZE = envNumber('MONGO_POOL_SIZE', 10, data.POOL_SIZE, 1);
 
     this.CONNECT_TIMEOUT_MS = envNumber(
       'MONGO_CONNECT_TIMEOUT_MS',
       15000,
-      data?.CONNECT_TIMEOUT_MS,
+      data.CONNECT_TIMEOUT_MS,
     );
 
     this.SOCKET_TIMEOUT_MS = envNumber(
       'MONGO_SOCKET_TIMEOUT_MS',
       360000,
-      data?.SOCKET_TIMEOUT_MS,
+      data.SOCKET_TIMEOUT_MS,
     );
   }
 }

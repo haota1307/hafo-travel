@@ -1,8 +1,9 @@
-import { envNumber } from '@common/utils/env-number.util';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import type { DatabaseType } from 'typeorm';
+
+import { envNumber } from '@common/utils/env-number.util';
 
 export class TypeOrmConfiguration {
   @IsNotEmpty()
@@ -29,17 +30,16 @@ export class TypeOrmConfiguration {
   @IsString()
   TYPE: DatabaseType;
 
-  constructor(data?: Partial<TypeOrmConfiguration>) {
-    this.HOST = data?.HOST || process.env['TYPEORM_HOST'] || 'localhost';
-    this.PORT = envNumber('TYPEORM_PORT', 5432, data?.PORT, 1, 65535);
+  constructor(data: Partial<TypeOrmConfiguration> & { DATABASE: string }) {
+    this.HOST = data.HOST || process.env['TYPEORM_HOST'] || 'localhost';
+    this.PORT = envNumber('TYPEORM_PORT', 5432, data.PORT, 1, 65535);
     this.USERNAME =
-      data?.USERNAME || process.env['TYPEORM_USERNAME'] || 'postgres';
+      data.USERNAME || process.env['TYPEORM_USERNAME'] || 'postgres';
     this.PASSWORD =
-      data?.PASSWORD || process.env['TYPEORM_PASSWORD'] || 'password';
-    this.DATABASE =
-      data?.DATABASE || process.env['TYPEORM_DATABASE'] || 'backend_app';
+      data.PASSWORD || process.env['TYPEORM_PASSWORD'] || 'password';
+    this.DATABASE = data.DATABASE;
     this.TYPE =
-      data?.TYPE || (process.env['TYPEORM_TYPE'] as DatabaseType) || 'postgres';
+      data.TYPE || (process.env['TYPEORM_TYPE'] as DatabaseType) || 'postgres';
   }
 }
 

@@ -65,7 +65,7 @@
 ## Contract gRPC
 
 - RPC nội bộ dùng gRPC. Browser, webhook và API bên ngoài dùng HTTP qua BFF; sự kiện bất đồng bộ dự kiến dùng Kafka, chưa có broker/consumer trong source.
-- Nguồn contract: `libs/interfaces/src/lib/proto/<service>/v1/*.proto`. Package hiện có: `identity.v1`.
+- Nguồn contract: `libs/interfaces/src/lib/proto/<service>/v1/*.proto`. Danh sách package theo từng service nằm trong cây proto.
 - Sau khi sửa proto, chạy `pnpm proto:generate`. Buf/ts-proto sinh message, client/controller interfaces và constants tại `libs/interfaces/src/lib/grpc/`. Commit proto cùng output; không sửa tay file sinh.
 - Generator giữ phần contract, bỏ helper decorator không dùng và comment, sinh `<SERVICE>_METHODS` từ tên RPC trong proto rồi chạy formatter. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`; không viết tay tên RPC hoặc thêm lại message pattern/envelope TCP. Config dùng `protobufFileName` từ output sinh thay vì lặp đường dẫn proto.
 - Không đổi hoặc tái sử dụng field number đã phát hành. Khi bỏ field phải reserve tên/number; thay đổi không tương thích cần package/version mới.
@@ -94,11 +94,11 @@
 
 ## Config và bootstrap
 
-- Config app kế thừa BaseConfiguration, dùng ValidateNested/Type và createConfiguration để validate một lần sau khi khởi tạo đủ config con.
+- Các app kế thừa `BaseConfiguration` và dùng `@ValidateNested()`, `@Type()` cho từng nhóm cấu hình. `createConfiguration(Configuration)` nạp `.env` nếu có và kiểm tra cấu hình. Các app gRPC khai báo `GRPC_SERV`, `APP_CONFIG` và cấu hình database theo mẫu Identity.
 - GrpcConfiguration chứa client options; grpcServerOptions dùng bind host riêng. Identity dùng cổng 5101.
 - GRPC_BIND_HOST mặc định 0.0.0.0. IDENTITY_SERVICE_HOST là địa chỉ client gọi tới, mặc định localhost; port theo IDENTITY_SERVICE_PORT.
 - Identity dùng NestFactory.createMicroservice, đăng ký interceptor rồi listen; chỉ BFF mở HTTP.
-- Cả hai bundle copy toàn bộ cây proto sang dist/apps/<app>/proto, giữ đường dẫn import. Loader dùng camelCase, defaults và includeDirs chung; source/test fallback về cây proto gốc.
+- Các bundle copy toàn bộ cây proto sang dist/apps/<app>/proto, giữ đường dẫn import. Loader dùng camelCase, defaults và includeDirs chung; source/test fallback về cây proto gốc.
 - envNumber kiểm tra giá trị/khoảng hợp lệ khi khởi tạo. Khi thêm biến môi trường, cập nhật .env.example. Không tự bật TypeORM synchronize, seed hoặc migration database.
 
 ## Thêm app/module mới
@@ -106,10 +106,10 @@
 Generator tham khảo:
 
 ```sh
-pnpm exec nx g @nx/nest:application apps/catalog --linter=eslint --unitTestRunner=jest --e2eTestRunner=none --useProjectJson
+pnpm exec nx g @nx/nest:application apps/example --linter=eslint --unitTestRunner=jest --e2eTestRunner=none --useProjectJson
 ```
 
-Đây chỉ là scaffold. Kiểm tra diff, chuyển test sang apps/catalog/tests, dùng preset Jest chung và cập nhật tsconfig.spec.json. Không tự tạo CRUD/permission chưa được yêu cầu.
+Đây chỉ là scaffold. Kiểm tra diff, chuyển test sang apps/example/tests, dùng preset Jest chung và cập nhật tsconfig.spec.json. Không tự tạo CRUD/permission chưa được yêu cầu.
 
 Với service gRPC mới: thêm proto/version, chạy generator, đăng ký definition/enum trong grpc.config.ts, biến môi trường, client/provider, bootstrap và copy assets như app hiện có. Cập nhật danh sách build/dev-lite khi cần chạy cùng hệ thống.
 

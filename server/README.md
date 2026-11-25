@@ -8,6 +8,7 @@ Hướng dẫn cho AI và quy ước phát triển: [instructions](instructions/
 
 - `apps/bff`: HTTP gateway, Swagger, validation, logging và guards.
 - `apps/identity`: tạo/tra cứu người dùng, gán role và CRUD role, lưu MongoDB.
+- Ba app gRPC `booking`, `payment` và `ai-agent` đã có khung module nghiệp vụ. [Sơ đồ và trách nhiệm từng module](instructions/services.md).
 - `libs`: cấu hình, constants, decorators, entities, guards, interceptors, interfaces, middlewares, schemas và utils.
 - BaseEntity + TypeORM/PostgreSQL cho module mới; BaseSchema + MongoDB cho dữ liệu hiện tại.
 - Redis, Docker providers, seed vai trò, ESLint, Prettier và Jest.
@@ -27,6 +28,12 @@ Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và c
 3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
 4. Chạy `pnpm dev-lite` để bật BFF và Identity.
 
+Từ thư mục `server`, dùng `pnpm exec nx serve booking` để xem riêng một app mới hoặc `pnpm dev` để chạy cả năm app. Ba app mới chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
+
+Cả năm app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
+
+Khi nâng cấp môi trường đang có dữ liệu Identity, đổi tên biến `MONGODB_DB_NAME` thành `IDENTITY_MONGODB_DB_NAME` và giữ giá trị hiện tại. Nếu môi trường cũ dùng mặc định, đặt `IDENTITY_MONGODB_DB_NAME=backend_app` để tiếp tục đọc dữ liệu cũ. Môi trường mới mặc định dùng `identity`.
+
 Swagger theo cấu hình mẫu: http://localhost:3300/api/docs.
 
 Compose mặc định bật bốn dịch vụ, không cần profile. MongoDB dùng cổng 27017, Redis 6379, PostgreSQL 5432, và pgAdmin http://localhost:5050.
@@ -39,7 +46,7 @@ Thêm module/service theo cấu trúc controller → service → repository. Con
 
 Identity dùng `NestFactory.createMicroservice`, chỉ mở gRPC. BFF giữ HTTP/Swagger, lấy typed client qua `GrpcProvider` và `ClientGrpc.getService` trong `onModuleInit`. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`, package/service/method khớp proto; config lấy đường dẫn từ `protobufFileName` được sinh cùng contract.
 
-Các app dùng `createConfiguration(Configuration)` để validate một lần. `GrpcConfiguration` chứa client options; `grpcServerOptions` chọn bind host riêng. Cả hai bundle copy cây proto vào `dist/apps/<app>/proto`, giữ đường dẫn import. HTTP DTO thuộc `gateway`; schema MongoDB được map rõ sang UserProfile/RoleProfile trước khi trả gRPC.
+Các app dùng `createConfiguration(Configuration)` để khởi tạo và kiểm tra cấu hình. Các app gRPC khai báo `GRPC_SERV` và `APP_CONFIG` theo mẫu Identity. Mỗi app chọn địa chỉ lắng nghe bằng `grpcServerOptions` tại `src/main.ts`. Các bundle copy cây proto vào `dist/apps/<app>/proto`, giữ đường dẫn import. HTTP DTO thuộc `gateway`; schema MongoDB được map rõ sang UserProfile/RoleProfile trước khi trả gRPC.
 
 BFF dùng `requestGrpc` lấy raw protobuf response; `HttpResponseInterceptor` bọc một lần thành `ResponseDto`. Create-user lấy `response.message` để giữ data dạng chuỗi. Service nội bộ dùng `requestGrpcData` trả Promise. Metadata `x-process-id` giữ correlation ID; `grpcCallContext(metadata, call)` truyền deadline còn lại qua các chặng.
 
@@ -55,7 +62,7 @@ RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `
 
 App và library dùng TypeScript strict chung; ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Import chia nhóm Node.js → package ngoài → `@common/...` → đường dẫn tương đối, cách nhóm bằng một dòng trống và xếp theo đường dẫn trong mỗi nhóm; xem [quy ước triển khai](instructions/coding.md).
 
-- `pnpm build`: build BFF và Identity.
+- `pnpm build`: build cả năm app.
 - `pnpm typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
 - `pnpm lint`: kiểm tra lint workspace.
 - `pnpm test` chạy các suite BFF và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.

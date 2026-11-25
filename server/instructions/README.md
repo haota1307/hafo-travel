@@ -41,5 +41,6 @@
 
 - BFF trả 401 cho API cần xác thực trong khi chờ triển khai đăng nhập. Xem [RBAC](rbac.md).
 - Identity quản lý hồ sơ, gán role và CRUD role trong MongoDB.
+- [Bản đồ service và module](services.md) ghi rõ phần chạy được và phần thiết kế cho Booking, Payment và AI Agent.
 - TypeORM/BaseEntity là phần nền dùng lại; không có nghĩa các service hiện đang lưu user bằng PostgreSQL.
 - Build/lint/test local không chứng minh tích hợp MongoDB hoặc Redis thật đã hoạt động.

@@ -1,6 +1,8 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const { loadEnvFile } = require('node:process');
+
 const { MongoClient, ObjectId } = require('mongoose').mongo;
-const fs = require('fs');
-const path = require('path');
 
 // Hàm chuyển đổi các kiểu dữ liệu đặc biệt của MongoDB ($oid, $date)
 function mapData(_data) {
@@ -39,7 +41,7 @@ async function processFile(filePath, mode, db) {
     console.log(
       `✅ [${seed.collection}] pruned & inserted ${seedData.length} docs`,
     );
-  } else if (mode === 'migrate') {
+  } else {
     for (const doc of seedData) {
       const exists = await collection.findOne(doc);
 
@@ -53,8 +55,6 @@ async function processFile(filePath, mode, db) {
     }
 
     console.log(`✅ [${seed.collection}] migration completed`);
-  } else {
-    console.error('❌ Invalid mode, use "prune" or "migrate"');
   }
 }
 
@@ -62,10 +62,16 @@ async function processFile(filePath, mode, db) {
 async function bootstrap() {
   const dirPath = process.argv[2];
   const mode = process.argv[3] || 'migrate'; // prune | migrate
+  const databaseKey = process.argv[4] || 'IDENTITY_MONGODB_DB_NAME';
+  const defaultDatabase = process.argv[5] || 'identity';
 
   if (!dirPath) {
     console.error('❌ Please provide a seeder directory path');
     process.exit(1);
+  }
+
+  if (mode !== 'migrate' && mode !== 'prune') {
+    throw new Error('Invalid mode, use "prune" or "migrate"');
   }
 
   const absoluteDir = path.resolve(dirPath);
@@ -75,18 +81,26 @@ async function bootstrap() {
     process.exit(1);
   }
 
-  // Lấy connection string từ biến môi trường hoặc dùng mặc định
+  const files = fs
+    .readdirSync(absoluteDir)
+    .filter((file) => file.endsWith('.json'));
+
+  if (files.length === 0) {
+    console.log('No JSON seed files found.');
+
+    return;
+  }
+
+  if (fs.existsSync('.env')) {
+    loadEnvFile('.env');
+  }
+
   const mongoUri = process.env.MONGODB_URL || 'mongodb://localhost:27017';
   const client = new MongoClient(mongoUri);
 
   try {
     await client.connect();
-    const db = client.db(process.env.MONGODB_DB_NAME || 'backend_app');
-
-    // Đọc tất cả các file .json trong thư mục
-    const files = fs
-      .readdirSync(absoluteDir)
-      .filter((f) => f.endsWith('.json'));
+    const db = client.db(process.env[databaseKey] || defaultDatabase);
 
     for (const file of files) {
       const filePath = path.join(absoluteDir, file);
@@ -94,11 +108,12 @@ async function bootstrap() {
     }
 
     console.log('🎉 All seeders executed successfully!');
-  } catch (err) {
-    console.error('❌ Error while seeding:', err);
   } finally {
     await client.close();
   }
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('❌ Error while seeding:', error.message);
+  process.exitCode = 1;
+});

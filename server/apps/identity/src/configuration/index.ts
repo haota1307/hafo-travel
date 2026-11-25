@@ -18,7 +18,9 @@ class Configuration extends BaseConfiguration {
 
   @ValidateNested()
   @Type(() => MongoConfig)
-  MONGO_CONFIG = new MongoConfig();
+  MONGO_CONFIG = new MongoConfig({
+    DB_NAME: process.env['IDENTITY_MONGODB_DB_NAME'] || 'identity',
+  });
 }
 
 export const CONFIGURATION = createConfiguration(Configuration);
