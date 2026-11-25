@@ -41,6 +41,6 @@
 
 - BFF xác minh chữ ký HS256, hạn dùng và quyền trong JWT trên từng request. Xem [RBAC](rbac.md).
 - Identity quản lý hồ sơ, gán role và CRUD role trong MongoDB.
-- [Bản đồ service và module](services.md) ghi rõ phần chạy được và phần thiết kế cho Booking, Payment và AI Agent.
+- [Bản đồ service và module](services.md) ghi rõ phần chạy được và phần thiết kế cho Booking, Payment, Notification và AI Agent.
 - TypeORM/BaseEntity là phần nền dùng lại; không có nghĩa các service hiện đang lưu user bằng PostgreSQL.
 - Build/lint/test local không chứng minh tích hợp MongoDB hoặc Redis thật đã hoạt động.

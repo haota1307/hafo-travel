@@ -21,7 +21,7 @@ Nền tảng hiện tại là Node 26 LTS, NestJS 12, Nx 24 và TypeORM 1. Ứng
 
 Không import controller/service/repository của một app vào app khác. Dùng contract trong `libs` và transport hiện có. Alias `@common/<library>/*` được khai báo trong `tsconfig.base.json`.
 
-Booking, Payment và AI Agent dùng bootstrap gRPC. Xem [trách nhiệm, cổng và luồng gọi của năm service](services.md).
+Booking, Payment, Notification và AI Agent dùng bootstrap gRPC. Notification cung cấp RPC nội bộ `SendEmail` để gửi thư qua Resend. Xem [trách nhiệm, cổng và luồng gọi của sáu service](services.md).
 
 ## Cấu trúc một module
 

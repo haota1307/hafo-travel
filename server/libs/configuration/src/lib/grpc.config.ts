@@ -22,6 +22,10 @@ import {
   protobufFileName as identityProtoFile,
 } from '@common/interfaces/grpc/identity/v1/identity';
 import {
+  NOTIFICATION_V1_PACKAGE_NAME,
+  protobufFileName as notificationProtoFile,
+} from '@common/interfaces/grpc/notification/v1/notification';
+import {
   PAYMENT_V1_PACKAGE_NAME,
   protobufFileName as paymentProtoFile,
 } from '@common/interfaces/grpc/payment/v1/payment';
@@ -31,6 +35,7 @@ export enum GRPC_SERVICES {
   IDENTITY_SERVICE = 'GRPC_IDENTITY_SERVICE',
   BOOKING_SERVICE = 'GRPC_BOOKING_SERVICE',
   PAYMENT_SERVICE = 'GRPC_PAYMENT_SERVICE',
+  NOTIFICATION_SERVICE = 'GRPC_NOTIFICATION_SERVICE',
   AI_AGENT_SERVICE = 'GRPC_AI_AGENT_SERVICE',
 }
 
@@ -52,6 +57,12 @@ const definitions = {
     file: paymentProtoFile,
     prefix: 'PAYMENT_SERVICE',
     port: 5104,
+  },
+  [GRPC_SERVICES.NOTIFICATION_SERVICE]: {
+    package: NOTIFICATION_V1_PACKAGE_NAME,
+    file: notificationProtoFile,
+    prefix: 'NOTIFICATION_SERVICE',
+    port: 5105,
   },
   [GRPC_SERVICES.AI_AGENT_SERVICE]: {
     package: AIAGENT_V1_PACKAGE_NAME,
@@ -128,6 +139,10 @@ export class GrpcConfiguration {
   @IsNotEmpty()
   @IsObject()
   GRPC_PAYMENT_SERVICE = grpcOptions(GRPC_SERVICES.PAYMENT_SERVICE);
+
+  @IsNotEmpty()
+  @IsObject()
+  GRPC_NOTIFICATION_SERVICE = grpcOptions(GRPC_SERVICES.NOTIFICATION_SERVICE);
 
   @IsNotEmpty()
   @IsObject()

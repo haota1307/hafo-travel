@@ -9,6 +9,7 @@ Hướng dẫn cho AI và quy ước phát triển: [instructions](instructions/
 - `apps/bff`: HTTP gateway, Swagger, validation, logging và guards.
 - `apps/identity`: tạo/tra cứu người dùng, gán role và CRUD role, lưu MongoDB.
 - Ba app gRPC `booking`, `payment` và `ai-agent` đã có khung module nghiệp vụ. [Sơ đồ và trách nhiệm từng module](instructions/services.md).
+- `apps/notification`: app gRPC gửi email qua Resend.
 - `libs`: cấu hình, constants, decorators, entities, guards, interceptors, interfaces, middlewares, schemas và utils.
 - BaseEntity + TypeORM/PostgreSQL cho module mới; BaseSchema + MongoDB cho dữ liệu hiện tại.
 - Redis, Docker providers, seed vai trò, ESLint, Prettier và Jest.
@@ -28,9 +29,13 @@ Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và c
 3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
 4. Chạy `pnpm dev-lite` để bật BFF và Identity.
 
-Từ thư mục `server`, dùng `pnpm exec nx serve booking` để xem riêng một app mới hoặc `pnpm dev` để chạy cả năm app. Ba app mới chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
+Từ thư mục `server`, dùng `pnpm exec nx serve booking` để xem riêng một app mới hoặc `pnpm dev` để chạy cả sáu app. Booking, Payment và AI Agent chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
 
-Cả năm app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
+Các app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
+
+Để gửi email, điền `RESEND_API_KEY` có quyền gửi và `RESEND_FROM_EMAIL` là địa chỉ gửi trên domain đã xác minh với Resend vào `server/.env`. Chạy riêng app bằng `pnpm exec nx serve notification`. App lắng nghe gRPC ở cổng `5105`. Khi chưa cấu hình Resend, app vẫn khởi động và trả `UNAVAILABLE` cho yêu cầu gửi.
+
+RPC nội bộ `notification.v1.NotificationService/SendEmail` nhận `to`, `subject`, ít nhất một trong hai trường `text` hoặc `html`, và `idempotencyKey`. Dùng một khóa riêng cho mỗi email và giữ cùng khóa cùng nội dung khi thử lại. `emailId` là mã Resend trả về khi tiếp nhận thư. [Contract gRPC](libs/interfaces/src/lib/proto/notification/v1/notification.proto) · [API gửi email của Resend](https://resend.com/docs/api-reference/emails/send-email) · [Quy tắc chống gửi trùng](https://resend.com/docs/dashboard/emails/idempotency-keys).
 
 Khi nâng cấp môi trường đang có dữ liệu Identity, đổi tên biến `MONGODB_DB_NAME` thành `IDENTITY_MONGODB_DB_NAME` và giữ giá trị hiện tại. Nếu môi trường cũ dùng mặc định, đặt `IDENTITY_MONGODB_DB_NAME=backend_app` để tiếp tục đọc dữ liệu cũ. Môi trường mới mặc định dùng `identity`.
 
@@ -62,7 +67,7 @@ RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `
 
 App và library dùng TypeScript strict chung; ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Import chia nhóm Node.js → package ngoài → `@common/...` → đường dẫn tương đối, cách nhóm bằng một dòng trống và xếp theo đường dẫn trong mỗi nhóm; xem [quy ước triển khai](instructions/coding.md).
 
-- `pnpm build`: build cả năm app.
+- `pnpm build`: build cả sáu app.
 - `pnpm typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
 - `pnpm lint`: kiểm tra lint workspace.
 - `pnpm test` chạy các suite BFF, Identity và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.

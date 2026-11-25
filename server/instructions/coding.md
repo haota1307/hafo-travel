@@ -94,7 +94,7 @@
 
 ## Config và bootstrap
 
-- Các app kế thừa `BaseConfiguration` và dùng `@ValidateNested()`, `@Type()` cho từng nhóm cấu hình. `createConfiguration(Configuration)` nạp `.env` nếu có và kiểm tra cấu hình. Các app gRPC khai báo `GRPC_SERV`, `APP_CONFIG` và cấu hình database theo mẫu Identity.
+- Các app kế thừa `BaseConfiguration` và dùng `@ValidateNested()`, `@Type()` cho từng nhóm cấu hình. `createConfiguration(Configuration)` nạp `.env` nếu có và kiểm tra cấu hình. Các app gRPC khai báo `GRPC_SERV`, `APP_CONFIG` và cấu hình riêng cho dependency mà app sử dụng. Identity cấu hình MongoDB, còn Notification cấu hình email.
 - GrpcConfiguration chứa client options; grpcServerOptions dùng bind host riêng. Identity dùng cổng 5101.
 - GRPC_BIND_HOST mặc định 0.0.0.0. IDENTITY_SERVICE_HOST là địa chỉ client gọi tới, mặc định localhost; port theo IDENTITY_SERVICE_PORT.
 - Identity dùng NestFactory.createMicroservice, đăng ký interceptor rồi listen; chỉ BFF mở HTTP.

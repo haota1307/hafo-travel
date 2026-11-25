@@ -24,6 +24,8 @@ class Configuration extends BaseConfiguration {
     DB_NAME: process.env['IDENTITY_MONGODB_DB_NAME'] || 'identity',
   });
 
+  @ValidateNested()
+  @Type(() => AuthConfiguration)
   AUTH_CONFIG = new AuthConfiguration();
 }
 

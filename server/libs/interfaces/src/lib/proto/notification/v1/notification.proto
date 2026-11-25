@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package notification.v1;
+
+service NotificationService {
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse);
+}
+
+message SendEmailRequest {
+  string to = 1;
+  string subject = 2;
+  optional string text = 3;
+  optional string html = 4;
+  string idempotency_key = 5;
+}
+
+message SendEmailResponse {
+  string email_id = 1;
+}
