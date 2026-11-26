@@ -12,8 +12,8 @@ import {
   type SetUserRolesRequest,
 } from '@common/interfaces/grpc/identity/v1/identity';
 
-import { userProfileMapper } from '../mappers/user-profile.mapper';
-import { UserService } from '../services/user.service';
+import { userProfileMapper } from '@identity/user/mappers/user-profile.mapper';
+import { UserService } from '@identity/user/services/user.service';
 
 @Controller()
 export class UserController {

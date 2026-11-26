@@ -15,7 +15,7 @@ import type {
 } from '@common/interfaces/grpc/notification/v1/notification';
 import { RPC_TIMEOUT_MS, type GrpcCallContext } from '@common/utils/rpc.util';
 
-import type { EmailConfiguration } from '../../../../configuration/email.configuration';
+import type { EmailConfiguration } from '@notification/config/email.configuration';
 
 @Injectable()
 export class NotificationService {

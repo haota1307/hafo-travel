@@ -5,9 +5,9 @@ import { AuthorizationCacheModule } from '@common/configuration/authorization-ca
 import { RoleDestination } from '@common/schemas/role.schema';
 import { UserDestination } from '@common/schemas/user.schema';
 
-import { RoleController } from './controllers/role.controller';
-import { RoleRepository } from './repositories/role.repository';
-import { RoleService } from './services/role.service';
+import { RoleController } from '@identity/role/controllers/role.controller';
+import { RoleRepository } from '@identity/role/repositories/role.repository';
+import { RoleService } from '@identity/role/services/role.service';
 
 @Module({
   imports: [

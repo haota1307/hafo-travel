@@ -16,7 +16,7 @@ import {
 } from '@common/interfaces/grpc/notification/v1/notification';
 import { requestGrpcData, type GrpcCallContext } from '@common/utils/rpc.util';
 
-import type { AuthConfiguration } from '../../../../configuration/auth.configuration';
+import type { AuthConfiguration } from '@identity/config/auth.configuration';
 
 const messages = {
   vi: {

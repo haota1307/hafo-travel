@@ -10,8 +10,8 @@ import {
   type RoleIdRequest,
 } from '@common/interfaces/grpc/identity/v1/identity';
 
-import { roleProfileMapper } from '../mappers/role-profile.mapper';
-import { RoleService } from '../services/role.service';
+import { roleProfileMapper } from '@identity/role/mappers/role-profile.mapper';
+import { RoleService } from '@identity/role/services/role.service';
 
 @Controller()
 export class RoleController {

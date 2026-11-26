@@ -17,10 +17,10 @@ import { ExceptionInterceptor } from '@common/interceptors/exception.interceptor
 import { HttpResponseInterceptor } from '@common/interceptors/http-response.interceptor';
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware';
 
-import { CONFIGURATION, TConfiguration } from '../configuration';
-import { AuthModule } from './modules/auth/auth.module';
-import { RoleModule } from './modules/role/role.module';
-import { UserModule } from './modules/user/user.module';
+import { AuthModule } from '@bff/auth/auth.module';
+import { RoleModule } from '@bff/role/role.module';
+import { UserModule } from '@bff/user/user.module';
+import { CONFIGURATION, TConfiguration } from '@bff/config';
 
 @Module({
   imports: [

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { CheckoutController } from './controllers/checkout.controller';
-import { CheckoutRepository } from './repositories/checkout.repository';
-import { CheckoutService } from './services/checkout.service';
+import { CheckoutController } from '@booking/checkout/controllers/checkout.controller';
+import { CheckoutRepository } from '@booking/checkout/repositories/checkout.repository';
+import { CheckoutService } from '@booking/checkout/services/checkout.service';
 
 @Module({
   controllers: [CheckoutController],

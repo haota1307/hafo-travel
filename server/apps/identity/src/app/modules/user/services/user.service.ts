@@ -11,9 +11,9 @@ import { AuthorizationCache } from '@common/configuration/authorization-cache.co
 import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
 import type { CreateUserRequest } from '@common/interfaces/grpc/identity/v1/identity';
 
-import { RoleService } from '../../role/services/role.service';
-import { createUserRequestMapper } from '../mappers/user-request.mapper';
-import { UserRepository } from '../repositories/user.repository';
+import { RoleService } from '@identity/role/services/role.service';
+import { createUserRequestMapper } from '@identity/user/mappers/user-request.mapper';
+import { UserRepository } from '@identity/user/repositories/user.repository';
 
 @Injectable()
 export class UserService {

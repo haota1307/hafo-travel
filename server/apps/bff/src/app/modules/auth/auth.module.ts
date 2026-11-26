@@ -3,7 +3,7 @@ import { ClientsModule } from '@nestjs/microservices';
 
 import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from '@bff/auth/controllers/auth.controller';
 
 @Module({
   imports: [

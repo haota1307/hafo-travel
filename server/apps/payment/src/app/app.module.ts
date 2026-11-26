@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { CONFIGURATION } from '../configuration';
-import { ProviderModule } from './modules/provider/provider.module';
-import { RefundModule } from './modules/refund/refund.module';
-import { TransactionModule } from './modules/transaction/transaction.module';
+import { CONFIGURATION } from '@payment/config';
+import { ProviderModule } from '@payment/provider/provider.module';
+import { RefundModule } from '@payment/refund/refund.module';
+import { TransactionModule } from '@payment/transaction/transaction.module';
 
 @Module({
   imports: [

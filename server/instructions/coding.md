@@ -6,8 +6,8 @@
 - Dùng Node 26.13.0, pnpm 12.18.0 và Nx 24. Compiler CLI TypeScript 7 chạy qua `@typescript/native`; alias API `typescript` dùng TypeScript 6 cho toolchain/editor. Kiểm tra kiểu bằng `pnpm typecheck`.
 - ESLint kiểm tra dấu ngoặc và dòng trống giữa các bước; Prettier theo cấu hình server. Tách dòng giữa các method, function và khai báo độc lập.
 - Controller nhận input và gọi service/client gRPC. Service điều phối nghiệp vụ; repository truy vấn database; mapper chuyển dữ liệu rõ từng trường.
-- Dùng alias `@common/...` cho shared code, import tương đối trong module. Không import controller/service/repository của app khác vào runtime.
-- Sắp xếp import theo nhóm: Node.js (`node:...`) → package ngoài → alias `@common/...` → đường dẫn tương đối. Mỗi nhóm cách nhau một dòng trống, các import trong nhóm xếp tăng dần theo đường dẫn. Giữ nguyên `import type` và import có side effect theo yêu cầu khởi tạo. File gRPC sinh tự động theo generator, không sửa tay.
+- Dùng alias `@common/...` cho thư viện dùng chung. Trong `apps/<app>/src` và `apps/<app>/tests`, dùng alias của app trong `tsconfig.base.json`. Ví dụ, `@identity/user/services/user.service` trỏ tới service của module user. Notification có một module nên dùng trực tiếp `@notification/services/notification.service`. Alias `@<app>/app` trỏ tới `AppModule` và `@<app>/config` trỏ tới cấu hình của app, với `@<app>/config/*` cho file cấu hình cụ thể. Không import controller/service/repository của app khác vào runtime.
+- Chia import thành các nhóm theo thứ tự Node.js (`node:...`), package ngoài, alias `@common/...`, alias app rồi đường dẫn tương đối ở library hoặc file cấu hình công cụ. Cách nhóm bằng một dòng trống và xếp theo đường dẫn trong mỗi nhóm. Giữ nguyên `import type` và thứ tự import có side effect theo yêu cầu khởi tạo. File gRPC sinh tự động theo generator, không sửa tay.
 - Tên file theo mẫu controller/service/repository/mapper/util đang có. Không tạo base class, helper hoặc module rỗng trước khi có nhu cầu.
 
 ## Trách nhiệm trong luồng xử lý
@@ -109,7 +109,7 @@ Generator tham khảo:
 pnpm exec nx g @nx/nest:application apps/example --linter=eslint --unitTestRunner=jest --e2eTestRunner=none --useProjectJson
 ```
 
-Đây chỉ là scaffold. Kiểm tra diff, chuyển test sang apps/example/tests, dùng preset Jest chung và cập nhật tsconfig.spec.json. Không tự tạo CRUD/permission chưa được yêu cầu.
+Đây chỉ là scaffold. Kiểm tra diff, thêm các alias của app vào `tsconfig.base.json`, chuyển test sang `apps/example/tests`, dùng preset Jest chung và cập nhật `tsconfig.spec.json`. Không tự tạo CRUD/permission chưa được yêu cầu.
 
 Với service gRPC mới: thêm proto/version, chạy generator, đăng ký definition/enum trong grpc.config.ts, biến môi trường, client/provider, bootstrap và copy assets như app hiện có. Cập nhật danh sách build/dev-lite khi cần chạy cùng hệ thống.
 

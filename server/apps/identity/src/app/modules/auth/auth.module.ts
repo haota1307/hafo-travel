@@ -8,14 +8,14 @@ import { AuthSessionDestination } from '@common/schemas/auth-session.schema';
 import { RoleDestination } from '@common/schemas/role.schema';
 import { UserDestination } from '@common/schemas/user.schema';
 
-import { UserModule } from '../user/user.module';
-import { AccountController } from './controllers/account.controller';
-import { AuthController } from './controllers/auth.controller';
-import { AccountRepository } from './repositories/account.repository';
-import { AuthSessionRepository } from './repositories/auth.repository';
-import { AccountEmailService } from './services/account-email.service';
-import { AccountService } from './services/account.service';
-import { AuthService } from './services/auth.service';
+import { AccountController } from '@identity/auth/controllers/account.controller';
+import { AuthController } from '@identity/auth/controllers/auth.controller';
+import { AccountRepository } from '@identity/auth/repositories/account.repository';
+import { AuthSessionRepository } from '@identity/auth/repositories/auth.repository';
+import { AccountEmailService } from '@identity/auth/services/account-email.service';
+import { AccountService } from '@identity/auth/services/account.service';
+import { AuthService } from '@identity/auth/services/auth.service';
+import { UserModule } from '@identity/user/user.module';
 
 @Module({
   imports: [

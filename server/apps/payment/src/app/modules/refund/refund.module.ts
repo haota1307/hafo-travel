@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { RefundController } from './controllers/refund.controller';
-import { RefundRepository } from './repositories/refund.repository';
-import { RefundService } from './services/refund.service';
+import { RefundController } from '@payment/refund/controllers/refund.controller';
+import { RefundRepository } from '@payment/refund/repositories/refund.repository';
+import { RefundService } from '@payment/refund/services/refund.service';
 
 @Module({
   controllers: [RefundController],

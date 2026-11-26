@@ -10,7 +10,7 @@ import { AuthorizationCache } from '@common/configuration/authorization-cache.co
 import { PERMISSION } from '@common/constants/enum/role.enum';
 import type { CreateRoleRequest } from '@common/interfaces/grpc/identity/v1/identity';
 
-import { RoleRepository } from '../repositories/role.repository';
+import { RoleRepository } from '@identity/role/repositories/role.repository';
 
 @Injectable()
 export class RoleService {

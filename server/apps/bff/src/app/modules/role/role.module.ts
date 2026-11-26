@@ -3,7 +3,7 @@ import { ClientsModule } from '@nestjs/microservices';
 
 import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
-import { RoleController } from './controllers/role.controller';
+import { RoleController } from '@bff/role/controllers/role.controller';
 
 @Module({
   imports: [

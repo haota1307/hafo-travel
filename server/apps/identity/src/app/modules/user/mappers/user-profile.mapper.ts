@@ -1,7 +1,7 @@
 import type { UserProfile } from '@common/interfaces/grpc/identity/v1/identity';
 import type { UserWithRoles } from '@common/schemas/user.schema';
 
-import { roleProfileMapper } from '../../role/mappers/role-profile.mapper';
+import { roleProfileMapper } from '@identity/role/mappers/role-profile.mapper';
 
 export function userProfileMapper(user: UserWithRoles): UserProfile {
   return {

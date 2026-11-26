@@ -3,10 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 
 import { MongoProvider } from '@common/configuration/mongo.config';
 
-import { CONFIGURATION, TConfiguration } from '../configuration';
-import { AuthModule } from './modules/auth/auth.module';
-import { RoleModule } from './modules/role/role.module';
-import { UserModule } from './modules/user/user.module';
+import { AuthModule } from '@identity/auth/auth.module';
+import { CONFIGURATION, TConfiguration } from '@identity/config';
+import { RoleModule } from '@identity/role/role.module';
+import { UserModule } from '@identity/user/user.module';
 
 @Module({
   imports: [

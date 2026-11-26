@@ -8,7 +8,7 @@ import {
 } from '@common/configuration/grpc.config';
 import { GrpcLoggingInterceptor } from '@common/interceptors/grpc-logging.interceptor';
 
-import { AppModule } from './app/app.module';
+import { AppModule } from '@payment/app';
 
 async function bootstrap() {
   const options = grpcServerOptions(GRPC_SERVICES.PAYMENT_SERVICE, {

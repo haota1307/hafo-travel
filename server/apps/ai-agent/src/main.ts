@@ -8,7 +8,7 @@ import {
 } from '@common/configuration/grpc.config';
 import { GrpcLoggingInterceptor } from '@common/interceptors/grpc-logging.interceptor';
 
-import { AppModule } from './app/app.module';
+import { AppModule } from '@ai-agent/app';
 
 async function bootstrap() {
   const options = grpcServerOptions(GRPC_SERVICES.AI_AGENT_SERVICE, {

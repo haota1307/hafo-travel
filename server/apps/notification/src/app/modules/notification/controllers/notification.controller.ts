@@ -10,7 +10,7 @@ import {
 } from '@common/interfaces/grpc/notification/v1/notification';
 import { grpcCallContext } from '@common/utils/rpc.util';
 
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '@notification/services/notification.service';
 
 @Controller()
 export class NotificationController {

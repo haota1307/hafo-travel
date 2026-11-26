@@ -21,9 +21,9 @@ import {
   verifyPassword,
 } from '@common/utils/password.util';
 
-import type { AuthConfiguration } from '../../../../configuration/auth.configuration';
-import { UserService } from '../../user/services/user.service';
-import { AuthSessionRepository } from '../repositories/auth.repository';
+import { AuthSessionRepository } from '@identity/auth/repositories/auth.repository';
+import type { AuthConfiguration } from '@identity/config/auth.configuration';
+import { UserService } from '@identity/user/services/user.service';
 
 const MAX_EMAIL_LENGTH = 254;
 const MILLISECONDS_PER_SECOND = 1000;

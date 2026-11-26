@@ -26,11 +26,11 @@ import {
 } from '@common/utils/password.util';
 import type { GrpcCallContext } from '@common/utils/rpc.util';
 
-import type { AuthConfiguration } from '../../../../configuration/auth.configuration';
-import { UserService } from '../../user/services/user.service';
-import { AccountRepository } from '../repositories/account.repository';
-import { AccountEmailService } from './account-email.service';
-import { AuthService } from './auth.service';
+import { AccountRepository } from '@identity/auth/repositories/account.repository';
+import { AccountEmailService } from '@identity/auth/services/account-email.service';
+import { AuthService } from '@identity/auth/services/auth.service';
+import type { AuthConfiguration } from '@identity/config/auth.configuration';
+import { UserService } from '@identity/user/services/user.service';
 
 type EmailAction = 'verify-email' | 'reset-password' | 'verify-google';
 

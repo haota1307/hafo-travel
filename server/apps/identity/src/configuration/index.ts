@@ -8,7 +8,7 @@ import { GrpcConfiguration } from '@common/configuration/grpc.config';
 import { RedisConfiguration } from '@common/configuration/redis.config';
 import { MongoConfig } from '@common/configuration/mongo.config';
 
-import { AuthConfiguration } from './auth.configuration';
+import { AuthConfiguration } from '@identity/config/auth.configuration';
 
 class Configuration extends BaseConfiguration {
   @ValidateNested()

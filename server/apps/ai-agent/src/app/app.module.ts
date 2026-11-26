@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { CONFIGURATION } from '../configuration';
-import { AgentModule } from './modules/agent/agent.module';
-import { ConversationModule } from './modules/conversation/conversation.module';
-import { ToolsModule } from './modules/tools/tools.module';
+import { AgentModule } from '@ai-agent/agent/agent.module';
+import { CONFIGURATION } from '@ai-agent/config';
+import { ConversationModule } from '@ai-agent/conversation/conversation.module';
+import { ToolsModule } from '@ai-agent/tools/tools.module';
 
 @Module({
   imports: [

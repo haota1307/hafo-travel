@@ -18,9 +18,9 @@ import { PERMISSION } from '@common/constants/enum/role.enum';
 import type { UserWithRoles } from '@common/schemas/user.schema';
 import { hashPassword } from '@common/utils/password.util';
 
-import type { AuthSessionRepository } from '../src/app/modules/auth/repositories/auth.repository';
-import { AuthService } from '../src/app/modules/auth/services/auth.service';
-import type { UserService } from '../src/app/modules/user/services/user.service';
+import type { AuthSessionRepository } from '@identity/auth/repositories/auth.repository';
+import { AuthService } from '@identity/auth/services/auth.service';
+import type { UserService } from '@identity/user/services/user.service';
 
 const EMAIL = 'ExactCase@example.test';
 const PASSWORD = 'long fixture password ';

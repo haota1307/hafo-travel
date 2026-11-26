@@ -69,7 +69,7 @@ RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `
 
 ## Kiểm tra
 
-App và library dùng TypeScript strict chung; ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Import chia nhóm Node.js → package ngoài → `@common/...` → đường dẫn tương đối, cách nhóm bằng một dòng trống và xếp theo đường dẫn trong mỗi nhóm; xem [quy ước triển khai](instructions/coding.md).
+App và library dùng TypeScript strict chung. ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Source và test của app dùng alias riêng, ví dụ `@identity/user/services/user.service`. Thư viện dùng chung dùng `@common/...`. Các alias nằm trong [tsconfig.base.json](tsconfig.base.json). Xem [quy ước triển khai](instructions/coding.md) để biết thứ tự import và cách thêm alias cho app mới.
 
 - `pnpm build`: build cả sáu app.
 - `pnpm typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.

@@ -6,7 +6,7 @@ import { BaseConfiguration } from '@common/configuration/base.config';
 import { createConfiguration } from '@common/configuration/create-configuration';
 import { GrpcConfiguration } from '@common/configuration/grpc.config';
 
-import { EmailConfiguration } from './email.configuration';
+import { EmailConfiguration } from '@notification/config/email.configuration';
 
 class Configuration extends BaseConfiguration {
   @ValidateNested()

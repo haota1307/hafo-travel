@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { DepartureController } from './controllers/departure.controller';
-import { DepartureRepository } from './repositories/departure.repository';
-import { DepartureService } from './services/departure.service';
+import { DepartureController } from '@booking/departure/controllers/departure.controller';
+import { DepartureRepository } from '@booking/departure/repositories/departure.repository';
+import { DepartureService } from '@booking/departure/services/departure.service';
 
 @Module({
   controllers: [DepartureController],

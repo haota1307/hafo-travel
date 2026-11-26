@@ -43,17 +43,17 @@ import { LoggerMiddleware } from '@common/middlewares/logger.middleware';
 import type { UserWithRoles } from '@common/schemas/user.schema';
 import { requestGrpcData } from '@common/utils/rpc.util';
 
-import { AuthController as RpcAuthController } from '../../identity/src/app/modules/auth/controllers/auth.controller';
-import { AuthService } from '../../identity/src/app/modules/auth/services/auth.service';
-import { RoleController as RpcRoleController } from '../../identity/src/app/modules/role/controllers/role.controller';
-import { RoleRepository } from '../../identity/src/app/modules/role/repositories/role.repository';
-import { RoleService } from '../../identity/src/app/modules/role/services/role.service';
-import { UserController as RpcUserController } from '../../identity/src/app/modules/user/controllers/user.controller';
-import { UserRepository } from '../../identity/src/app/modules/user/repositories/user.repository';
-import { UserService } from '../../identity/src/app/modules/user/services/user.service';
-import { AuthController as BffAuthController } from '../src/app/modules/auth/controllers/auth.controller';
-import { RoleController as BffRoleController } from '../src/app/modules/role/controllers/role.controller';
-import { UserController as BffUserController } from '../src/app/modules/user/controllers/user.controller';
+import { AuthController as BffAuthController } from '@bff/auth/controllers/auth.controller';
+import { RoleController as BffRoleController } from '@bff/role/controllers/role.controller';
+import { UserController as BffUserController } from '@bff/user/controllers/user.controller';
+import { AuthController as RpcAuthController } from '@identity/auth/controllers/auth.controller';
+import { AuthService } from '@identity/auth/services/auth.service';
+import { RoleController as RpcRoleController } from '@identity/role/controllers/role.controller';
+import { RoleRepository } from '@identity/role/repositories/role.repository';
+import { RoleService } from '@identity/role/services/role.service';
+import { UserController as RpcUserController } from '@identity/user/controllers/user.controller';
+import { UserRepository } from '@identity/user/repositories/user.repository';
+import { UserService } from '@identity/user/services/user.service';
 
 async function freePort(): Promise<number> {
   const server = createServer();

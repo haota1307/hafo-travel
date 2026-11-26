@@ -5,7 +5,7 @@ import { AuthorizationCacheModule } from '@common/configuration/authorization-ca
 import { AuthorizationService } from '@common/guards/authorization.service';
 import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
-import { UserController } from './controllers/user.controller';
+import { UserController } from '@bff/user/controllers/user.controller';
 
 @Module({
   imports: [

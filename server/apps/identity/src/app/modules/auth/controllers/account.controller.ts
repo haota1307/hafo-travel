@@ -12,7 +12,7 @@ import {
 } from '@common/interfaces/grpc/identity/v1/identity';
 import { grpcCallContext } from '@common/utils/rpc.util';
 
-import { AccountService } from '../services/account.service';
+import { AccountService } from '@identity/auth/services/account.service';
 
 @Controller()
 export class AccountController {

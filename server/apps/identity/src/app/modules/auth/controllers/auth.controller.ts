@@ -10,7 +10,7 @@ import {
   type RefreshSessionRequest,
 } from '@common/interfaces/grpc/identity/v1/identity';
 
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '@identity/auth/services/auth.service';
 
 @Controller()
 export class AuthController {

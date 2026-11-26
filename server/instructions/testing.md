@@ -18,7 +18,7 @@ libs/interceptors/
 
 `jest.preset.js` dùng `testMatch` cho `tests/**/*.spec.ts` và `tests/**/*.test.ts`. Các `tsconfig.spec.json` include `tests/**/*.ts`. Jest/TypeScript config vẫn ở root project để Nx nhận diện target. `tsconfig.app.json`/`tsconfig.lib.json` chỉ include source runtime; Nx production inputs loại trừ toàn bộ `tests/`.
 
-Khi chuyển test, sửa import tương đối và tìm lại tham chiếu setup/fixture. Không chỉ di chuyển file mà bỏ quên cấu hình. Test cùng library có thể import `../src/lib/...`; shared dependency khác dùng alias sẵn có.
+Khi chuyển test, rà lại tham chiếu setup/fixture và cấu hình test. Test app dùng alias cùng app cho source runtime. Test cùng library có thể import `../src/lib/...` và dùng alias `@common/...` cho thư viện dùng chung khác.
 
 ## Chọn kiểm tra theo thay đổi
 

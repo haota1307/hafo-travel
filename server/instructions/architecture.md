@@ -19,7 +19,7 @@ Nền tảng hiện tại là Node 26 LTS, NestJS 12, Nx 24 và TypeORM 1. Ứng
 | `libs/utils`                            | Hàm dùng chung như RPC, chuẩn hóa lỗi, request/string                 |
 | `tools`                                 | Công cụ vận hành như seed; không chứa logic xử lý request             |
 
-Không import controller/service/repository của một app vào app khác. Dùng contract trong `libs` và transport hiện có. Alias `@common/<library>/*` được khai báo trong `tsconfig.base.json`.
+Không import controller/service/repository của một app vào app khác trong source runtime. Dùng contract trong `libs` và transport hiện có. `tsconfig.base.json` khai báo alias `@common/<library>/*` cho thư viện chung và alias riêng cho từng app theo [quy ước import](coding.md#phân-chia-trách-nhiệm).
 
 Booking, Payment, Notification và AI Agent dùng bootstrap gRPC. Notification cung cấp RPC nội bộ `SendEmail` để gửi thư qua Resend. Xem [trách nhiệm, cổng và luồng gọi của sáu service](services.md).
 

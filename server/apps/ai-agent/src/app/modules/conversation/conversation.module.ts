@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { ConversationController } from './controllers/conversation.controller';
-import { ConversationRepository } from './repositories/conversation.repository';
-import { ConversationService } from './services/conversation.service';
+import { ConversationController } from '@ai-agent/conversation/controllers/conversation.controller';
+import { ConversationRepository } from '@ai-agent/conversation/repositories/conversation.repository';
+import { ConversationService } from '@ai-agent/conversation/services/conversation.service';
 
 @Module({
   controllers: [ConversationController],

@@ -4,11 +4,11 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { LoginTicket, OAuth2Client } from 'google-auth-library';
 
-import { AccountRepository } from '../src/app/modules/auth/repositories/account.repository';
-import { AccountEmailService } from '../src/app/modules/auth/services/account-email.service';
-import { AccountService } from '../src/app/modules/auth/services/account.service';
-import { AuthService } from '../src/app/modules/auth/services/auth.service';
-import { UserService } from '../src/app/modules/user/services/user.service';
+import { AccountRepository } from '@identity/auth/repositories/account.repository';
+import { AccountEmailService } from '@identity/auth/services/account-email.service';
+import { AccountService } from '@identity/auth/services/account.service';
+import { AuthService } from '@identity/auth/services/auth.service';
+import { UserService } from '@identity/user/services/user.service';
 
 describe('Google sign-in', () => {
   const accounts = {
