@@ -1,6 +1,6 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -49,9 +49,15 @@
 }
 
 :root {
+  --font-sans:
+    "Public Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --page-border: #143c321f;
   --page-dark-foreground: #c9d0cc;
-  --page-dark-border: color-mix(in srgb, var(--page-dark-foreground) 12%, transparent);
+  --page-dark-border: color-mix(
+    in srgb,
+    var(--page-dark-foreground) 12%,
+    transparent
+  );
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -122,7 +128,8 @@
 
 .public-site,
 .account-screen,
-:root:has(.account-screen) [data-slot='toast-viewport'],
+:root:has(.public-site, .account-screen, .template-scope)
+  [data-slot="toast-viewport"],
 .template-scope {
   --radius: 0.75rem;
   --radius-md: calc(var(--radius) * 0.8);
@@ -147,64 +154,65 @@
 }
 
 @font-face {
-  font-family: 'Public Inter';
+  font-family: "Public Inter";
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url(/public-site/fonts/inter-0.woff) format('woff');
+  src: url(/public-site/fonts/inter-0.woff) format("woff");
 }
 @font-face {
-  font-family: 'Public Inter';
+  font-family: "Public Inter";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(/public-site/fonts/inter-1.woff) format('woff');
+  src: url(/public-site/fonts/inter-1.woff) format("woff");
 }
 @font-face {
-  font-family: 'Public Inter';
+  font-family: "Public Inter";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(/public-site/fonts/inter-2.woff) format('woff');
+  src: url(/public-site/fonts/inter-2.woff) format("woff");
 }
 @font-face {
-  font-family: 'Public Inter';
+  font-family: "Public Inter";
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(/public-site/fonts/inter-3.woff) format('woff');
+  src: url(/public-site/fonts/inter-3.woff) format("woff");
 }
 @font-face {
-  font-family: 'Public Inter';
+  font-family: "Public Inter";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(/public-site/fonts/inter-4.woff) format('woff');
+  src: url(/public-site/fonts/inter-4.woff) format("woff");
 }
 
 .public-site,
 .account-screen,
-:root:has(.account-screen) [data-slot='toast-viewport'] {
-  --site-font: 'Public Inter', sans-serif;
+:root:has(.public-site, .account-screen) [data-slot="toast-viewport"] {
+  --site-font: "Public Inter", sans-serif;
   --font-heading: var(--site-font);
   --font-sans: var(--site-font);
 }
 
 .account-screen,
-:root:has(.account-screen) [data-slot='toast-viewport'] {
+:root:has(.public-site, .account-screen, .template-scope)
+  [data-slot="toast-viewport"] {
   font-family: var(--font-sans);
 }
 
-:root:has(.account-screen) [data-slot='toast'] {
+:root:has(.public-site, .account-screen) [data-slot="toast"] {
   border-radius: var(--radius);
   box-shadow: 0 4px 16px var(--page-border);
 }
 
-:root:has(.account-screen) [data-slot='toast-content'] {
+:root:has(.public-site, .account-screen) [data-slot="toast-content"] {
   padding: 0.75rem 1rem;
 }
 
-.account-screen [data-slot='input']:enabled {
+.account-screen [data-slot="input"]:enabled {
   background-color: var(--card);
 }
 
@@ -280,8 +288,9 @@
   }
 }
 
-.template-scope {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+.template-scope,
+:root:has(.template-scope) [data-slot="toast-viewport"] {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -300,7 +309,8 @@
   font-family: var(--font-sans);
 }
 
-.template-scope.light {
+.template-scope.light,
+:root:has(.template-scope.light) [data-slot="toast-viewport"] {
   --background: #f7f9f8;
   --card: #fff;
   --secondary: #f0f4f2;
@@ -308,15 +318,16 @@
   --sidebar: var(--background);
 }
 
-.template-scope.light [data-slot='sidebar-inset'] {
+.template-scope.light [data-slot="sidebar-inset"] {
   --background: #fff;
 }
 
-.template-scope [data-slot='table-row'][data-state='selected'] {
+.template-scope [data-slot="table-row"][data-state="selected"] {
   --muted: var(--accent);
 }
 
-.template-scope.dark {
+.template-scope.dark,
+:root:has(.template-scope.dark) [data-slot="toast-viewport"] {
   --background: #191e1c;
   --foreground: var(--page-dark-foreground);
   --card: var(--background);
@@ -339,24 +350,26 @@
   --chart-5: oklch(0.645 0.246 16.439);
 }
 
-.template-scope.font-manrope {
-  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+.template-scope.font-manrope,
+:root:has(.template-scope.font-manrope) [data-slot="toast-viewport"] {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
 
-.template-scope.font-system {
+.template-scope.font-system,
+:root:has(.template-scope.font-system) [data-slot="toast-viewport"] {
   --font-sans: ui-sans-serif, system-ui, sans-serif;
 }
 
 .template-scope .font-manrope {
-  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
 
 .template-scope .font-inter {
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 .template-scope button:not(:disabled),
-.template-scope [role='button']:not(:disabled) {
+.template-scope [role="button"]:not(:disabled) {
   cursor: pointer;
 }
 
@@ -372,11 +385,11 @@
   overflow: hidden;
 }
 
-.template-scope .CollapsibleContent[data-state='open'] {
+.template-scope .CollapsibleContent[data-state="open"] {
   animation: template-slide-down 300ms ease-out;
 }
 
-.template-scope .CollapsibleContent[data-state='closed'] {
+.template-scope .CollapsibleContent[data-state="closed"] {
   animation: template-slide-up 300ms ease-out;
 }
 
@@ -408,7 +421,7 @@
 
 @media (min-width: 768px) {
   .template-scope .faded-bottom::after {
-    content: '';
+    content: "";
     pointer-events: none;
     position: absolute;
     inset-inline: 0;
