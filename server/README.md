@@ -18,22 +18,22 @@ Hướng dẫn cho AI và quy ước phát triển: [instructions](instructions/
 
 ## Cấu hình và chạy
 
-Dùng Node.js 26.13.0 LTS và pnpm 12.18.0 theo `.nvmrc` ở root. Với nvm-windows, chạy `nvm use 26.13.0`; cài `npm install -g pnpm@12.18.0` nếu chưa có. `engines` giới hạn Node 26/pnpm 12 và `packageManager` khóa phiên bản pnpm.
+Dùng Node.js 26.13.0 LTS và npm đi kèm theo `.nvmrc` ở root. Với nvm-windows, chạy `nvm use 26.13.0`. `engines` giới hạn Node 26.
 
-Dependency được ghim stable trong `package.json` và `pnpm-lock.yaml`: Nx 24.0.6, NestJS 12.4.2, TypeORM 1.1.2, Mongoose 9.12.1 và ESLint 10.14.0. Compiler TypeScript 7.0.2 cài qua `@typescript/native`; alias `typescript` trỏ tới `@typescript/typescript6@6.0.2` cho programmatic API của Nx, ts-loader, ts-jest và editor theo [hướng dẫn Nx](https://nx.dev/docs/kb/typescript-7). Khi nâng tiếp, chạy migration và kiểm tra tương thích cả toolchain.
+Dependency được ghim stable trong `package.json` và `package-lock.json`: Nx 24.0.6, NestJS 12.4.2, TypeORM 1.1.2, Mongoose 9.12.1 và ESLint 10.14.0. Compiler TypeScript 7.0.2 cài qua `@typescript/native`; alias `typescript` trỏ tới `@typescript/typescript6@6.0.2` cho programmatic API của Nx, ts-loader, ts-jest và editor theo [hướng dẫn Nx](https://nx.dev/docs/kb/typescript-7). Khi nâng tiếp, chạy migration và kiểm tra tương thích cả toolchain.
 
-Cấu hình pnpm 12 nằm trong `pnpm-workspace.yaml`, gồm `allowBuilds` và các ngoại lệ version được ghim. Override schematics của `@nx/nest` lên 12.0.13; peer ngoại lệ chỉ cho phép Nest 12.4.2 với `@nx/nest` và webpack-dev-server 6.1.0 với `@nx/webpack` vì metadata Nx 24.0.6 còn khai báo major cũ. Giữ kiểm tra peer chung và kiểm chứng build/test/generator khi sửa các ngoại lệ. Công cụ seed dùng MongoDB driver từ `mongoose.mongo`.
+Cấu hình ngoại lệ dependency nằm trong mục `overrides` của `package.json`: override `@nx/nest > @nestjs/schematics` lên `12.0.13`, `keyv` lên `6.1.0` (để `@keyv/redis` và `@nestjs/cache-manager` dùng cùng bản `keyv` 6), và các ngoại lệ peer cho `@nest-lab/throttler-storage-redis`, `@nestjs/typeorm`, `typeorm`, `@nx/nest`, `@nx/webpack` vì metadata còn khai báo major cũ. Giữ phiên bản ghim trong `package.json` và kiểm chứng build/test/generator khi nâng cấp. Công cụ seed dùng MongoDB driver từ `mongoose.mongo`.
 
-1. Chạy `pnpm install --frozen-lockfile`.
+1. Chạy `npm ci`.
 2. Tạo `.env` từ `.env.example`, điền thông tin kết nối và [hai khóa riêng cho access JWT và refresh JWT](instructions/rbac.md#khóa-ký-jwt). Dùng database riêng để giữ dữ liệu độc lập; chỉ đưa `.env.example` vào Git.
 3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
-4. Chạy `pnpm dev-lite` để bật BFF, Identity và Notification.
+4. Chạy `npm run dev-lite` để bật BFF, Identity và Notification.
 
-Từ thư mục `server`, dùng `pnpm exec nx serve booking` để xem riêng một app mới hoặc `pnpm dev` để chạy cả sáu app. Booking, Payment và AI Agent chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
+Từ thư mục `server`, dùng `npx nx serve booking` để xem riêng một app mới hoặc `npm run dev` để chạy cả sáu app. Booking, Payment và AI Agent chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
 
 Các app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
 
-Để gửi email, điền `RESEND_API_KEY` có quyền gửi và `RESEND_FROM_EMAIL` là địa chỉ gửi trên domain đã xác minh với Resend vào `server/.env`. Chạy riêng app bằng `pnpm exec nx serve notification`. App lắng nghe gRPC ở cổng `5105`. Khi chưa cấu hình Resend, app vẫn khởi động và trả `UNAVAILABLE` cho yêu cầu gửi.
+Để gửi email, điền `RESEND_API_KEY` có quyền gửi và `RESEND_FROM_EMAIL` là địa chỉ gửi trên domain đã xác minh với Resend vào `server/.env`. Chạy riêng app bằng `npx nx serve notification`. App lắng nghe gRPC ở cổng `5105`. Khi chưa cấu hình Resend, app vẫn khởi động và trả `UNAVAILABLE` cho yêu cầu gửi.
 
 Đăng ký và khôi phục tài khoản dùng `AUTH_PUBLIC_ORIGIN` để tạo liên kết về client. Chạy `node tools/auth-storage.cjs migrate` để chuẩn bị index và role `client`. Đăng nhập Google dùng `GOOGLE_CLIENT_ID` cùng giá trị với `NEXT_PUBLIC_GOOGLE_CLIENT_ID` của client. Xem [luồng tự đăng ký và khôi phục](instructions/rbac.md#tự-đăng-ký-và-khôi-phục-tài-khoản).
 
@@ -51,7 +51,7 @@ PostgreSQL 18 mount volume tại `/var/lib/postgresql`. Các thư mục dữ li�
 
 ## Phát triển nghiệp vụ mới
 
-Thêm module/service theo cấu trúc controller → service → repository. Contract ở `libs/interfaces/src/lib/proto/<service>/v1`; chạy `pnpm proto:generate` và commit type sinh trong `libs/interfaces/src/lib/grpc`. Buf/ts-proto giữ contract, bỏ helper decorator/comment không dùng, sinh hằng số tên RPC `<SERVICE>_METHODS` từ proto và chạy formatter.
+Thêm module/service theo cấu trúc controller → service → repository. Contract ở `libs/interfaces/src/lib/proto/<service>/v1`; chạy `npm run proto:generate` và commit type sinh trong `libs/interfaces/src/lib/grpc`. Buf/ts-proto giữ contract, bỏ helper decorator/comment không dùng, sinh hằng số tên RPC `<SERVICE>_METHODS` từ proto và chạy formatter.
 
 Identity dùng `NestFactory.createMicroservice`, chỉ mở gRPC. BFF giữ HTTP/Swagger, lấy typed client qua `GrpcProvider` và `ClientGrpc.getService` trong `onModuleInit`. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`, package/service/method khớp proto; config lấy đường dẫn từ `protobufFileName` được sinh cùng contract.
 
@@ -73,15 +73,15 @@ Identity xử lý lần lượt các thao tác ghi liên quan đến cùng một
 
 App và library dùng TypeScript strict chung. ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Source và test của app dùng alias riêng, ví dụ `@identity/user/services/user.service`. Thư viện dùng chung dùng `@common/...`. Các alias nằm trong [tsconfig.base.json](tsconfig.base.json). Xem [quy ước triển khai](instructions/coding.md) để biết thứ tự import và cách thêm alias cho app mới.
 
-- `pnpm build`: build cả sáu app.
-- `pnpm typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
-- `pnpm lint`: kiểm tra lint workspace.
-- `pnpm test` chạy các suite BFF, Identity và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
-- `pnpm exec nx run-many -t test`: chạy các test được bổ sung cho dự án mới.
+- `npm run build`: build cả sáu app.
+- `npm run typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
+- `npm run lint`: kiểm tra lint workspace.
+- `npm test` chạy các suite BFF, Identity và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
+- `npx nx run-many -t test`: chạy các test được bổ sung cho dự án mới.
 
 Nâng cấp toolchain đã chạy migration Nx; không chạy seed/migration database, không khởi động container và không xóa dữ liệu hiện có.
 
-Source ứng dụng giữ CommonJS, dùng `module`/`moduleResolution: nodenext` và target ES2023; Node 26 hỗ trợ require ESM của Nest 12. Các target Webpack CLI 7 dùng `--mode` và `NODE_ENV` rõ ràng cho production/development. Jest 30 bật VM Modules qua target default trong `nx.json`; spec dùng `isolatedModules: true` cho ts-jest, kiểm tra kiểu đầy đủ bằng `pnpm typecheck`.
+Source ứng dụng giữ CommonJS, dùng `module`/`moduleResolution: nodenext` và target ES2023; Node 26 hỗ trợ require ESM của Nest 12. Các target Webpack CLI 7 dùng `--mode` và `NODE_ENV` rõ ràng cho production/development. Jest 30 bật VM Modules qua target default trong `nx.json`; spec dùng `isolatedModules: true` cho ts-jest, kiểm tra kiểu đầy đủ bằng `npm run typecheck`.
 
 ## Tích hợp frontend
 

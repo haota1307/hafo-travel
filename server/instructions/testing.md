@@ -22,7 +22,7 @@ Khi chuyển test, rà lại tham chiếu setup/fixture và cấu hình test. Te
 
 ## Chọn kiểm tra theo thay đổi
 
-- Dùng Node.js 26.13.0 và pnpm 12.18.0. Compiler CLI TypeScript 7.0.2 cài qua `@typescript/native`; alias `typescript` dùng `@typescript/typescript6@6.0.2` cho API của Nx/ts-loader/ts-jest. `pnpm typecheck` kiểm tra toàn bộ app/library/spec bằng compiler 7.
+- Dùng Node.js 26.13.0 và npm. Compiler CLI TypeScript 7.0.2 cài qua `@typescript/native`; alias `typescript` dùng `@typescript/typescript6@6.0.2` cho API của Nx/ts-loader/ts-jest. `npm run typecheck` kiểm tra toàn bộ app/library/spec bằng compiler 7.
 - Khi mở root repository trong VS Code, SDK ở root trỏ tới API/editor TypeScript 6.0.2 trong `server/node_modules`; chọn `TypeScript: Select TypeScript Version` → `Use Workspace Version`. Setting `js/ts.tsdk.path` chỉ khai báo đường dẫn, không tự chọn SDK. Khi mở riêng server, dùng `server/.vscode`.
 - Cấu hình backend dùng NodeNext, ES2023, strict và isolatedModules, bỏ baseUrl/node10/node16 override cũ và `ignoreDeprecations`. Type/interface dùng trong decorated signature phải import type; class DTO/service cần metadata runtime vẫn import giá trị.
 - Jest 30/ts-jest chạy với `NODE_OPTIONS=--experimental-vm-modules` được khai báo trong `nx.json` để nạp Nest 12 ESM trên Node 26. Giữ kiểm tra kiểu độc lập; không thêm `--forceExit`, tắt diagnostics hoặc bỏ suite để che lỗi migration.
@@ -33,17 +33,17 @@ Khi chuyển test, rà lại tham chiếu setup/fixture và cấu hình test. Te
 - Không thêm test chỉ lặp lại implementation hoặc để tăng số lượng. Ưu tiên contract response, lỗi, guard/quyền truy cập và nhánh hồi quy có ý nghĩa.
 
 ```sh
-pnpm exec nx test interceptors --runInBand
-pnpm exec nx test bff --runInBand
-pnpm exec nx lint interceptors
-pnpm exec nx build bff
-pnpm typecheck
-pnpm test
-pnpm build
-pnpm lint
+npx nx test interceptors --runInBand
+npx nx test bff --runInBand
+npx nx lint interceptors
+npx nx build bff
+npm run typecheck
+npm test
+npm run build
+npm run lint
 ```
 
-Các lệnh workspace kiểm tra phạm vi rộng hơn; chỉ chạy khi thay đổi cần đến. Khi debug cache/daemon có thể đặt `NX_DAEMON=false`, `NX_ISOLATE_PLUGINS=false`, dùng `--skipNxCache` và `--output-style=static` để thấy log lỗi trực tiếp trên Nx 24. Trên PowerShell nếu `pnpm.ps1` bị chặn, dùng `pnpm.cmd` của Node 26 đã kích hoạt.
+Các lệnh workspace kiểm tra phạm vi rộng hơn; chỉ chạy khi thay đổi cần đến. Khi debug cache/daemon có thể đặt `NX_DAEMON=false`, `NX_ISOLATE_PLUGINS=false`, dùng `--skipNxCache` và `--output-style=static` để thấy log lỗi trực tiếp trên Nx 24. Trên PowerShell nếu `npm.ps1` bị chặn, dùng `npm.cmd` của Node 26 đã kích hoạt.
 
 ## Tài nguyên và báo cáo kết quả
 
@@ -54,4 +54,4 @@ Các lệnh workspace kiểm tra phạm vi rộng hơn; chỉ chạy khi thay đ
 - Các suite trong `libs/interceptors/tests/` kiểm tra HTTP envelope, status/error metadata gRPC, deadline/correlation và guard và logging.
 - Suite `apps/bff/tests/identity-http.spec.ts` kiểm tra login, refresh, logout, bearer, 401/403, Swagger và contract gRPC Identity trên localhost. AuthService được thay bằng test double trong suite transport. `apps/identity/tests` kiểm tra nghiệp vụ mật khẩu và phiên. Kiểm thử Next qua HTTP với MongoDB và Redis thật dùng `client/test/auth-e2e.test.mjs` theo README client. Các RPC dùng repository MongoDB được mock để kiểm tra tạo hồ sơ, gán role và CRUD role.
 
-Sau khi sửa proto, chạy `pnpm proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build các app dùng contract bị ảnh hưởng để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role); runtime vẫn chịu module boundary thông thường.
+Sau khi sửa proto, chạy `npm run proto:generate`, typecheck, lint và suite liên quan; khi đổi packaging/config, build các app dùng contract bị ảnh hưởng để kiểm tra proto assets. ESLint chỉ cho phép các import xuyên app cụ thể trong suite tích hợp BFF để dựng service thật (user/role); runtime vẫn chịu module boundary thông thường.

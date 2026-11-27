@@ -30,10 +30,7 @@
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
         "{workspaceRoot}/dist/apps/notification/package.json",
-        "{workspaceRoot}/dist/apps/notification/pnpm-lock.yaml",
-        "{workspaceRoot}/dist/apps/notification/pnpm-workspace.yaml",
-        "{workspaceRoot}/dist/apps/notification/patches",
-        "{workspaceRoot}/dist/apps/notification/local_path_modules"
+        "{workspaceRoot}/dist/apps/notification/package-lock.json"
       ],
       "options": {
         "buildTarget": "build"
@@ -41,10 +38,10 @@
       "inputs": [
         "default",
         "^default",
-        "{workspaceRoot}/pnpm-workspace.yaml",
+        "{workspaceRoot}/package-lock.json",
         "{workspaceRoot}/package.json",
         {
-          "runtime": "node -e \"try{console.log('pnpm major '+require('child_process').execSync('pnpm --version',{stdio:['ignore','pipe','ignore']}).toString().trim().split('.')[0])}catch{console.log('pnpm major unavailable')}\""
+          "runtime": "node -e \"try{console.log('npm major '+require('child_process').execSync('npm --version',{stdio:['ignore','pipe','ignore']}).toString().trim().split('.')[0])}catch{console.log('npm major unavailable')}\""
         }
       ]
     },

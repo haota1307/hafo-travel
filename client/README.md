@@ -10,12 +10,12 @@ Từ trang `/[locale]/auth/login`, chọn đăng ký hoặc quên mật khẩu. 
 
 ## Chạy local
 
-Node.js 26.13.0 LTS, pnpm 12.18.0; kích hoạt Node theo `.nvmrc` ở root trước khi chạy:
+Node.js 26.13.0 LTS và npm đi kèm; kích hoạt Node theo `.nvmrc` ở root trước khi chạy:
 
 ```powershell
-pnpm install --frozen-lockfile
+npm ci
 if (!(Test-Path .env.local)) { Copy-Item .env.example .env.local }
-pnpm dev
+npm run dev
 ```
 
 Đặt `API_URL=http://localhost:3300/api` trong `.env.local` theo cấu hình backend mẫu. Backend chạy theo [README server](../server/README.md). `NEXT_PUBLIC_API_URL` là fallback tương thích; không đặt secret trong biến public.
@@ -31,20 +31,20 @@ pnpm dev
 - HTTP wrapper nhận envelope `{ statusCode, message, data, processId, duration }` và unwrap thành `{ status, payload: data }`. Validation backend trả `message: string[]` không có field/path; chưa có contract phân trang.
 
 ```powershell
-pnpm lint
-pnpm typecheck
-pnpm format
-pnpm format:check
-pnpm build
-pnpm test:base
-pnpm start
+npm run lint
+npm run typecheck
+npm run format
+npm run format:check
+npm run build
+npm run test:base
+npm start
 ```
 
 Test base dùng Node test runner và fixture HTTP/messages, gồm cấu trúc bản dịch public, ICU/rich text, dữ liệu retreat/trải nghiệm theo locale và hành vi sort/filter/pagination/faceting/selection của bảng demo; không cần database. Dừng server tự bật sau khi kiểm tra. Build không chứng minh giao diện hoặc tương tác browser đúng.
 
 Các dependency trực tiếp được ghim stable trong package/lockfile: Next 16.4.6, React 19.3.1, TanStack Table 9.3.1, DayPicker 10.0.2 (`@daypicker/react`), Zod 4.6.7 và ESLint 10.14.0. Alias lịch v9 đã bỏ. Compiler TypeScript 7.0.2 cài qua `@typescript/native`, còn alias `typescript` trỏ tới `@typescript/typescript6@6.0.2` để Next, ESLint và test loader có programmatic API.
 
-pnpm 12 đặt cấu hình tại `pnpm-workspace.yaml`: `allowBuilds` liệt kê script build được phép; các ngoại lệ tuổi phát hành ghim đúng version được package manager ghi khi cập nhật stable. Ba plugin ESLint mới nhất chưa khai báo peer ESLint 10; `peerDependencyRules.allowedVersions` chỉ cho phép version 10.14.0 cho các plugin này, giữ nguyên các rule. Kiểm tra lint toàn frontend khi thay đổi các ngoại lệ. `shadcn` CLI nằm ở devDependencies.
+Ba plugin ESLint mới nhất chưa khai báo peer ESLint 10; mục `overrides` trong `package.json` cho phép các plugin này dùng `eslint` 10.14.0 mà vẫn giữ nguyên các rule. Kiểm tra lint toàn frontend khi nâng dependency. `shadcn` CLI nằm ở devDependencies.
 
 ## Phát triển
 

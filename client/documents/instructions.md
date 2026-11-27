@@ -4,8 +4,8 @@
 
 - Chỉ lên plan và dùng computer use khi được yêu cầu. Hạn chế test không cần thiết; dừng đúng process tự bật để test.
 - Giữ thay đổi của người dùng; không tự thêm endpoint, schema nghiệp vụ hoặc auth chưa được yêu cầu.
-- Dùng Node.js 26.13.0 LTS và pnpm 12.18.0; version chính xác theo `.nvmrc`, package.json/lockfile. Stack: Next 16.4, React 19.3, TypeScript strict, Tailwind 4, React Query 5, React Hook Form, Zod 4, next-intl. Dependency trực tiếp ghim stable; cấu hình pnpm nằm tại `pnpm-workspace.yaml`.
-- TypeScript 7.0.2 chạy CLI qua alias `@typescript/native`; alias `typescript` trỏ tới `@typescript/typescript6@6.0.2` cho API mà Next/ESLint/test loader và editor còn cần. `pnpm typecheck` dùng compiler 7, không import programmatic API từ compiler native.
+- Dùng Node.js 26.13.0 LTS và npm; version chính xác theo `.nvmrc`, package.json/lockfile. Stack: Next 16.4, React 19.3, TypeScript strict, Tailwind 4, React Query 5, React Hook Form, Zod 4, next-intl. Dependency trực tiếp ghim stable; ngoại lệ peer ESLint 10 nằm trong `overrides` của `package.json`.
+- TypeScript 7.0.2 chạy CLI qua alias `@typescript/native`; alias `typescript` trỏ tới `@typescript/typescript6@6.0.2` cho API mà Next/ESLint/test loader và editor còn cần. `npm run typecheck` dùng compiler 7, không import programmatic API từ compiler native.
 - Import Zod từ `zod`, không dùng `zod/v3`. Không cần Axios hoặc store toàn cục mới.
 - Đọc source/module tương tự trước khi thêm helper, component hay dependency. Chỉ tạo thư mục khi có code cần dùng.
 
@@ -161,7 +161,7 @@ Login trong template là mô phỏng. Luồng thực tế ở `features/auth` v�
 ## Kiểm tra và cập nhật tài liệu
 
 - Chỉ doc: rà nội dung/link/diff. Code: lint phạm vi ảnh hưởng; API/type/route/dependency cần build và kiểm tra tập trung tương ứng.
-- `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test:base` là các lệnh kiểm tra nền tảng. `pnpm format`/`pnpm format:check` dùng Prettier. Test base dùng Node test runner và API TypeScript 6 đã cài, gồm public i18n và hồi quy bảng demo v9; không thêm test framework. Ngoại lệ peer của ba plugin ESLint 10 chỉ cho phép version cụ thể trong `pnpm-workspace.yaml`, không tắt rule khi nâng dependency.
+- `npm run lint`, `npm run typecheck`, `npm run build`, `npm run test:base` là các lệnh kiểm tra nền tảng. `npm run format`/`npm run format:check` dùng Prettier. Test base dùng Node test runner và API TypeScript 6 đã cài, gồm public i18n và hồi quy bảng demo v9; không thêm test framework. Ngoại lệ peer của ba plugin ESLint 10 chỉ cho phép version cụ thể qua `overrides` trong `package.json`, không tắt rule khi nâng dependency.
 - Smoke bằng HTTP backend/proxy và route locale khi cần; test transport/validation bằng fixture contract BFF, không cần gọi MongoDB thật cho unit test.
 - Không xem build hoặc HTTP SSR là bằng chứng tương tác/visual browser. Không dùng Computer Use khi chưa được yêu cầu.
 - Dừng process tự bật để kiểm tra; không chạy lại kiểm tra đã đạt nếu không có thay đổi liên quan. Commit lockfile cùng dependency.

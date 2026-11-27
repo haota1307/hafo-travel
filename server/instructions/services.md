@@ -78,8 +78,8 @@ Booking và Payment dùng chung `TYPEORM_HOST`, `TYPEORM_PORT`, `TYPEORM_USERNAM
 
 Trên volume mới, Docker Compose khởi tạo database PostgreSQL `backend_app`. Hiện Booking và Payment chỉ nạp cấu hình. Khi bật kết nối TypeORM cho từng app, cần tạo database theo tên đã cấu hình trước khi chạy migration.
 
-Từ thư mục `server`, chạy `pnpm exec nx run identity:seed` hoặc `pnpm exec nx run ai-agent:seed` để nạp dữ liệu vào MongoDB của app tương ứng. AI Agent hiện chưa có dữ liệu mẫu. Booking và Payment sẽ cần target seed PostgreSQL khi có dữ liệu mẫu.
+Từ thư mục `server`, chạy `npx nx run identity:seed` hoặc `npx nx run ai-agent:seed` để nạp dữ liệu vào MongoDB của app tương ứng. AI Agent hiện chưa có dữ liệu mẫu. Booking và Payment sẽ cần target seed PostgreSQL khi có dữ liệu mẫu.
 
 ## Chạy thử
 
-Từ `server` dùng `pnpm exec nx serve booking`, thay `booking` bằng tên app cần xem. `pnpm dev-lite` chạy BFF, Identity và Notification; `pnpm dev` chạy cả sáu app. Có thể đổi cổng từng service qua `<SERVICE>_SERVICE_PORT` trong [cấu hình mẫu](../.env.example). Với AI Agent, dùng `AI_AGENT_SERVICE_PORT`.
+Từ `server` dùng `npx nx serve booking`, thay `booking` bằng tên app cần xem. `npm run dev-lite` chạy BFF, Identity và Notification; `npm run dev` chạy cả sáu app. Có thể đổi cổng từng service qua `<SERVICE>_SERVICE_PORT` trong [cấu hình mẫu](../.env.example). Với AI Agent, dùng `AI_AGENT_SERVICE_PORT`.

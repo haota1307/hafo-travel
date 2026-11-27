@@ -29,7 +29,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug identity with Nx",
-      "runtimeExecutable": "pnpm exec",
+      "runtimeExecutable": "npx",
       "runtimeArgs": [
         "nx",
         "serve",

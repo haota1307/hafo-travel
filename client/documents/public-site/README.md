@@ -4,7 +4,7 @@ Hafo Travel dùng Next.js App Router hiện có, với nội dung gợi ý hành
 
 ## Chạy và cấu hình
 
-Chạy `pnpm dev` trong `client`, mở `/vi` hoặc `/en`. Locale mặc định là `vi`; nút VI/EN giữ pathname, query và hash.
+Chạy `npm run dev` trong `client`, mở `/vi` hoặc `/en`. Locale mặc định là `vi`; nút VI/EN giữ pathname, query và hash.
 
 Thông tin liên hệ hiện được chủ dự án cung cấp: `haodev1307@gmail.com`, `0947055644`. Sửa tập trung trong `features/public-site/site.config.ts`.
 
@@ -73,4 +73,4 @@ Portal Sheet/Popover tiếp tục lấy node hiện tại qua `usePublicPortalCo
 
 ## Kiểm tra
 
-Chạy formatter/lint trong phạm vi sửa, `pnpm test:base` và `pnpm build`. Test public kiểm tra cấu trúc vi/en, ICU/rich text, dữ liệu sáu hành trình/12 trải nghiệm, giá card/detail và asset local. Kết quả browser, route, responsive và giới hạn kiểm tra được ghi riêng trong [QA](QA.md). Build hoặc HTTP 200 không thay thế bằng chứng giao diện/tương tác.
+Chạy formatter/lint trong phạm vi sửa, `npm run test:base` và `npm run build`. Test public kiểm tra cấu trúc vi/en, ICU/rich text, dữ liệu sáu hành trình/12 trải nghiệm, giá card/detail và asset local. Kết quả browser, route, responsive và giới hạn kiểm tra được ghi riêng trong [QA](QA.md). Build hoặc HTTP 200 không thay thế bằng chứng giao diện/tương tác.

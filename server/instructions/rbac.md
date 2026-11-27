@@ -58,7 +58,7 @@ Người có `user.assign_roles` có thể cấp mọi role hiện có, gồm ad
 Chạy công cụ từ `server` bằng Node trong phiên bản dự án. Hai biến `MONGODB_URL` và `IDENTITY_MONGODB_DB_NAME` chọn database đích. Truyền mật khẩu qua môi trường riêng của process hoặc secret manager. Bỏ biến mật khẩu sau khi chạy.
 
 1. Chạy `node tools/auth-storage.cjs migrate` trước khi khởi động phiên bản mới. Migration tạo collection phiên, các index tra cứu token, TTL và index bảo đảm một tài khoản bootstrap. Có thể chạy lại. Nếu có xung đột index hoặc email trùng, công cụ dừng để người vận hành đối chiếu dữ liệu.
-2. Trên DB mới, chạy `pnpm exec nx run identity:seed` để tạo role administrator. Với DB đang sử dụng, kiểm tra role đã tồn tại trước khi seed.
+2. Trên DB mới, chạy `npx nx run identity:seed` để tạo role administrator. Với DB đang sử dụng, kiểm tra role đã tồn tại trước khi seed.
 3. Để tạo tài khoản quản trị đầu tiên, đặt `ADMIN_ACCOUNT` (email), `ADMIN_PASSWORD`, `ADMIN_FIRST_NAME`, `ADMIN_LAST_NAME` rồi chạy `node tools/provision-credentials.cjs administrator`. Email phải chưa thuộc hồ sơ khác. Lần chạy lại cùng tài khoản giữ nguyên mật khẩu.
 4. Để cấp mật khẩu lần đầu cho hồ sơ có sẵn, đặt `AUTH_PROFILE_ID` bằng MongoDB `_id` và `AUTH_PROFILE_PASSWORD`, chạy `node tools/provision-credentials.cjs profile`. Công cụ giữ nguyên role và mật khẩu đã cấp. Hồ sơ cần có email hợp lệ, `userId` và đúng một role tồn tại. Mật khẩu mới cho cả quản trị viên và người dùng cần ít nhất 8 ký tự và tối đa 1.024 byte UTF-8.
 

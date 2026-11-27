@@ -3,7 +3,7 @@
 ## Phân chia trách nhiệm
 
 - TypeScript bật strict, isolatedModules, NodeNext và ES2023; giữ strictPropertyInitialization: false cho field được framework gán. Type/interface trong decorated signature dùng import type; class DTO/service cần metadata runtime vẫn import giá trị.
-- Dùng Node 26.13.0, pnpm 12.18.0 và Nx 24. Compiler CLI TypeScript 7 chạy qua `@typescript/native`; alias API `typescript` dùng TypeScript 6 cho toolchain/editor. Kiểm tra kiểu bằng `pnpm typecheck`.
+- Dùng Node 26.13.0, npm và Nx 24. Compiler CLI TypeScript 7 chạy qua `@typescript/native`; alias API `typescript` dùng TypeScript 6 cho toolchain/editor. Kiểm tra kiểu bằng `npm run typecheck`.
 - ESLint kiểm tra dấu ngoặc và dòng trống giữa các bước; Prettier theo cấu hình server. Tách dòng giữa các method, function và khai báo độc lập.
 - Controller nhận input và gọi service/client gRPC. Service điều phối nghiệp vụ; repository truy vấn database; mapper chuyển dữ liệu rõ từng trường.
 - Dùng alias `@common/...` cho thư viện dùng chung. Trong `apps/<app>/src` và `apps/<app>/tests`, dùng alias của app trong `tsconfig.base.json`. Ví dụ, `@identity/user/services/user.service` trỏ tới service của module user. Notification có một module nên dùng trực tiếp `@notification/services/notification.service`. Alias `@<app>/app` trỏ tới `AppModule` và `@<app>/config` trỏ tới cấu hình của app, với `@<app>/config/*` cho file cấu hình cụ thể. Không import controller/service/repository của app khác vào runtime.
@@ -66,7 +66,7 @@
 
 - RPC nội bộ dùng gRPC. Browser, webhook và API bên ngoài dùng HTTP qua BFF; sự kiện bất đồng bộ dự kiến dùng Kafka, chưa có broker/consumer trong source.
 - Nguồn contract: `libs/interfaces/src/lib/proto/<service>/v1/*.proto`. Danh sách package theo từng service nằm trong cây proto.
-- Sau khi sửa proto, chạy `pnpm proto:generate`. Buf/ts-proto sinh message, client/controller interfaces và constants tại `libs/interfaces/src/lib/grpc/`. Commit proto cùng output; không sửa tay file sinh.
+- Sau khi sửa proto, chạy `npm run proto:generate`. Buf/ts-proto sinh message, client/controller interfaces và constants tại `libs/interfaces/src/lib/grpc/`. Commit proto cùng output; không sửa tay file sinh.
 - Generator giữ phần contract, bỏ helper decorator không dùng và comment, sinh `<SERVICE>_METHODS` từ tên RPC trong proto rồi chạy formatter. Controller dùng `@GrpcMethod(SERVICE_NAME, SERVICE_METHODS.METHOD_NAME)`; không viết tay tên RPC hoặc thêm lại message pattern/envelope TCP. Config dùng `protobufFileName` từ output sinh thay vì lặp đường dẫn proto.
 - Không đổi hoặc tái sử dụng field number đã phát hành. Khi bỏ field phải reserve tên/number; thay đổi không tương thích cần package/version mới.
 - HTTP DTO thuộc `gateway/`; request/response nội bộ lấy từ type sinh. Không alias transport contract sang DTO HTTP hoặc gửi Mongoose document qua service boundary.
@@ -106,11 +106,11 @@
 Generator tham khảo:
 
 ```sh
-pnpm exec nx g @nx/nest:application apps/example --linter=eslint --unitTestRunner=jest --e2eTestRunner=none --useProjectJson
+npx nx g @nx/nest:application apps/example --linter=eslint --unitTestRunner=jest --e2eTestRunner=none --useProjectJson
 ```
 
 Đây chỉ là scaffold. Kiểm tra diff, thêm các alias của app vào `tsconfig.base.json`, chuyển test sang `apps/example/tests`, dùng preset Jest chung và cập nhật `tsconfig.spec.json`. Không tự tạo CRUD/permission chưa được yêu cầu.
 
 Với service gRPC mới: thêm proto/version, chạy generator, đăng ký definition/enum trong grpc.config.ts, biến môi trường, client/provider, bootstrap và copy assets như app hiện có. Cập nhật danh sách build/dev-lite khi cần chạy cùng hệ thống.
 
-Webpack CLI 7 dùng --mode và NODE_ENV theo target. Cấu hình pnpm 12 ở pnpm-workspace.yaml; chỉ cho phép build script đã rà và ngoại lệ peer theo version cụ thể.
+Webpack CLI 7 dùng --mode và NODE_ENV theo target. Cấu hình ngoại lệ dependency nằm trong `overrides` của `package.json`; chỉ cho phép ngoại lệ peer theo version cụ thể.

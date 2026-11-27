@@ -7,7 +7,7 @@
 1. Đọc [kiến trúc và nguồn đối chiếu](architecture.md) trước khi sửa một luồng.
 2. Đọc [quy ước triển khai](coding.md) trước khi sửa code, gồm cách chọn pattern, phân trách nhiệm và giữ code dễ đọc.
 3. Đọc [quy ước test và kiểm chứng](testing.md) khi thay đổi test, cấu hình hoặc xác nhận kết quả.
-4. Xem [README backend](../README.md) để cài đặt và chạy local. Phiên bản thực tế lấy từ `package.json` và `pnpm-lock.yaml`.
+4. Xem [README backend](../README.md) để cài đặt và chạy local. Phiên bản thực tế lấy từ `package.json` và `package-lock.json`.
 5. Đọc [xác thực và RBAC](rbac.md) khi thay đổi user, role, permission hoặc truy cập endpoint.
 
 ## Giữ nhất quán khi AI coding
