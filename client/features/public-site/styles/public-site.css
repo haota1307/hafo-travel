@@ -464,7 +464,7 @@
   overflow: hidden;
   width: 100%;
   min-height: 560px;
-  color: #f7f5ef;
+  color: var(--site-overlay-foreground);
 }
 .public-site .intro > .container {
   position: relative;
@@ -687,7 +687,7 @@
   background: linear-gradient(180deg, transparent 35%, #0b251bd9);
 }
 .public-site .experience-card__head {
-  color: #f7f5ef;
+  color: var(--site-overlay-foreground);
   gap: 6px;
 }
 .public-site .experience-stats > div {

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import {
   Injectable,
+  Logger,
   Module,
   type OnModuleDestroy,
   ServiceUnavailableException,
@@ -34,6 +35,7 @@ const beginChange = `
 
 @Injectable()
 export class AuthorizationCache implements OnModuleDestroy {
+  private readonly logger = new Logger(AuthorizationCache.name);
   private readonly redis: Redis;
   private readonly ttl: number;
 
@@ -100,7 +102,13 @@ export class AuthorizationCache implements OnModuleDestroy {
     try {
       return await write();
     } finally {
-      await this.redis.hdel(key, writer, 'value', 'revision');
+      try {
+        await this.redis.hdel(key, writer, 'value', 'revision');
+      } catch {
+        this.logger.warn(
+          'Could not clear the authorization cache write marker',
+        );
+      }
     }
   }
 

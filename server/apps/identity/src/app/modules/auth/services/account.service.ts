@@ -11,7 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { isEmail } from 'class-validator';
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client, type TokenPayload } from 'google-auth-library';
 
 import type {
   EmailActionRequest,
@@ -26,10 +26,14 @@ import {
 } from '@common/utils/password.util';
 import type { GrpcCallContext } from '@common/utils/rpc.util';
 
-import { AccountRepository } from '@identity/auth/repositories/account.repository';
+import {
+  AccountRepository,
+  type NewAccount,
+} from '@identity/auth/repositories/account.repository';
 import { AccountEmailService } from '@identity/auth/services/account-email.service';
 import { AuthService } from '@identity/auth/services/auth.service';
 import type { AuthConfiguration } from '@identity/config/auth.configuration';
+import { RoleService } from '@identity/role/services/role.service';
 import { UserService } from '@identity/user/services/user.service';
 
 type EmailAction = 'verify-email' | 'reset-password' | 'verify-google';
@@ -55,6 +59,7 @@ export class AccountService {
     private readonly sessions: AuthService,
     private readonly mail: AccountEmailService,
     private readonly jwt: JwtService,
+    private readonly roles: RoleService,
     configuration: ConfigService,
   ) {
     this.config = configuration.getOrThrow<AuthConfiguration>('AUTH_CONFIG');
@@ -104,7 +109,7 @@ export class AccountService {
     }
 
     try {
-      await this.accounts.createClient({
+      await this.createClientAccount({
         email,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
@@ -169,6 +174,38 @@ export class AccountService {
     { credential, emailToken, locale }: GoogleLoginRequest,
     context: GrpcCallContext,
   ) {
+    const { profile, email } = await this.verifyGoogleProfile(
+      credential,
+      emailToken,
+    );
+    const lookupStartedAt = Date.now();
+    const existing = await this.accounts.byGoogleSubject(profile.sub);
+
+    if (existing) {
+      return this.sessions.startSession(existing, lookupStartedAt);
+    }
+
+    if (!emailToken && !email.endsWith('@gmail.com') && !profile.hd) {
+      const confirmation = await this.issueToken('verify-google', profile.sub, {
+        email,
+      });
+      await this.mail.send(
+        'verify-google',
+        email,
+        confirmation,
+        locale || 'vi',
+        context,
+      );
+
+      throw new ForbiddenException('GOOGLE_EMAIL_CONFIRMATION_REQUIRED');
+    }
+
+    const user = await this.findOrLinkGoogleAccount(profile, email);
+
+    return this.sessions.startSession(user, lookupStartedAt);
+  }
+
+  private async verifyGoogleProfile(credential: string, emailToken?: string) {
     if (!this.config.GOOGLE_CLIENT_ID) {
       throw new ServiceUnavailableException('Google sign-in is not configured');
     }
@@ -204,65 +241,60 @@ export class AccountService {
       }
     }
 
-    const lookupStartedAt = Date.now();
-    let user: UserWithRoles | null = await this.accounts.byGoogleSubject(
-      profile.sub,
-    );
+    return { profile, email };
+  }
 
-    if (!user) {
-      if (!emailToken && !email.endsWith('@gmail.com') && !profile.hd) {
-        const confirmation = await this.issueToken(
-          'verify-google',
-          profile.sub,
-          { email },
-        );
-        await this.mail.send(
-          'verify-google',
+  private async findOrLinkGoogleAccount(
+    profile: TokenPayload,
+    email: string,
+  ): Promise<UserWithRoles> {
+    try {
+      if (!(await this.accounts.existingEmail(email))) {
+        return await this.createClientAccount({
           email,
-          confirmation,
-          locale || 'vi',
-          context,
-        );
-
-        throw new ForbiddenException('GOOGLE_EMAIL_CONFIRMATION_REQUIRED');
+          googleSubject: profile.sub,
+          firstName: profile.given_name || profile.name || email.split('@')[0],
+          lastName: profile.family_name || '',
+        });
       }
-
-      try {
-        if (!(await this.accounts.existingEmail(email))) {
-          user = await this.accounts.createClient({
-            email,
-            googleSubject: profile.sub,
-            firstName:
-              profile.given_name || profile.name || email.split('@')[0],
-            lastName: profile.family_name || '',
-          });
-        }
-      } catch (error) {
-        if (!duplicateKey(error)) {
-          throw error;
-        }
-      }
-
-      if (!user) {
-        try {
-          user = await this.accounts.linkRegisteredAccount(email, profile.sub);
-        } catch (error) {
-          if (!duplicateKey(error)) {
-            throw error;
-          }
-        }
-
-        user ??= await this.accounts.byGoogleSubject(profile.sub);
-      }
-
-      if (!user) {
-        throw new ConflictException(
-          'Use the existing sign-in method for this email',
-        );
+    } catch (error) {
+      if (!duplicateKey(error)) {
+        throw error;
       }
     }
 
-    return this.sessions.startSession(user, lookupStartedAt);
+    let user: UserWithRoles | null = null;
+
+    try {
+      user = await this.accounts.linkRegisteredAccount(email, profile.sub);
+    } catch (error) {
+      if (!duplicateKey(error)) {
+        throw error;
+      }
+    }
+
+    user ??= await this.accounts.byGoogleSubject(profile.sub);
+
+    if (!user) {
+      throw new ConflictException(
+        'Use the existing sign-in method for this email',
+      );
+    }
+
+    return user;
+  }
+
+  private createClientAccount(
+    data: Omit<NewAccount, 'userId' | 'roles' | 'emailVerifiedAt'>,
+  ) {
+    return this.roles.withClientRoleAssignment((roles) =>
+      this.accounts.create({
+        ...data,
+        userId: randomUUID(),
+        roles,
+        emailVerifiedAt: new Date(),
+      }),
+    );
   }
 
   private issueToken(

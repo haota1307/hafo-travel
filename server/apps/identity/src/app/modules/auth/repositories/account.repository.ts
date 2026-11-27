@@ -1,25 +1,27 @@
 import { randomUUID } from 'node:crypto';
 
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import {
-  Role,
-  RoleModelName,
-  type RoleModel,
-} from '@common/schemas/role.schema';
+import type { Role } from '@common/schemas/role.schema';
 import {
   UserModelName,
   type UserModel,
   type User,
 } from '@common/schemas/user.schema';
 
+export type NewAccount = Pick<
+  User,
+  'email' | 'firstName' | 'lastName' | 'googleSubject' | 'passwordHash'
+> & {
+  userId: string;
+  roles: User['roles'];
+  emailVerifiedAt: Date;
+};
+
 @Injectable()
 export class AccountRepository {
-  constructor(
-    @InjectModel(UserModelName) private readonly users: UserModel,
-    @InjectModel(RoleModelName) private readonly roles: RoleModel,
-  ) {}
+  constructor(@InjectModel(UserModelName) private readonly users: UserModel) {}
 
   existingEmail(email: string) {
     return this.users
@@ -56,25 +58,8 @@ export class AccountRepository {
       .exec();
   }
 
-  async createClient(
-    data: Pick<User, 'email' | 'firstName' | 'lastName'> &
-      Pick<Partial<User>, 'googleSubject' | 'passwordHash'>,
-  ) {
-    const role = await this.roles
-      .findOne({ name: 'client' })
-      .select('_id')
-      .exec();
-
-    if (!role) {
-      throw new ServiceUnavailableException('Client role is not configured');
-    }
-
-    const user = await this.users.create({
-      ...data,
-      userId: randomUUID(),
-      roles: [role._id],
-      emailVerifiedAt: new Date(),
-    });
+  async create(data: NewAccount) {
+    const user = await this.users.create(data);
 
     return user.populate<{ roles: Role[] }>('roles');
   }

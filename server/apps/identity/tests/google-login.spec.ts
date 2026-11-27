@@ -3,11 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { LoginTicket, OAuth2Client } from 'google-auth-library';
+import { Types } from 'mongoose';
 
 import { AccountRepository } from '@identity/auth/repositories/account.repository';
 import { AccountEmailService } from '@identity/auth/services/account-email.service';
 import { AccountService } from '@identity/auth/services/account.service';
 import { AuthService } from '@identity/auth/services/auth.service';
+import { RoleService } from '@identity/role/services/role.service';
 import { UserService } from '@identity/user/services/user.service';
 
 describe('Google sign-in', () => {
@@ -15,10 +17,11 @@ describe('Google sign-in', () => {
     byGoogleSubject: jest.fn(),
     existingEmail: jest.fn(),
     linkRegisteredAccount: jest.fn(),
-    createClient: jest.fn(),
+    create: jest.fn(),
   };
   const startSession = jest.fn();
   const send = jest.fn();
+  const clientRoleId = new Types.ObjectId();
   const registered = { userId: 'existing', roles: [{ name: 'client' }] };
   const profile = {
     iss: 'https://accounts.google.com',
@@ -40,6 +43,14 @@ describe('Google sign-in', () => {
         { provide: AuthService, useValue: { startSession } },
         { provide: AccountEmailService, useValue: { send } },
         { provide: UserService, useValue: {} },
+        {
+          provide: RoleService,
+          useValue: {
+            withClientRoleAssignment: (
+              assign: (roles: [Types.ObjectId]) => Promise<unknown>,
+            ) => assign([clientRoleId]),
+          },
+        },
         {
           provide: JwtService,
           useValue: { signAsync: async () => 'confirmation' },
@@ -83,21 +94,23 @@ describe('Google sign-in', () => {
       'guest@gmail.com',
       profile.sub,
     );
-    expect(accounts.createClient).not.toHaveBeenCalled();
+    expect(accounts.create).not.toHaveBeenCalled();
     expect(startSession).toHaveBeenCalledWith(registered, expect.any(Number));
   });
 
   it('creates a client for a new email and uses the subject on later logins', async () => {
-    accounts.createClient.mockResolvedValue(registered);
+    accounts.create.mockResolvedValue(registered);
     await login();
     accounts.byGoogleSubject.mockResolvedValue(registered);
     await login();
 
-    expect(accounts.createClient).toHaveBeenCalledTimes(1);
-    expect(accounts.createClient).toHaveBeenCalledWith(
+    expect(accounts.create).toHaveBeenCalledTimes(1);
+    expect(accounts.create).toHaveBeenCalledWith(
       expect.objectContaining({
         email: 'guest@gmail.com',
         googleSubject: profile.sub,
+        roles: [clientRoleId],
+        emailVerifiedAt: expect.any(Date),
       }),
     );
     expect(accounts.linkRegisteredAccount).not.toHaveBeenCalled();
@@ -109,23 +122,21 @@ describe('Google sign-in', () => {
     accounts.linkRegisteredAccount.mockResolvedValue(null);
     await expect(login()).rejects.toBeInstanceOf(ConflictException);
     expect(startSession).not.toHaveBeenCalled();
-    expect(accounts.createClient).not.toHaveBeenCalled();
+    expect(accounts.create).not.toHaveBeenCalled();
   });
 
   it('checks third-party email ownership before linking or creating', async () => {
-    jest
-      .spyOn(OAuth2Client.prototype, 'verifyIdToken')
-      .mockImplementation(
-        async () =>
-          new LoginTicket(undefined, {
-            ...profile,
-            email: 'guest@example.org',
-          }),
-      );
+    jest.spyOn(OAuth2Client.prototype, 'verifyIdToken').mockImplementation(
+      async () =>
+        new LoginTicket(undefined, {
+          ...profile,
+          email: 'guest@example.org',
+        }),
+    );
     await expect(login()).rejects.toBeInstanceOf(ForbiddenException);
     expect(send).toHaveBeenCalledTimes(1);
     expect(accounts.linkRegisteredAccount).not.toHaveBeenCalled();
-    expect(accounts.createClient).not.toHaveBeenCalled();
+    expect(accounts.create).not.toHaveBeenCalled();
     expect(startSession).not.toHaveBeenCalled();
   });
 });

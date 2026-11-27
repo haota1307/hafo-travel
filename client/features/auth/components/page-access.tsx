@@ -1,38 +1,13 @@
-import { cookies } from "next/headers";
 import { getLocale } from "next-intl/server";
-import { cache, type ReactNode } from "react";
-import { redirect } from "@/i18n/navigation";
-import http, { HttpError } from "@/lib/http";
-import { accessCookie, jwtPattern, refreshCookie } from "@/lib/session-cookies";
-import { SessionSchema } from "../auth.schema";
+import type { ReactNode } from "react";
 import {
   accessibleDestinations,
   type Destination,
 } from "@/features/dashboard/sections";
+import { redirect } from "@/i18n/navigation";
+import { readPageSession } from "../auth.server";
 import { signedInPath } from "../route-access";
 import { SessionRecovery } from "./session-recovery";
-
-export const readPageSession = cache(async () => {
-  const jar = await cookies();
-  const token = jar.get(accessCookie)?.value;
-
-  if (token && jwtPattern.test(token)) {
-    try {
-      const { payload } = await http.get("/user/me", {
-        headers: { Authorization: `Bearer ${token}` },
-        redirect: "error",
-      });
-
-      return SessionSchema.parse(payload);
-    } catch (error) {
-      if (!(error instanceof HttpError && error.status === 401)) {
-        return "unavailable" as const;
-      }
-    }
-  }
-
-  return jar.get(refreshCookie)?.value ? ("renew" as const) : null;
-});
 
 export async function PageAccess({
   scope,

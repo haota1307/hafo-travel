@@ -9,8 +9,8 @@ import "@fontsource/inter/vietnamese-400.css";
 import "@fontsource/inter/vietnamese-500.css";
 import "@fontsource/inter/vietnamese-600.css";
 import "@fontsource/inter/vietnamese-700.css";
+import { readPageSession } from "@/features/auth/auth.server";
 import { DashboardShell } from "@/features/dashboard/components/dashboard-shell";
-import { readPageSession } from "@/features/auth/components/page-access";
 import { accessibleDestinations } from "@/features/dashboard/sections";
 import { publicSiteConfig } from "@/features/public-site/site.config";
 

@@ -8,7 +8,16 @@ const requestPage = globalThis.fetch;
 
 test("dashboard and guest pages follow the current role across locales", async (t) => {
   let permissions = ["UI:dashboard", "UI:dashboard/roles"];
+  let googleError = "GOOGLE_EMAIL_CONFIRMATION_REQUIRED";
   const bff = createServer((request, response) => {
+    if (request.method === "POST" && request.url === "/auth/google") {
+      request.resume();
+      response.writeHead(403, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ statusCode: 403, message: googleError }));
+
+      return;
+    }
+
     assert.equal(request.url, "/user/me");
     assert.equal(request.headers.authorization, "Bearer test.access.token");
     response.setHeader("Content-Type", "application/json");
@@ -41,6 +50,7 @@ test("dashboard and guest pages follow the current role across locales", async (
   process.env.API_URL = await listen(bff);
   const server = createServer();
   const origin = await listen(server);
+  process.env.NEXT_PUBLIC_SITE_URL = origin;
   const app = next({
     dev: false,
     hostname: "127.0.0.1",
@@ -128,4 +138,25 @@ test("dashboard and guest pages follow the current role across locales", async (
   );
   assert.equal(renewing.status, 200);
   assert.doesNotMatch(await renewing.text(), /data-slot="sidebar"/);
+
+  async function googleLogin() {
+    return requestPage(new URL("/api/auth/google", origin), {
+      method: "POST",
+      headers: { Origin: origin, "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: "test-credential" }),
+      signal: AbortSignal.timeout(10000),
+    });
+  }
+
+  const confirmation = await googleLogin();
+  assert.equal(confirmation.status, 403);
+  assert.equal(confirmation.headers.get("set-cookie"), null);
+  assert.deepEqual(await confirmation.json(), {
+    message: "GOOGLE_EMAIL_CONFIRMATION_REQUIRED",
+  });
+
+  googleError = "Upstream error details";
+  const forbidden = await googleLogin();
+  assert.equal(forbidden.status, 403);
+  assert.deepEqual(await forbidden.json(), { message: "AUTH_REQUEST_FAILED" });
 });

@@ -67,6 +67,8 @@ TypeORM đã bỏ entity sản phẩm và dùng autoLoadEntities. Đăng ký ent
 
 RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `PermissionGuard` và decorator `Permissions`. Tạo user cần đồng thời `user.create` và `user.assign_roles`; đổi role cần `user.assign_roles`. Trường `roles` giữ dạng mảng nhưng bắt buộc đúng một phần tử. Không xóa role đang được user sử dụng. Role có CRUD và danh mục permission. Tên administrator không có bypass đặc biệt. Xem [contract và quyền truy cập](instructions/rbac.md). gRPC chưa kiểm tra quyền caller, phải nằm trong mạng riêng cho service tin cậy.
 
+Identity xử lý lần lượt các thao tác ghi liên quan đến cùng một role trong một tiến trình. Triển khai hiện tại dùng một tiến trình Identity nhận các thao tác ghi role và gán role.
+
 ## Kiểm tra
 
 App và library dùng TypeScript strict chung. ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Source và test của app dùng alias riêng, ví dụ `@identity/user/services/user.service`. Thư viện dùng chung dùng `@common/...`. Các alias nằm trong [tsconfig.base.json](tsconfig.base.json). Xem [quy ước triển khai](instructions/coding.md) để biết thứ tự import và cách thêm alias cho app mới.

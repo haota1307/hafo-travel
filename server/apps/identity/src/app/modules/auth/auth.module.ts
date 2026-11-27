@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AccessTokenModule } from '@common/configuration/access-token.config';
 import { GrpcProvider, GRPC_SERVICES } from '@common/configuration/grpc.config';
 import { AuthSessionDestination } from '@common/schemas/auth-session.schema';
-import { RoleDestination } from '@common/schemas/role.schema';
 import { UserDestination } from '@common/schemas/user.schema';
 
 import { AccountController } from '@identity/auth/controllers/account.controller';
@@ -15,6 +14,7 @@ import { AuthSessionRepository } from '@identity/auth/repositories/auth.reposito
 import { AccountEmailService } from '@identity/auth/services/account-email.service';
 import { AccountService } from '@identity/auth/services/account.service';
 import { AuthService } from '@identity/auth/services/auth.service';
+import { RoleModule } from '@identity/role/role.module';
 import { UserModule } from '@identity/user/user.module';
 
 @Module({
@@ -23,11 +23,8 @@ import { UserModule } from '@identity/user/user.module';
     ClientsModule.registerAsync([
       GrpcProvider(GRPC_SERVICES.NOTIFICATION_SERVICE),
     ]),
-    MongooseModule.forFeature([
-      AuthSessionDestination,
-      UserDestination,
-      RoleDestination,
-    ]),
+    MongooseModule.forFeature([AuthSessionDestination, UserDestination]),
+    RoleModule,
     UserModule,
   ],
   controllers: [AuthController, AccountController],

@@ -15,9 +15,11 @@ Quyền UI và quyền API dùng chung trường `permissions` của role. Mỗi
 - `UserGuard` yêu cầu bearer token cho route bảo vệ. BFF xác minh chữ ký HS256, issuer, audience và thời hạn. Access JWT chứa `sub`, `profileId` và `roleId` tại thời điểm cấp. BFF tra role hiện tại theo `userId` và permissions theo `roleId`. Hai giá trị được cache riêng trong Redis để các user cùng role dùng chung danh sách quyền. Route public có khai báo permission vẫn yêu cầu xác thực.
 - Khi thiếu cache, BFF lấy dữ liệu từ Identity qua gRPC. Identity đánh dấu key trước khi ghi thay đổi role hoặc gán lại role cho user. Trong lúc ghi, request đọc trực tiếp từ Identity. Khi ghi xong, Identity xóa key liên quan. Request sau đó nhận quyền mới ngay cả khi dùng access token đã cấp. Kết quả đọc bắt đầu trước khi đổi quyền không thể ghi đè cache mới.
 - BFF và Identity phải dùng chung Redis trong cùng môi trường. TTL của cache phân quyền lấy từ `REDIS_TTL` (giây). Nếu Redis lỗi khi đọc quyền, guard tra Identity. Nếu Identity không thể đánh dấu key trên Redis trước khi ghi, thao tác thay đổi phân quyền trả 503.
+- Nếu Redis lỗi khi dọn dấu đang ghi, Identity ghi cảnh báo và giữ kết quả gốc của thao tác MongoDB. Dấu còn lại khiến BFF đọc trực tiếp từ Identity cho đến khi dấu được dọn hoặc hết TTL.
 - `PermissionGuard` yêu cầu đủ tất cả permission khai báo, trả 401 khi thiếu xác thực và 403 khi thiếu quyền.
 - Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi lưu hồ sơ. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
 - Không xóa role đang được user sử dụng; API trả 409. Cần chuyển user sang role khác trước khi xóa. Role có thể có permission rỗng nếu user không được thực hiện tác vụ quản trị.
+- Identity xử lý lần lượt các thao tác sửa, xóa và gán liên quan đến cùng một role. Kiểm tra role tồn tại hoặc đang được sử dụng nằm trong cùng lượt ghi, gồm cả lúc tạo hồ sơ và tự đăng ký. Việc điều phối chạy trong tiến trình Identity đang xử lý thao tác ghi.
 
 ## HTTP API
 
@@ -98,6 +100,8 @@ Trình duyệt gọi Next `POST /api/auth/login`, `/api/auth/refresh`, `/api/aut
 Identity ký token liên kết 30 phút với audience riêng cho từng thao tác. Token nằm trong fragment của liên kết để Next chỉ nhận token qua POST khi người dùng gửi form. Đăng ký lưu email chữ thường, tạo hồ sơ khi người nhận chọn mật khẩu. Unique index email ngăn tạo lại tài khoản. Yêu cầu mới được gửi từ màn hình đăng ký hoặc quên mật khẩu. Sau khi đổi mật khẩu, các liên kết khôi phục và refresh token phiên bản cũ hết hiệu lực. Access token đã cấp còn hiệu lực tối đa 5 phút.
 
 Với tài khoản Google dùng địa chỉ bên thứ ba ngoài Gmail và Google Workspace, lần tạo hoặc liên kết tài khoản đầu tiên cần mở liên kết email rồi chọn lại đúng tài khoản Google.
+
+Sau khi gửi email xác nhận, BFF trả HTTP 403 với `message: "GOOGLE_EMAIL_CONFIRMATION_REQUIRED"`. Next chuyển mã này cho giao diện Google.
 
 Google tra tài khoản bằng `sub` đã được xác minh. Khi chưa có liên kết, Identity dùng email đã xác minh để liên kết với tài khoản tự đăng ký bằng mật khẩu hoặc tạo tài khoản mới với role `client`. Với quản trị viên bootstrap có `initialAdministrator: true`, Gmail đã được Google xác minh và khớp chính xác với email lưu trong hồ sơ cũng đủ để liên kết. Liên kết giữ nguyên hồ sơ, mật khẩu và quyền. Hồ sơ không đủ điều kiện hoặc đã liên kết Google khác trả 409. Tài khoản chỉ dùng Google khôi phục quyền truy cập qua Google.
 

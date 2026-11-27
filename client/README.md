@@ -63,6 +63,6 @@ Mở `/[locale]/auth/login` để đăng nhập và `/[locale]/account` để xe
 
 Để chạy kiểm thử xuyên suốt trên stack thử nghiệm, đặt `AUTH_TEST_ORIGIN`, `AUTH_TEST_EMAIL` và `AUTH_TEST_PASSWORD` trong môi trường của process, rồi chạy `node --test test/auth-e2e.test.mjs` từ `client`. Bài test đăng nhập với tài khoản thử, xoay token, thu hồi refresh token và kiểm tra access JWT đã cấp còn dùng được đến khi hết hạn.
 
-Sau khi build client, chạy `node --test test/dashboard-access.test.mjs` để kiểm tra chuyển hướng dashboard, login và register theo locale và quyền hiện tại. Bài test tự mở Next và BFF mô phỏng trên cổng loopback tạm thời.
+Sau khi build client, chạy `node --test test/dashboard-access.test.mjs` để kiểm tra chuyển hướng dashboard, login, register và mã xác nhận email khi đăng nhập Google. Bài test tự mở Next và BFF mô phỏng trên cổng loopback tạm thời.
 
 Khi chỉ có BFF và Identity đang chạy, đặt `API_URL` khớp với `GLOBAL_PREFIX` của BFF, build client rồi chạy cùng lệnh với `AUTH_TEST_ORIGIN` để trống. Suite tự mở Next trên một cổng loopback tạm thời và đóng khi hoàn tất.

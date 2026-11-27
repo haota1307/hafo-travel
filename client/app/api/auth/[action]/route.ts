@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import {
   accountActionSchemas,
+  GOOGLE_EMAIL_CONFIRMATION_REQUIRED,
   GoogleLoginSchema,
   isAccountAction,
   LoginSchema,
@@ -21,6 +22,10 @@ const TokenPairSchema = z.object({
   refreshToken: z.string().regex(jwtPattern),
   accessExpiresIn: z.number().int().positive().max(300),
   refreshExpiresIn: z.number().int().positive(),
+});
+
+const GoogleEmailConfirmationErrorSchema = z.object({
+  message: z.literal(GOOGLE_EMAIL_CONFIRMATION_REQUIRED),
 });
 
 function reply(status: number, message: string) {
@@ -82,7 +87,19 @@ export async function POST(
       });
 
       if (!upstream.ok) {
-        const response = reply(upstream.status, "AUTH_REQUEST_FAILED");
+        let message = "AUTH_REQUEST_FAILED";
+
+        if (action === "google" && upstream.status === 403) {
+          const error = GoogleEmailConfirmationErrorSchema.safeParse(
+            await upstream.json().catch(() => null),
+          );
+
+          if (error.success) {
+            message = error.data.message;
+          }
+        }
+
+        const response = reply(upstream.status, message);
         const retry =
           upstream.headers.get("retry-after") ??
           upstream.headers.get("retry-after-account");

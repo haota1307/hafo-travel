@@ -35,6 +35,9 @@ export const GoogleLoginSchema = z.object({
 
 export type GoogleLoginInput = z.infer<typeof GoogleLoginSchema>;
 
+export const GOOGLE_EMAIL_CONFIRMATION_REQUIRED =
+  "GOOGLE_EMAIL_CONFIRMATION_REQUIRED";
+
 export const accountActionSchemas = {
   register: EmailActionSchema,
   "forgot-password": EmailActionSchema,

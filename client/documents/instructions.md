@@ -90,6 +90,8 @@ BFF có các route hồ sơ, gán role và CRUD role theo [RBAC backend](../../s
 
 Các action đăng ký, xác thực email, quên/đặt lại mật khẩu và Google dùng cùng Next handler `/api/auth/[action]`. Form ở `features/auth`, route ở `/[locale]/auth`, dữ liệu đi qua schema, API object và React Query. Hai màn hình nhận liên kết đọc token từ fragment khi submit. Google Identity Services trả credential cho mutation; route Next ghi cookie phiên sau khi Identity xác minh. Form xác thực hiển thị lỗi email và mật khẩu bỏ trống dưới ô nhập. Các lỗi khác dùng toast của ứng dụng.
 
+Route Next giữ mã `GOOGLE_EMAIL_CONFIRMATION_REQUIRED` khi BFF trả 403 chứa đúng mã này cho action `google`. UI dùng mã đó để báo người dùng kiểm tra hộp thư. Các lỗi upstream khác giữ status và thông báo chung.
+
 ### Lỗi và form
 
 - Validation backend hiện trả HTTP 400 với `message: string[]`, không có field/path; không đoán field từ nội dung chuỗi. `getApiValidationErrors(error)` chỉ map khi HTTP 400/422 thực sự có issue `{ path, message }` trong `payload.message`; contract hiện tại trả `{}`. Map issue có cấu trúc vào field hợp lệ của form khi endpoint hỗ trợ.
@@ -153,6 +155,8 @@ Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, 
 Trang dashboard và từng section truyền đích cụ thể vào `PageAccess` để kiểm tra quyền từ `GET /user/me` trong request hiện tại. Quyền khớp chính xác với đường dẫn của trang, ví dụ `UI:dashboard` và `UI:dashboard/users`. Khi thêm section, cập nhật danh mục quyền backend. Dùng danh sách đích được phép cho sidebar, tìm kiếm, các liên kết nội bộ và chuyển hướng sau login. Proxy giữ locale và đường dẫn đích khi chuyển khách sang login. Login/register chỉ dành cho khách. Các liên kết xác minh và khôi phục tài khoản xử lý theo token riêng. Khi cần xoay refresh token, trình duyệt dùng luồng refresh có khóa dùng chung trước khi tải lại trang. Hồ sơ và đăng xuất nằm tại `/[locale]/account`.
 
 Login trong template là mô phỏng. Luồng thực tế ở `features/auth` và `/[locale]/auth/login`. Next giữ access JWT và refresh JWT trong hai cookie HttpOnly. Proxy gửi access JWT dưới dạng Bearer đến BFF. Route refresh và logout chuyển giá trị refresh cookie đến Identity qua BFF. Route auth trả trạng thái cho browser và giữ credential ngoài JSON. Xem [cấu hình và kiểm thử](../README.md).
+
+`features/auth/auth.server.ts` đọc phiên từ BFF và lưu kết quả trong phạm vi request để layout và `PageAccess` dùng chung.
 
 ## Kiểm tra và cập nhật tài liệu
 

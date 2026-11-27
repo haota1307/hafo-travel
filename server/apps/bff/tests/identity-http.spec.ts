@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { createServer, type AddressInfo } from 'node:net';
 
 import {
+  ConflictException,
   ForbiddenException,
   type INestApplication,
   type INestMicroservice,
@@ -147,11 +148,6 @@ describe('BFF HTTP over real gRPC services', () => {
     ),
     getAll: jest.fn(async () => [...storedRoles.values()]),
     getById: jest.fn(async (id: string) => storedRoles.get(id)),
-    getByIds: jest.fn(async (ids: string[]) =>
-      [...storedRoles.values()].filter((role) =>
-        ids.includes(role._id.toString()),
-      ),
-    ),
     create: jest.fn(
       async (data: {
         name: string;
@@ -683,6 +679,45 @@ describe('BFF HTTP over real gRPC services', () => {
     });
 
     expect(result.user).toBeFalsy();
+  });
+
+  it('waits for a concurrent role assignment before deciding whether to delete the role', async () => {
+    const role = await roleRepository.create({
+      name: 'concurrent-assignment',
+      description: '',
+      permissions: [],
+    });
+    const setRoles = repository.setRoles.getMockImplementation();
+
+    if (!setRoles) {
+      throw new Error('Missing role assignment fixture');
+    }
+
+    let completeAssignment!: () => void;
+    const pendingAssignment = new Promise<void>((resolve) => {
+      completeAssignment = resolve;
+    });
+    const assignmentStarted = new Promise<void>((resolve) => {
+      repository.setRoles.mockImplementationOnce(async (userId, roles) => {
+        resolve();
+        await pendingAssignment;
+
+        return setRoles(userId, roles);
+      });
+    });
+
+    const assignment = userApp
+      .get(UserService)
+      .setRoles(fixture.userId, [role.id]);
+    await assignmentStarted;
+    const deletion = expect(
+      userApp.get(RoleService).delete(role.id),
+    ).rejects.toBeInstanceOf(ConflictException);
+    completeAssignment();
+
+    await Promise.all([assignment, deletion]);
+    expect(roleRepository.delete).not.toHaveBeenCalled();
+    expect(fixture.roles).toEqual([role]);
   });
 
   it('keeps Swagger HTTP routes and DTO metadata', async () => {

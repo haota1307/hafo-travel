@@ -220,6 +220,7 @@
   --white-10: var(--border);
   --icon-grey-40: #6d7d70;
   --site-background: var(--background);
+  --site-overlay-foreground: #f7f5ef;
   --site-unit: calc(100vw / 90);
 }
 

@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
 
@@ -14,6 +15,8 @@ import { RoleRepository } from '@identity/role/repositories/role.repository';
 
 @Injectable()
 export class RoleService {
+  private readonly roleWrites = new Map<string, Promise<void>>();
+
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly cache: AuthorizationCache,
@@ -49,8 +52,10 @@ export class RoleService {
     const input = this.validateInput(data);
 
     try {
-      const role = await this.cache.change(this.cache.roleKey(id), () =>
-        this.roleRepository.update(id, input),
+      const role = await this.withRoleWrite(id, () =>
+        this.cache.change(this.cache.roleKey(id), () =>
+          this.roleRepository.update(id, input),
+        ),
       );
 
       if (!role) {
@@ -66,35 +71,82 @@ export class RoleService {
   async delete(id: string) {
     this.validateId(id);
 
-    if (await this.roleRepository.isAssigned(id)) {
-      throw new ConflictException('Cannot delete a role assigned to a user');
-    }
+    const role = await this.withRoleWrite(id, async () => {
+      if (await this.roleRepository.isAssigned(id)) {
+        throw new ConflictException('Cannot delete a role assigned to a user');
+      }
 
-    const role = await this.cache.change(this.cache.roleKey(id), () =>
-      this.roleRepository.delete(id),
-    );
+      return this.cache.change(this.cache.roleKey(id), () =>
+        this.roleRepository.delete(id),
+      );
+    });
 
     if (!role) {
       throw new NotFoundException('Role not found');
     }
   }
 
-  async resolveRoleIds(ids: string[]): Promise<Types.ObjectId[]> {
+  async withRoleAssignment<T>(
+    ids: string[],
+    assign: (roleIds: [Types.ObjectId]) => Promise<T>,
+  ): Promise<T> {
     if (!Array.isArray(ids) || ids.length !== 1) {
       throw new BadRequestException('Exactly one role is required');
     }
 
-    for (const id of ids) {
-      this.validateId(id);
+    const [id] = ids;
+    this.validateId(id);
+
+    return this.withRoleWrite(id, async () => {
+      const role = await this.roleRepository.getById(id);
+
+      if (!role) {
+        throw new BadRequestException('One or more roles do not exist');
+      }
+
+      return assign([role._id]);
+    });
+  }
+
+  async withClientRoleAssignment<T>(
+    assign: (roleIds: [Types.ObjectId]) => Promise<T>,
+  ): Promise<T> {
+    const role = await this.roleRepository.getByName('client');
+
+    if (!role) {
+      throw new ServiceUnavailableException('Client role is not configured');
     }
 
-    const roles = await this.roleRepository.getByIds(ids);
+    const id = role._id.toHexString();
 
-    if (roles.length !== ids.length) {
-      throw new BadRequestException('One or more roles do not exist');
+    return this.withRoleWrite(id, async () => {
+      const current = await this.roleRepository.getById(id);
+
+      if (current?.name !== 'client') {
+        throw new ServiceUnavailableException('Client role is not configured');
+      }
+
+      return assign([current._id]);
+    });
+  }
+
+  private async withRoleWrite<T>(id: string, write: () => Promise<T>) {
+    const key = id.toLowerCase();
+    const previous = this.roleWrites.get(key) ?? Promise.resolve();
+    const result = previous.then(write);
+    const settled = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    this.roleWrites.set(key, settled);
+
+    try {
+      return await result;
+    } finally {
+      if (this.roleWrites.get(key) === settled) {
+        this.roleWrites.delete(key);
+      }
     }
-
-    return ids.map((id) => new Types.ObjectId(id));
   }
 
   private validateId(id: string) {

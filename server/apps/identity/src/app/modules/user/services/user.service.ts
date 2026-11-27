@@ -30,11 +30,11 @@ export class UserService {
       throw new BadRequestException(CODE_ERROR.USER_ALREADY_EXISTS);
     }
 
-    await this.roleService.resolveRoleIds(data.roles);
+    return this.roleService.withRoleAssignment(data.roles, (roles) => {
+      const input = createUserRequestMapper(data, randomUUID(), roles);
 
-    const input = createUserRequestMapper(data, randomUUID());
-
-    return this.userRepository.create(input);
+      return this.userRepository.create(input);
+    });
   }
 
   getUserByUserId(userId: string) {
@@ -50,9 +50,10 @@ export class UserService {
   }
 
   async setRoles(userId: string, roles: string[]) {
-    const roleIds = await this.roleService.resolveRoleIds(roles);
-    const user = await this.cache.change(this.cache.userKey(userId), () =>
-      this.userRepository.setRoles(userId, roleIds),
+    const user = await this.roleService.withRoleAssignment(roles, (roleIds) =>
+      this.cache.change(this.cache.userKey(userId), () =>
+        this.userRepository.setRoles(userId, roleIds),
+      ),
     );
 
     if (!user) {

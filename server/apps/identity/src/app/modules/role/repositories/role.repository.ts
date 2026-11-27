@@ -27,10 +27,6 @@ export class RoleRepository {
     return this.roleModel.findOne({ name }).exec();
   }
 
-  getByIds(ids: string[]) {
-    return this.roleModel.find({ _id: { $in: ids } }).exec();
-  }
-
   create(data: Pick<Role, 'name' | 'description' | 'permissions'>) {
     return this.roleModel.create(data);
   }

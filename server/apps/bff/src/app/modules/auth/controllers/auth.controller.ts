@@ -118,7 +118,7 @@ export class AuthController implements OnModuleInit {
   login(@Body() body: LoginRequestDto, @ProcessId() processId: string) {
     return requestGrpc(
       this.identity.login,
-      { email: body.email.trim(), password: body.password },
+      { email: body.email, password: body.password },
       { processId },
     );
   }

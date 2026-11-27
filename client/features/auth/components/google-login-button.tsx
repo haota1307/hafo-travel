@@ -5,8 +5,10 @@ import Script from "next/script";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { FieldSeparator } from "@/components/ui/field";
+import { getApiErrorCode } from "@/lib/api-error";
 import { HttpError } from "@/lib/http";
 import { useGoogleLogin } from "../auth.queries";
+import { GOOGLE_EMAIL_CONFIRMATION_REQUIRED } from "../auth.schema";
 import { AuthErrorToast } from "./auth-error-toast";
 
 type GoogleButtonText = "signin_with" | "signup_with";
@@ -133,7 +135,8 @@ export function GoogleLoginButton({
   const status =
     google.error instanceof HttpError ? google.error.status : undefined;
   const confirmInbox =
-    status === 403 && google.error?.message === "AUTH_REQUEST_FAILED";
+    status === 403 &&
+    getApiErrorCode(google.error) === GOOGLE_EMAIL_CONFIRMATION_REQUIRED;
 
   return (
     <div className="space-y-2" aria-busy={google.isPending}>
