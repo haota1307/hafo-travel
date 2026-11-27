@@ -10,6 +10,7 @@ Hướng dẫn cho AI và quy ước phát triển: [instructions](instructions/
 - `apps/identity`: tạo/tra cứu người dùng, gán role và CRUD role, lưu MongoDB.
 - Ba app gRPC `booking`, `payment` và `ai-agent` đã có khung module nghiệp vụ. [Sơ đồ và trách nhiệm từng module](instructions/services.md).
 - `apps/notification`: app gRPC gửi email qua Resend.
+- `apps/audit`: app gRPC ghi và tra cứu lịch sử quản trị trong MongoDB.
 - `libs`: cấu hình, constants, decorators, entities, guards, interceptors, interfaces, middlewares, schemas và utils.
 - BaseEntity + TypeORM/PostgreSQL cho module mới; BaseSchema + MongoDB cho dữ liệu hiện tại.
 - Redis, Docker providers, seed vai trò, ESLint, Prettier và Jest.
@@ -29,15 +30,17 @@ Cấu hình ngoại lệ dependency nằm trong mục `overrides` của `package
 3. Chạy `docker compose -f docker-compose.provider.yaml up -d` để bật đủ MongoDB 9.0.4, Redis 8.10.3, PostgreSQL 18.6 và pgAdmin 9.19.0. Dữ liệu nằm trong `docker/docker_data`, với các thư mục `mongodb-9`, `redis-8`, `postgresql-18` và `pgadmin-9`. Các cổng mặc định cần còn trống.
 4. Chạy `npm run dev-lite` để bật BFF, Identity và Notification.
 
-Từ thư mục `server`, dùng `npx nx serve booking` để xem riêng một app mới hoặc `npm run dev` để chạy cả sáu app. Booking, Payment và AI Agent chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên.
+Từ thư mục `server`, dùng `npx nx serve booking` để xem riêng một app mới hoặc `npm run dev` để chạy cả bảy app. Booking, Payment và AI Agent chỉ cần Node và các dependency đã cài. BFF và Identity dùng Redis/MongoDB theo cấu hình bên trên. Audit cần MongoDB.
 
-Các app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
+Các app dùng chung `server/.env`. Identity chọn database qua `IDENTITY_MONGODB_DB_NAME`, AI Agent qua `AI_AGENT_MONGODB_DB_NAME` và Audit qua `AUDIT_MONGODB_DB_NAME`. Từ thư mục `server` có thể chạy bundle đã build bằng `node dist/apps/booking/main.js`. [Cấu hình theo service](instructions/services.md#cấu-hình-và-seed).
 
 Để gửi email, điền `RESEND_API_KEY` có quyền gửi và `RESEND_FROM_EMAIL` là địa chỉ gửi trên domain đã xác minh với Resend vào `server/.env`. Chạy riêng app bằng `npx nx serve notification`. App lắng nghe gRPC ở cổng `5105`. Khi chưa cấu hình Resend, app vẫn khởi động và trả `UNAVAILABLE` cho yêu cầu gửi.
 
 Đăng ký và khôi phục tài khoản dùng `AUTH_PUBLIC_ORIGIN` để tạo liên kết về client. Chạy `node tools/auth-storage.cjs migrate` để chuẩn bị index và role `client`. Đăng nhập Google dùng `GOOGLE_CLIENT_ID` cùng giá trị với `NEXT_PUBLIC_GOOGLE_CLIENT_ID` của client. Xem [luồng tự đăng ký và khôi phục](instructions/rbac.md#tự-đăng-ký-và-khôi-phục-tài-khoản).
 
 RPC nội bộ `notification.v1.NotificationService/SendEmail` nhận `to`, `subject`, ít nhất một trong hai trường `text` hoặc `html`, và `idempotencyKey`. Dùng một khóa riêng cho mỗi email và giữ cùng khóa cùng nội dung khi thử lại. `emailId` là mã Resend trả về khi tiếp nhận thư. [Contract gRPC](libs/interfaces/src/lib/proto/notification/v1/notification.proto) · [API gửi email của Resend](https://resend.com/docs/api-reference/emails/send-email) · [Quy tắc chống gửi trùng](https://resend.com/docs/dashboard/emails/idempotency-keys).
+
+Chạy riêng Audit bằng `npx nx serve audit`. App lắng nghe gRPC ở cổng `5107` và ghi vào collection `audit_events` trong database `audit` theo mặc định. `AppendAuditEvent` ghi sự kiện quản trị Identity. Khi gửi lại, giữ cùng `eventId`, `processId` gốc và nội dung. `ListAuditEvents` hỗ trợ lọc và phân trang, dùng cùng bộ lọc khi gửi lại `nextCursor`. Chỉ mở gRPC Audit cho service nội bộ tin cậy. [Contract gRPC](libs/interfaces/src/lib/proto/audit/v1/audit.proto)
 
 Đăng nhập Google tự liên kết theo email với tài khoản tự đăng ký đã xác minh. Quản trị viên bootstrap có thể đăng nhập bằng đúng Gmail đã dùng khi khởi tạo. Khi email mới, Identity tạo tài khoản với role `client`. Lần đăng nhập sau tìm lại hồ sơ theo Google subject.
 
@@ -73,10 +76,10 @@ Identity xử lý lần lượt các thao tác ghi liên quan đến cùng một
 
 App và library dùng TypeScript strict chung. ESLint kiểm tra dấu ngoặc và khoảng cách giữa các bước. Source và test của app dùng alias riêng, ví dụ `@identity/user/services/user.service`. Thư viện dùng chung dùng `@common/...`. Các alias nằm trong [tsconfig.base.json](tsconfig.base.json). Xem [quy ước triển khai](instructions/coding.md) để biết thứ tự import và cách thêm alias cho app mới.
 
-- `npm run build`: build cả sáu app.
+- `npm run build`: build cả bảy app.
 - `npm run typecheck`: dùng compiler TypeScript 7 để kiểm tra toàn bộ app/library/spec.
 - `npm run lint`: kiểm tra lint workspace.
-- `npm test` chạy các suite BFF, Identity và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
+- `npm test` chạy các suite BFF, Identity, Audit và interceptors. Suite BFF dùng HTTP và gRPC trên localhost với repository MongoDB được mock.
 - `npx nx run-many -t test`: chạy các test được bổ sung cho dự án mới.
 
 Nâng cấp toolchain đã chạy migration Nx; không chạy seed/migration database, không khởi động container và không xóa dữ liệu hiện có.

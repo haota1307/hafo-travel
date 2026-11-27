@@ -1,6 +1,6 @@
 # Bản đồ backend
 
-Backend có sáu app Nx. Notification cung cấp RPC nội bộ gửi email qua Resend. BFF đang phục vụ HTTP, Identity quản lý hồ sơ và vai trò qua gRPC. Booking, Payment và AI Agent đã có entrypoint gRPC và các module Nest cho nghiệp vụ. Phần nghiệp vụ, Kafka, Saga và kết nối mô hình AI dưới đây là thiết kế để thảo luận.
+Backend có bảy app Nx. BFF phục vụ HTTP, Identity quản lý hồ sơ và vai trò, Notification gửi email qua Resend và Audit ghi, tra cứu lịch sử quản trị qua gRPC. Booking, Payment và AI Agent đã có entrypoint gRPC và các module Nest cho nghiệp vụ. Phần nghiệp vụ, Kafka, Saga và kết nối mô hình AI dưới đây là thiết kế để thảo luận.
 
 Sơ đồ dưới đây thể hiện luồng đích. Mũi tên gRPC biểu thị một lời gọi cần kết quả ngay. Sự kiện Kafka cho phép bên nhận tiếp tục xử lý sau khi bên phát đã ghi nhận thay đổi.
 
@@ -41,6 +41,7 @@ Booking, Payment và AI Agent đã đăng ký tất cả module trong bảng v�
 | `payment` · gRPC 5104  | `transaction`, `refund`, `provider`                                       | Transaction theo dõi số tiền, tiền tệ, mã tham chiếu và trạng thái giao dịch. Refund theo dõi yêu cầu và kết quả hoàn. Provider tích hợp cổng thanh toán, xác minh chữ ký callback và đối soát.                                               |
 | `notification` · gRPC 5105 | `notification` | Nhận RPC `SendEmail`, gửi thư qua Resend và trả mã thư khi nhà cung cấp tiếp nhận. Hộp thư, trạng thái đã đọc và gửi lại theo sự kiện là các chức năng dự kiến. |
 | `ai-agent` · gRPC 5106 | `conversation`, `agent`, `tools`                                          | Conversation lưu hội thoại theo người dùng. Agent dựng ngữ cảnh, gọi mô hình và chọn công cụ được phép. Tools gọi Booking để tìm tour, tra giá/chỗ và tạo yêu cầu đã được khách xác nhận.                                                     |
+| `audit` · gRPC 5107   | `audit`                                                                  | Audit sở hữu lịch sử quản trị trong MongoDB. App nhận sự kiện theo `eventId` và tra cứu theo thời gian, hành động, người thực hiện hoặc đối tượng.                                                                                            |
 
 Ví dụ với một tour Hà Giang, module `catalog` của Booking sở hữu lịch trình ba ngày. Module `departure` sở hữu chuyến ngày cụ thể, giá của chuyến và hai chỗ khách muốn giữ. Payment sở hữu giao dịch tương ứng với số tiền của đơn. Khi tour đổi nội dung hoặc giá cho các chuyến sau, Booking vẫn đọc được giá đã chốt của đơn cũ.
 
@@ -48,6 +49,12 @@ Ví dụ với một tour Hà Giang, module `catalog` của Booking sở hữu l
 
 1. Mở [điểm khởi động Booking](../apps/booking/src/main.ts) và [AppModule](../apps/booking/src/app/app.module.ts) để xem cách app lắng nghe gRPC và đăng ký các module nghiệp vụ.
 2. Khi triển khai nghiệp vụ đầu tiên, bổ sung xử lý trong module tương ứng theo [module user đang chạy trong Identity](../apps/identity/src/app/modules/user/user.module.ts). Ví dụ, giữ chỗ cần controller nhận lệnh, service áp dụng điều kiện và repository ghi đơn cùng số chỗ. Dữ liệu và quy tắc nằm trong app sở hữu nghiệp vụ.
+
+## Ghi và tra cứu lịch sử quản trị
+
+Audit cung cấp hai RPC nội bộ `AppendAuditEvent` và `ListAuditEvents`. Phiên bản đầu tiếp nhận sự kiện tạo, sửa, xóa role, tạo người dùng và gán lại role từ caller tin cậy. Sự kiện giữ thời điểm xảy ra, người thực hiện, đối tượng, thay đổi và `processId` gốc. Bản ghi đã lưu được giữ nguyên khi nhận lại cùng `eventId` và nội dung.
+
+Đợt tích hợp tiếp theo nối outbox của Identity vào RPC ghi và nối BFF vào RPC tra cứu. Khi có Kafka, consumer của Audit dùng lại cùng service ghi. [Contract Audit v1](../libs/interfaces/src/lib/proto/audit/v1/audit.proto)
 
 ## Luồng đặt tour qua AI và thanh toán dự kiến
 
@@ -73,8 +80,9 @@ Booking, Payment và AI Agent dùng cùng mẫu cấu hình với Identity. `src
 | Booking  | `TYPEORM_CONFIG` (PostgreSQL) | `BOOKING_POSTGRES_DATABASE` | `booking`   |
 | Payment  | `TYPEORM_CONFIG` (PostgreSQL) | `PAYMENT_POSTGRES_DATABASE` | `payment`   |
 | AI Agent | `MONGO_CONFIG` (MongoDB)      | `AI_AGENT_MONGODB_DB_NAME`  | `ai_agent`  |
+| Audit    | `MONGO_CONFIG` (MongoDB)      | `AUDIT_MONGODB_DB_NAME`     | `audit`     |
 
-Booking và Payment dùng chung `TYPEORM_HOST`, `TYPEORM_PORT`, `TYPEORM_USERNAME` và `TYPEORM_PASSWORD`. Identity và AI Agent cùng lấy địa chỉ MongoDB từ `MONGODB_URL`.
+Booking và Payment dùng chung `TYPEORM_HOST`, `TYPEORM_PORT`, `TYPEORM_USERNAME` và `TYPEORM_PASSWORD`. Identity, AI Agent và Audit cùng lấy địa chỉ MongoDB từ `MONGODB_URL`.
 
 Trên volume mới, Docker Compose khởi tạo database PostgreSQL `backend_app`. Hiện Booking và Payment chỉ nạp cấu hình. Khi bật kết nối TypeORM cho từng app, cần tạo database theo tên đã cấu hình trước khi chạy migration.
 
@@ -82,4 +90,4 @@ Từ thư mục `server`, chạy `npx nx run identity:seed` hoặc `npx nx run a
 
 ## Chạy thử
 
-Từ `server` dùng `npx nx serve booking`, thay `booking` bằng tên app cần xem. `npm run dev-lite` chạy BFF, Identity và Notification; `npm run dev` chạy cả sáu app. Có thể đổi cổng từng service qua `<SERVICE>_SERVICE_PORT` trong [cấu hình mẫu](../.env.example). Với AI Agent, dùng `AI_AGENT_SERVICE_PORT`.
+Từ `server` dùng `npx nx serve audit` để chạy riêng Audit. `npm run dev-lite` chạy BFF, Identity và Notification. `npm run dev` chạy cả bảy app. Có thể đổi cổng qua `<SERVICE>_SERVICE_PORT` trong [cấu hình mẫu](../.env.example).

@@ -14,6 +14,10 @@ import {
   protobufFileName as aiAgentProtoFile,
 } from '@common/interfaces/grpc/ai-agent/v1/ai-agent';
 import {
+  AUDIT_V1_PACKAGE_NAME,
+  protobufFileName as auditProtoFile,
+} from '@common/interfaces/grpc/audit/v1/audit';
+import {
   BOOKING_V1_PACKAGE_NAME,
   protobufFileName as bookingProtoFile,
 } from '@common/interfaces/grpc/booking/v1/booking';
@@ -37,6 +41,7 @@ export enum GRPC_SERVICES {
   PAYMENT_SERVICE = 'GRPC_PAYMENT_SERVICE',
   NOTIFICATION_SERVICE = 'GRPC_NOTIFICATION_SERVICE',
   AI_AGENT_SERVICE = 'GRPC_AI_AGENT_SERVICE',
+  AUDIT_SERVICE = 'GRPC_AUDIT_SERVICE',
 }
 
 const definitions = {
@@ -69,6 +74,12 @@ const definitions = {
     file: aiAgentProtoFile,
     prefix: 'AI_AGENT_SERVICE',
     port: 5106,
+  },
+  [GRPC_SERVICES.AUDIT_SERVICE]: {
+    package: AUDIT_V1_PACKAGE_NAME,
+    file: auditProtoFile,
+    prefix: 'AUDIT_SERVICE',
+    port: 5107,
   },
 };
 
@@ -147,6 +158,10 @@ export class GrpcConfiguration {
   @IsNotEmpty()
   @IsObject()
   GRPC_AI_AGENT_SERVICE = grpcOptions(GRPC_SERVICES.AI_AGENT_SERVICE);
+
+  @IsNotEmpty()
+  @IsObject()
+  GRPC_AUDIT_SERVICE = grpcOptions(GRPC_SERVICES.AUDIT_SERVICE);
 }
 
 export function GrpcProvider(

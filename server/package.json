@@ -6,13 +6,13 @@
     "prepare": "husky",
     "nx:reset": "nx reset",
     "nx:run-many": "nx run-many",
-    "dev": "npm run nx:reset && npm run nx:run-many -- -t serve --parallel=6",
+    "dev": "npm run nx:reset && npm run nx:run-many -- -t serve --parallel=7",
     "dev-lite": "npm run dev -- --projects=bff,identity,notification",
-    "build": "nx run-many -t build --projects=bff,identity,booking,payment,notification,ai-agent",
+    "build": "nx run-many -t build --projects=bff,identity,booking,payment,notification,ai-agent,audit",
     "lint": "nx run-many -t lint",
     "typecheck": "node tools/typecheck.cjs",
     "proto:generate": "node tools/generate-proto.cjs",
-    "test": "nx run-many -t test --projects=bff,identity,interceptors --runInBand"
+    "test": "nx run-many -t test --projects=bff,identity,audit,interceptors --runInBand"
   },
   "private": true,
   "dependencies": {

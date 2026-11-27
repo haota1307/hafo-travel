@@ -10,6 +10,7 @@ Nền tảng hiện tại là Node 26 LTS, NestJS 12, Nx 24 và TypeORM 1. Ứng
 | --------------------------------------- | --------------------------------------------------------------------- |
 | `apps/bff`                              | HTTP gateway, Swagger, validation, guards; chuyển yêu cầu sang gRPC   |
 | `apps/identity`                         | Logic người dùng/vai trò và repository MongoDB                        |
+| `apps/audit`                            | Ghi và tra cứu lịch sử quản trị qua gRPC, lưu MongoDB                  |
 | `libs/configuration`                    | Config, validation config, provider kết nối                           |
 | `libs/interfaces`                       | HTTP DTO tại `gateway/`, protobuf tại `proto/`, type sinh tại `grpc/` |
 | `libs/constants`                        | Message pattern, permissions và mã/thông báo dùng chung               |
@@ -21,7 +22,7 @@ Nền tảng hiện tại là Node 26 LTS, NestJS 12, Nx 24 và TypeORM 1. Ứng
 
 Không import controller/service/repository của một app vào app khác trong source runtime. Dùng contract trong `libs` và transport hiện có. `tsconfig.base.json` khai báo alias `@common/<library>/*` cho thư viện chung và alias riêng cho từng app theo [quy ước import](coding.md#phân-chia-trách-nhiệm).
 
-Booking, Payment, Notification và AI Agent dùng bootstrap gRPC. Notification cung cấp RPC nội bộ `SendEmail` để gửi thư qua Resend. Xem [trách nhiệm, cổng và luồng gọi của sáu service](services.md).
+Booking, Payment, Notification, AI Agent và Audit dùng bootstrap gRPC. Notification cung cấp RPC nội bộ `SendEmail` để gửi thư qua Resend. Audit cung cấp `AppendAuditEvent` và `ListAuditEvents`. Xem [trách nhiệm, cổng và luồng gọi của các service](services.md).
 
 ## Cấu trúc một module
 

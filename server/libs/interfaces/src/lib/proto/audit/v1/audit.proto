@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package audit.v1;
+
+service AuditService {
+  rpc AppendAuditEvent(AppendAuditEventRequest) returns (AppendAuditEventResponse);
+  rpc ListAuditEvents(ListAuditEventsRequest) returns (ListAuditEventsResponse);
+}
+
+message AuditActor {
+  string user_id = 1;
+}
+
+message AuditTarget {
+  string type = 1;
+  string id = 2;
+}
+
+message AuditRoleReference {
+  string id = 1;
+  string name = 2;
+}
+
+message AuditRoleSnapshot {
+  string name = 1;
+  string description = 2;
+  repeated string permissions = 3;
+}
+
+message AuditTextChange {
+  optional string before = 1;
+  optional string after = 2;
+}
+
+message AuditPermissionChange {
+  repeated string added = 1;
+  repeated string removed = 2;
+}
+
+message AuditRoleUpdate {
+  AuditTextChange name = 1;
+  AuditTextChange description = 2;
+  AuditPermissionChange permissions = 3;
+}
+
+message AuditUserRoleChange {
+  AuditRoleReference before = 1;
+  AuditRoleReference after = 2;
+}
+
+message AuditChanges {
+  AuditRoleSnapshot role_created = 1;
+  AuditRoleUpdate role_updated = 2;
+  AuditRoleSnapshot role_deleted = 3;
+  AuditRoleReference user_created = 4;
+  AuditUserRoleChange user_roles_assigned = 5;
+}
+
+message AuditEvent {
+  string event_id = 1;
+  uint32 schema_version = 2;
+  string source = 3;
+  string occurred_at = 4;
+  AuditActor actor = 5;
+  string action = 6;
+  AuditTarget target = 7;
+  AuditChanges changes = 8;
+  string process_id = 9;
+}
+
+message AppendAuditEventRequest {
+  AuditEvent event = 1;
+}
+
+message AppendAuditEventResponse {
+  string event_id = 1;
+  bool duplicate = 2;
+}
+
+message ListAuditEventsRequest {
+  optional string from = 1;
+  optional string to = 2;
+  optional string action = 3;
+  optional string actor_user_id = 4;
+  AuditTarget target = 5;
+  optional uint32 limit = 6;
+  optional string cursor = 7;
+}
+
+message ListAuditEventsResponse {
+  repeated AuditEvent events = 1;
+  optional string next_cursor = 2;
+}
