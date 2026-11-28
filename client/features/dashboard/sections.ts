@@ -11,20 +11,19 @@ import {
   UsersRound,
 } from "lucide-react";
 
-export const sections = [
+const sampleSections = [
   "inquiries",
   "tours",
   "departures",
   "bookings",
   "payments",
   "content",
-  "users",
-  "roles",
 ] as const;
 
-export type Section = (typeof sections)[number];
+export type SampleSection = (typeof sampleSections)[number];
 
-export type Destination = Section | "overview" | "permissions";
+export type Destination =
+  SampleSection | "users" | "roles" | "overview" | "permissions";
 
 export const navigation: { label: string; pages: Destination[] }[] = [
   {
@@ -99,8 +98,8 @@ export function visibleNavigation(destinations: Destination[]) {
     .filter((group) => group.pages.length > 0);
 }
 
-export function isSection(value: string): value is Section {
-  return sections.some((section) => section === value);
+export function isSampleSection(value: string): value is SampleSection {
+  return sampleSections.some((section) => section === value);
 }
 
 export function normalizeSearch(value: string) {

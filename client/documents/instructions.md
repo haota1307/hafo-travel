@@ -33,6 +33,7 @@ proxy.ts                      Locale middleware
 ```
 
 - Page mỏng; nghiệp vụ nằm trong `features/<domain>`, không đưa nghiệp vụ thật vào dữ liệu demo.
+- Dashboard có route riêng cho Tổng quan, Tài khoản, Vai trò và Phân quyền. Route `[section]` chỉ phục vụ danh sách mẫu. `DashboardLayoutProvider` cấp điều hướng và container popup. `DashboardSampleDataProvider` chỉ bọc Tổng quan và danh sách mẫu.
 - Input một dòng và Button mặc định cao 36px (`h-9`). Form dùng kích thước từ `components/ui`; chỉ chọn biến thể kích thước khi thiết kế yêu cầu.
 - Luôn đặt dấu `*` màu đỏ ngay sau nhãn của trường bắt buộc, ví dụ `Họ tên *`. Dùng `text-destructive` và `aria-hidden="true"` cho dấu sao. Giữ `required` hoặc `aria-required` theo loại control và dùng cùng điều kiện với validation của form.
 - Trường chọn từ danh sách trong form dashboard dùng Combobox shadcn ở `components/ui/combobox.tsx`. Tái sử dụng `features/dashboard/components/form-combobox.tsx` để tìm theo nhãn tiếng Việt/Anh và gửi mã lựa chọn qua form. Trong Sheet, truyền container của layout cho popup để giữ theme. Bộ lọc nhiều lựa chọn trên bảng dùng `DataTableFacetedFilter`, số dòng mỗi trang dùng `Select`.
@@ -44,7 +45,7 @@ proxy.ts                      Locale middleware
 - Code ứng dụng (`features`, `components`, `lib`, `hooks`, `i18n` và route ngoài demo) không import `@/template/*`; ESLint kiểm tra ranh giới này. Demo được phép dùng hạ tầng chung của ứng dụng.
 - Tham khảo data-table, layout và confirm-dialog tại `template/components`. Khi cần dùng cho nghiệp vụ thật, tách component phù hợp sang `components/shared`, truyền nhãn/dữ liệu qua props và dùng primitive chuẩn; không kéo provider hoặc mock demo vào feature.
 - `components.json` sinh primitive Base UI vào `components/ui`; đây là bộ chuẩn cho tính năng mới. Radix chỉ nằm trong `template/components/ui`. Không trộn `render` với `asChild`. Cả hai bộ lịch dùng DayPicker 10 từ `@daypicker/react`; không dùng lại alias lịch v9 hoặc classNames `table`, dùng `month_grid`.
-- Bảng dashboard và template dùng chung toolbar, bộ lọc nhiều lựa chọn, menu cột, phân trang và cấu hình TanStack Table 9 trong `components/shared/data-table/`. Dùng `useTable` với `dataTableFeatures`, đọc state qua `table.state` và giới hạn generic dữ liệu bảng ở `TData extends object`. Truyền nhãn cột, lựa chọn lọc và container của layout hiện tại vào các control dùng chung.
+- Bảng dashboard và template dùng chung toolbar, bộ lọc nhiều lựa chọn, menu cột, phân trang và cấu hình TanStack Table 9 trong `components/shared/data-table/`. Bảng dashboard dùng `useDataTable` cho state tìm kiếm, sắp xếp, chọn dòng và phân trang. Feature cung cấp dữ liệu, định nghĩa cột và cách đồng bộ bộ lọc với URL. Bảng template dùng `useTable` với `dataTableFeatures`. Đọc state qua `table.state`, dùng `TData extends object` và truyền nhãn, lựa chọn lọc, container của layout vào control dùng chung.
 - Chỉ có một `cn` tại `lib/utils.ts` và một `useIsMobile` tại `hooks/use-mobile.ts`; cả demo và ứng dụng dùng chung.
 - Giữ semantic tokens, accessible name cho icon-only control, DialogTitle/SheetTitle và vùng cuộn cho modal dài.
 - Nội dung gợi ý khi hover hoặc focus dùng Tooltip shadcn. Trong ứng dụng, dùng `LabeledTooltip` hoặc `components/ui/tooltip`; trong template dùng `template/components/ui/tooltip`. Gắn trigger lên chính phần tử tương tác, giữ `aria-label` cho nút chỉ có icon và truyền container của layout khi có theme cục bộ. Tránh thuộc tính HTML `title` để tạo tooltip trình duyệt, kể cả trên nút đã có Tooltip. Prop `title` dùng làm tiêu đề trang, cột hoặc dialog vẫn hợp lệ.
@@ -142,6 +143,7 @@ Khi áp dụng cho feature khác, đặt mã triển khai tại `client/features
 - `[locale]/layout` validate locale, gắn `html lang`, NextIntlClientProvider và QueryProvider. Request config đặt timeZone Asia/Ho_Chi_Minh.
 - Client dùng `useTranslations("<domain>")`; server dùng `getTranslations`. Message key ổn định theo ý nghĩa, thêm đồng thời vi/en; ICU cho biến/plural, escape dấu nháy theo cú pháp ICU.
 - Link/useRouter/usePathname/redirect cho route nội bộ import từ `@/i18n/navigation`. usePathname trả path không có locale để menu active giữ đúng. useSearchParams/notFound vẫn dùng next/navigation.
+- `NextTopLoader` trong `[locale]/layout` hiển thị thanh tiến trình khi điều hướng bằng liên kết. `useRouter` dùng cùng thanh khi `push` hoặc `replace` đổi pathname, kể cả khi đổi locale.
 - Route trang trải nghiệm dùng thư mục/URL tiếng Anh `experiences` cho cả hai locale: `/vi/experiences`, `/en/experiences`. Nội dung vẫn dịch theo locale. `/trai-nghiem` và `/coaches` redirect 308 trực tiếp tới `/experiences`, giữ locale/query; slug các hành trình giữ nguyên.
 - Language switch giữ pathname/query/hash khi đổi locale, không dùng cookie template-locale.
 - Public có nút VI/EN tại header cho desktop/mobile, đổi bằng navigation của `next-intl`. Nội dung section, footer, pháp lý và validation dùng key có nghĩa trong `publicSite`; đoạn có định dạng dùng `t.rich`, không ghép các mảnh câu theo tiếng Anh.
@@ -158,6 +160,8 @@ Khi áp dụng cho feature khác, đặt mã triển khai tại `client/features
 Trang dashboard và từng section truyền đích cụ thể vào `PageAccess` để kiểm tra quyền từ `GET /user/me` trong request hiện tại. `dashboardPermission` ánh xạ từng đích sang mã UI. Trang Vai trò dùng `UI:dashboard/roles` và trang Phân quyền dùng `UI:dashboard/permissions`. Với dữ liệu cũ, giao diện cấp quyền Phân quyền cho vai trò hệ thống `administrator` đã có quyền Vai trò. Khi thêm mã UI mới, cập nhật danh mục quyền backend. Dùng danh sách đích được phép cho sidebar, tìm kiếm, các liên kết nội bộ và chuyển hướng sau login. Proxy giữ locale và đường dẫn đích khi chuyển khách sang login. Login/register chỉ dành cho khách. Các liên kết xác minh và khôi phục tài khoản xử lý theo token riêng. Khi cần xoay refresh token, trình duyệt dùng luồng refresh có khóa dùng chung trước khi tải lại trang. Hồ sơ và đăng xuất nằm tại `/[locale]/account`.
 
 Login trong template là mô phỏng. Luồng thực tế ở `features/auth` và `/[locale]/auth/login`. Next giữ access JWT và refresh JWT trong hai cookie HttpOnly. Proxy gửi access JWT dưới dạng Bearer đến BFF. Route refresh và logout chuyển giá trị refresh cookie đến Identity qua BFF. Route auth trả trạng thái cho browser và giữ credential ngoài JSON. Xem [cấu hình và kiểm thử](../README.md).
+
+Hai layout `/[locale]/auth` và `/[locale]/account` dùng chung `AuthShell` trong `features/auth/components`.
 
 `features/auth/auth.server.ts` đọc phiên từ BFF và lưu kết quả trong phạm vi request để layout và `PageAccess` dùng chung.
 

@@ -51,6 +51,7 @@
 :root {
   --font-sans:
     "Public Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --navigation-progress: #6a9b7f;
   --page-border: #143c321f;
   --page-dark-foreground: #c9d0cc;
   --page-dark-border: color-mix(

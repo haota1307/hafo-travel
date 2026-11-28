@@ -179,12 +179,12 @@ export function PermissionMatrix({
         {columns.map(({ role }) => (
           <colgroup key={role.id} span={columnCount} />
         ))}
-        <TableHeader className="sticky top-0 z-20 bg-muted">
-          <TableRow>
+        <TableHeader className="sticky top-0 z-20 bg-background">
+          <TableRow className="hover:bg-transparent">
             <TableHead
               rowSpan={actions.length ? 2 : 1}
               scope="col"
-              className={cn(featureColumn, "border-b bg-muted")}
+              className={cn(featureColumn, "border-b bg-background")}
             >
               {t("matrix.feature")}
             </TableHead>
@@ -205,7 +205,7 @@ export function PermissionMatrix({
             ))}
           </TableRow>
           {actions.length > 0 && (
-            <TableRow>
+            <TableRow className="hover:bg-transparent">
               {columns.flatMap(({ role, name, selected, system }) =>
                 actions.map(({ action, label, permissions }, index) => (
                   <TableHead

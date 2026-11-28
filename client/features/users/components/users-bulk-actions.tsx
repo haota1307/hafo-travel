@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { useDashboardLayout } from "@/features/dashboard/components/dashboard-layout-context";
 import { getRoleName } from "@/features/roles/roles-ui";
 import { downloadCsv } from "@/lib/download-csv";
 
@@ -44,7 +44,7 @@ export function UsersBulkActions({
   const roleLabels = useTranslations("roles");
   const dashboard = useTranslations("dashboard");
   const locale = useLocale();
-  const { container } = useWorkspace();
+  const { container } = useDashboardLayout();
   const mutation = useUpdateUsersRole(actorId);
   const [open, setOpen] = useState(false);
   const [result, setResult] = useState<RoleResult | null>(null);

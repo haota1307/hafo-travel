@@ -3,19 +3,11 @@
 import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { PageError } from "@/components/shared/page-error";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-import { PageHeading } from "@/features/dashboard/components/record-ui";
-import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { PageHeading } from "@/components/shared/page-heading";
+import { useDashboardLayout } from "@/features/dashboard/components/dashboard-layout-context";
 import { accessibleDestinations } from "@/features/dashboard/sections";
 import { useRouter } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
@@ -78,7 +70,7 @@ function PermissionsEditor({
   const t = useTranslations("roles");
   const locale = useLocale();
   const router = useRouter();
-  const { container } = useWorkspace();
+  const { container } = useDashboardLayout();
   const rolesQuery = useGetRoles(actorId);
   const catalogQuery = useGetRolePermissions(actorId);
   const mutation = useUpdateRolePermissions(actorId);
@@ -209,44 +201,23 @@ function PermissionsEditor({
         onChange={changePermission}
       />
       {container && confirmation && (
-        <Dialog
-          open
-          onOpenChange={(open) => {
-            if (!open) {
-              setConfirmation(undefined);
-            }
-          }}
-        >
-          <DialogContent portalContainer={container} showCloseButton={false}>
-            <DialogHeader>
-              <DialogTitle>{t("removeAccessTitle")}</DialogTitle>
-              <p className="text-sm font-medium">
-                {getRoleName(confirmation.role, t, locale)}
-              </p>
-              <DialogDescription>
-                {confirmation.role.memberCount === undefined
-                  ? t("removeAccessUnknown")
-                  : t("removeAccessDescription", {
-                      count: confirmation.role.memberCount,
-                    })}
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setConfirmation(undefined)}
-              >
-                {t("cancel")}
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => void save(confirmation)}
-              >
-                {t("confirmRemoveAccess")}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <ConfirmDialog
+          portalContainer={container}
+          title={t("removeAccessTitle")}
+          subject={getRoleName(confirmation.role, t, locale)}
+          description={
+            confirmation.role.memberCount === undefined
+              ? t("removeAccessUnknown")
+              : t("removeAccessDescription", {
+                  count: confirmation.role.memberCount,
+                })
+          }
+          cancelLabel={t("cancel")}
+          confirmLabel={t("confirmRemoveAccess")}
+          confirmVariant="destructive"
+          onCancel={() => setConfirmation(undefined)}
+          onConfirm={() => void save(confirmation)}
+        />
       )}
     </div>
   );

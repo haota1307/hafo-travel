@@ -194,6 +194,20 @@ test("dashboard and guest pages follow the current role across locales", async (
   assert.equal(overview.status, 200);
   assert.doesNotMatch(await overview.text(), /href="\/vi\/dashboard\//);
 
+  permissions = ["UI:dashboard/inquiries"];
+  const inquiries = await open(
+    "/en/dashboard/inquiries?queue=unassigned",
+    signedIn,
+  );
+  assert.equal(inquiries.status, 200);
+  const inquiriesHtml = await inquiries.text();
+  assert.match(inquiriesHtml, /Inquiries<\/h1>/);
+  assert.match(inquiriesHtml, />Unassigned</);
+
+  const missingSection = await open("/en/dashboard/unknown-section", signedIn);
+  assert.equal(missingSection.status, 404);
+  await missingSection.text();
+
   permissions = ["UI:dashboard/users"];
   const users = await open("/vi/dashboard/users?record=staff", signedIn);
   assert.equal(users.status, 200);

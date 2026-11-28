@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 import { PageError } from "@/components/shared/page-error";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { PageHeading } from "@/features/dashboard/components/record-ui";
+import { PageHeading } from "@/components/shared/page-heading";
 import { dashboardPath } from "@/features/dashboard/sections";
 import { useRouter } from "@/i18n/navigation";
 
@@ -20,7 +20,8 @@ import {
   type UserEditAction,
 } from "../users-ui";
 import { useResendUserInvitation } from "../users.queries";
-import { InviteUserSheet, UserDetailSheet } from "./user-detail-sheet";
+import { InviteUserSheet } from "./invite-user-sheet";
+import { UserDetailSheet } from "./user-detail-sheet";
 import { showInvitationResult } from "./user-forms";
 import { UserStatusDialog } from "./user-row-actions";
 import { UsersTable } from "./users-table";

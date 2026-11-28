@@ -4,22 +4,15 @@ import { useFormatter, useLocale, useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
 import { toast } from "@/components/ui/toast";
-import { StatusBadge } from "@/features/dashboard/components/record-ui";
-import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { DashboardSheet } from "@/features/dashboard/components/dashboard-sheet";
 import { getRoleName } from "@/features/roles/roles-ui";
 
-import {
-  useGetUser,
-  useInviteUser,
-  useUpdateUsersRole,
-} from "../users.queries";
+import { useGetUser, useUpdateUsersRole } from "../users.queries";
 import type { InternalUser } from "../users.schema";
 import {
   getUserErrorKey,
@@ -27,78 +20,8 @@ import {
   type UserAccess,
   type UserEditAction,
 } from "../users-ui";
-import { EditUserNameForm, InviteUserForm, UserRoleForm } from "./user-forms";
-
-const userStatusColors: Record<InternalUser["status"], string> = {
-  active:
-    "border-green-500/30 bg-green-500/10 text-green-800 dark:text-green-300",
-  pending:
-    "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300",
-  locked: "border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-300",
-};
-
-export function UserStatusBadge({
-  status,
-}: {
-  status: InternalUser["status"];
-}) {
-  const t = useTranslations("users");
-
-  return (
-    <StatusBadge
-      status={status}
-      label={t(`statuses.${status}`)}
-      className={userStatusColors[status]}
-    />
-  );
-}
-
-export function InviteUserSheet({
-  actorId,
-  onClose,
-}: {
-  actorId: string;
-  onClose: () => void;
-}) {
-  const t = useTranslations("users");
-  const { container } = useWorkspace();
-  const mutation = useInviteUser(actorId);
-
-  if (!container) {
-    return null;
-  }
-
-  return (
-    <Sheet
-      open
-      onOpenChange={(open) => {
-        if (!open && !mutation.isPending) {
-          onClose();
-        }
-      }}
-    >
-      <SheetContent
-        portalContainer={container}
-        className="overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-md"
-      >
-        <SheetHeader className="gap-1 border-b p-5 pe-12">
-          <SheetTitle className="text-xl font-semibold">
-            {t("invite")}
-          </SheetTitle>
-          <SheetDescription>{t("inviteDescription")}</SheetDescription>
-        </SheetHeader>
-        <div className="px-5 pb-6">
-          <InviteUserForm
-            actorId={actorId}
-            mutation={mutation}
-            onDone={onClose}
-            onCancel={onClose}
-          />
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-}
+import { EditUserNameForm, UserRoleForm } from "./user-forms";
+import { UserStatusBadge } from "./user-status-badge";
 
 export function UserDetailSheet({
   actorId,
@@ -117,59 +40,42 @@ export function UserDetailSheet({
 }) {
   const t = useTranslations("users");
   const locale = useLocale();
-  const { container } = useWorkspace();
   const detail = useGetUser(actorId, recordId);
   const user = detail.isSuccess ? detail.data : undefined;
 
-  if (!container) {
-    return null;
-  }
-
   return (
-    <Sheet
-      open
-      onOpenChange={(open) => {
-        if (!open) {
-          onClose();
-        }
-      }}
-    >
-      <SheetContent
-        portalContainer={container}
-        className="overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-md"
-      >
-        <SheetHeader className="gap-1 border-b p-5 pe-12">
-          <SheetDescription>{t("detail")}</SheetDescription>
-          <SheetTitle className="text-xl font-semibold">
-            {user ? getUserName(user, locale) : t("account")}
-          </SheetTitle>
-        </SheetHeader>
-        <div className="grid gap-5 px-5 pb-6">
-          {detail.isLoading && <p role="status">{t("loadingDetail")}</p>}
-          {detail.isError && (
-            <div className="grid justify-items-start gap-2">
-              <p role="alert">{t(getUserErrorKey(detail.error))}</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => detail.refetch()}
-              >
-                {t("retry")}
-              </Button>
-            </div>
-          )}
-          {user && (
-            <UserDetail
-              user={user}
-              actorId={actorId}
-              access={access}
-              editAction={editAction}
-              onEditDone={onEditDone}
-            />
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
+    <DashboardSheet onClose={onClose}>
+      <SheetHeader className="gap-1 border-b p-5 pe-12">
+        <SheetDescription>{t("detail")}</SheetDescription>
+        <SheetTitle className="text-xl font-semibold">
+          {user ? getUserName(user, locale) : t("account")}
+        </SheetTitle>
+      </SheetHeader>
+      <div className="grid gap-5 px-5 pb-6">
+        {detail.isLoading && <p role="status">{t("loadingDetail")}</p>}
+        {detail.isError && (
+          <div className="grid justify-items-start gap-2">
+            <p role="alert">{t(getUserErrorKey(detail.error))}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => detail.refetch()}
+            >
+              {t("retry")}
+            </Button>
+          </div>
+        )}
+        {user && (
+          <UserDetail
+            user={user}
+            actorId={actorId}
+            access={access}
+            editAction={editAction}
+            onEditDone={onEditDone}
+          />
+        )}
+      </div>
+    </DashboardSheet>
   );
 }
 

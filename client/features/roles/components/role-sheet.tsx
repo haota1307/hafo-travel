@@ -7,13 +7,11 @@ import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { DashboardSheet } from "@/features/dashboard/components/dashboard-sheet";
 import {
   accessibleDestinations,
   dashboardPath,
@@ -49,32 +47,14 @@ function RoleSheet({
   onClose: () => void;
   children: ReactNode;
 }) {
-  const { container } = useWorkspace();
-
-  if (!container) {
-    return null;
-  }
-
   return (
-    <Sheet
-      open
-      onOpenChange={(open) => {
-        if (!open && !pending) {
-          onClose();
-        }
-      }}
-    >
-      <SheetContent
-        portalContainer={container}
-        className="overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-md"
-      >
-        <SheetHeader className="gap-1 border-b p-5 pe-12">
-          <SheetTitle className="text-xl font-semibold">{title}</SheetTitle>
-          <SheetDescription>{description}</SheetDescription>
-        </SheetHeader>
-        <div className="grid gap-5 px-5 pb-6">{children}</div>
-      </SheetContent>
-    </Sheet>
+    <DashboardSheet onClose={onClose} pending={pending}>
+      <SheetHeader className="gap-1 border-b p-5 pe-12">
+        <SheetTitle className="text-xl font-semibold">{title}</SheetTitle>
+        <SheetDescription>{description}</SheetDescription>
+      </SheetHeader>
+      <div className="grid gap-5 px-5 pb-6">{children}</div>
+    </DashboardSheet>
   );
 }
 

@@ -1,27 +1,25 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import {
-  useTable,
-  type ColumnFiltersState,
-  type PaginationState,
-  type SortingState,
-  type RowSelectionState,
-  type ColumnVisibilityState,
-} from "@tanstack/react-table";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableGrid } from "@/components/shared/data-table/grid";
 import { DataTableToolbar } from "@/components/shared/data-table/toolbar";
 import { DataTablePagination } from "@/components/shared/data-table/pagination";
-import { dataTableFeatures } from "@/components/shared/data-table/table-features";
+import { useDataTable } from "@/components/shared/data-table/use-data-table";
+import { PageHeading } from "@/components/shared/page-heading";
 import { useRouter } from "@/i18n/navigation";
 import { sampleDate } from "../fixtures";
-import type { Column, SampleSection } from "../records";
-import { dashboardPath, normalizeSearch } from "../sections";
-import { useWorkspace } from "./workspace";
-import { PageHeading } from "./record-ui";
+import type { Column } from "../records";
+import {
+  dashboardPath,
+  normalizeSearch,
+  type SampleSection,
+} from "../sections";
+import { useDashboardLayout } from "./dashboard-layout-context";
+import { useDashboardSampleData } from "./dashboard-sample-data";
 import { RecordSheet } from "./record-sheet";
 import { DashboardBulkActions } from "./dashboard-bulk-actions";
 import { useDashboardColumns } from "./dashboard-columns";
@@ -45,16 +43,9 @@ export function DashboardList({
   const t = useTranslations("dashboard");
   const router = useRouter();
   const params = useSearchParams();
-  const { data, container, inquiryState } = useWorkspace();
+  const { container } = useDashboardLayout();
+  const { data, inquiryState } = useDashboardSampleData();
   const [create, setCreate] = useState(false);
-  const [search, setSearch] = useState("");
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnVisibility, setVisibility] = useState<ColumnVisibilityState>({});
-  const [rowSelection, setSelection] = useState<RowSelectionState>({});
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
   const rows = data[section];
   const scoped = useMemo(
     () =>
@@ -103,24 +94,10 @@ export function DashboardList({
   const columnFilters: ColumnFiltersState = filterIds
     .filter((id) => params.has(id))
     .map((id) => ({ id, value: params.getAll(id) }));
-  const table = useTable({
-    features: dataTableFeatures,
+  const table = useDataTable({
     data: scoped,
     columns,
     getRowId: (row) => row.id,
-    autoResetPageIndex: false,
-    state: {
-      globalFilter: search,
-      sorting,
-      columnVisibility,
-      rowSelection,
-      pagination,
-      columnFilters,
-    },
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    onColumnVisibilityChange: setVisibility,
-    onRowSelectionChange: setSelection,
     globalFilterFn: (row, _id, query) =>
       normalizeSearch(
         [
@@ -130,42 +107,33 @@ export function DashboardList({
           ...Object.values(row.original.values),
         ].join(" "),
       ).includes(normalizeSearch(String(query))),
-    onGlobalFilterChange: (update) => {
-      setSearch(update);
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-    },
-    onColumnFiltersChange: (update) => {
-      const next =
-        typeof update === "function" ? update(columnFilters) : update;
-      const query = new URLSearchParams(window.location.search);
+    columnFilters: {
+      state: columnFilters,
+      onChange: (update) => {
+        const next =
+          typeof update === "function" ? update(columnFilters) : update;
+        const query = new URLSearchParams(window.location.search);
 
-      for (const id of filterIds) {
-        query.delete(id);
-      }
-
-      for (const filter of next) {
-        for (const value of filter.value as string[]) {
-          query.append(filter.id, value);
+        for (const id of filterIds) {
+          query.delete(id);
         }
-      }
 
-      window.history.replaceState(
-        null,
-        "",
-        window.location.pathname +
-          (query.size ? "?" + query.toString() : "") +
-          window.location.hash,
-      );
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+        for (const filter of next) {
+          for (const value of filter.value as string[]) {
+            query.append(filter.id, value);
+          }
+        }
+
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname +
+            (query.size ? "?" + query.toString() : "") +
+            window.location.hash,
+        );
+      },
     },
   });
-  const pageCount = table.getPageCount();
-
-  useEffect(() => {
-    if (pagination.pageIndex >= Math.max(1, pageCount)) {
-      table.setPageIndex(Math.max(0, pageCount - 1));
-    }
-  }, [pagination.pageIndex, pageCount, table]);
 
   const filters = filterIds
     .filter((id) => table.getColumn(id))
@@ -211,7 +179,7 @@ export function DashboardList({
               variant="secondary"
               size="sm"
               onClick={() => {
-                setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+                table.setPageIndex(0);
                 navigate({ queue: undefined });
               }}
             >

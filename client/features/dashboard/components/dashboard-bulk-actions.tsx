@@ -18,9 +18,10 @@ import {
   listColumns,
   type DashboardRecord,
   type InquiryUpdate,
-  type SampleSection,
 } from "../records";
-import { useWorkspace } from "./workspace";
+import type { SampleSection } from "../sections";
+import { useDashboardLayout } from "./dashboard-layout-context";
+import { useDashboardSampleData } from "./dashboard-sample-data";
 
 export function DashboardBulkActions({
   section,
@@ -31,8 +32,9 @@ export function DashboardBulkActions({
 }) {
   const t = useTranslations("dashboard");
   const common = useTranslations("template");
-  const { container, changePublication, inquiryState, editInquiries } =
-    useWorkspace();
+  const { container } = useDashboardLayout();
+  const { changePublication, inquiryState, editInquiries } =
+    useDashboardSampleData();
   const records = table
     .getFilteredSelectedRowModel()
     .rows.map((row) => row.original);

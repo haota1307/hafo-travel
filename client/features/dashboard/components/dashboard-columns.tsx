@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 import { Ellipsis } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LabeledTooltip } from "@/components/shared/labeled-tooltip";
-import { Checkbox } from "@/components/ui/checkbox";
+import { createSelectionColumn } from "@/components/shared/data-table/selection-column";
 import { DataTableColumnHeader } from "@/components/shared/data-table/column-header";
 import type { ColumnDef } from "@/components/shared/data-table/table-features";
-import type { DashboardRecord, SampleSection } from "../records";
-import { listColumns } from "../records";
-import { StatusBadge } from "./record-ui";
+import { listColumns, type DashboardRecord } from "../records";
+import type { SampleSection } from "../sections";
+import { DashboardStatusBadge } from "./dashboard-status-badge";
 
 export function useDashboardColumns(
   section: SampleSection,
@@ -60,36 +60,16 @@ export function useDashboardColumns(
       filterFn: (row, id, values: string[]) =>
         values.includes(row.getValue(id)),
       cell: ({ row }) =>
-        row.original.status && <StatusBadge status={row.original.status} />,
+        row.original.status && (
+          <DashboardStatusBadge status={row.original.status} />
+        ),
     });
 
     return [
-      {
-        id: "select",
-        enableHiding: false,
-        enableSorting: false,
-        meta: { className: "w-8" },
-        header: ({ table }) => (
-          <Checkbox
-            className="rounded-full shadow-xs"
-            checked={table.getIsAllPageRowsSelected()}
-            indeterminate={
-              table.getIsSomePageRowsSelected() &&
-              !table.getIsAllPageRowsSelected()
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(value)}
-            aria-label={labels("selectAll")}
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            className="rounded-full shadow-xs"
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(value)}
-            aria-label={labels("selectRow") + " · " + row.original.title}
-          />
-        ),
-      },
+      createSelectionColumn<DashboardRecord>(
+        labels("selectAll"),
+        (record) => labels("selectRow") + " · " + record.title,
+      ),
       {
         accessorKey: "title",
         enableHiding: false,

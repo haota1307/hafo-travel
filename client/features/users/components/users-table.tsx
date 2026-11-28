@@ -1,29 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import {
-  useTable,
-  type ColumnFiltersState,
-  type ColumnVisibilityState,
-  type PaginationState,
-  type RowSelectionState,
-  type SortingState,
-} from "@tanstack/react-table";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 
-import { DataTableColumnHeader } from "@/components/shared/data-table/column-header";
 import { DataTableGrid } from "@/components/shared/data-table/grid";
 import { DataTablePagination } from "@/components/shared/data-table/pagination";
-import {
-  dataTableFeatures,
-  type ColumnDef,
-} from "@/components/shared/data-table/table-features";
+import { useDataTable } from "@/components/shared/data-table/use-data-table";
 import { DataTableToolbar } from "@/components/shared/data-table/toolbar";
-import { LabeledTooltip } from "@/components/shared/labeled-tooltip";
 import { PageError } from "@/components/shared/page-error";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { useDashboardLayout } from "@/features/dashboard/components/dashboard-layout-context";
 import { normalizeSearch } from "@/features/dashboard/sections";
 import { RoleIdSchema } from "@/features/roles/roles.schema";
 import { getRoleName } from "@/features/roles/roles-ui";
@@ -31,222 +18,25 @@ import { HttpError } from "@/lib/http";
 
 import { useGetUsers } from "../users.queries";
 import { UserStatusSchema, type InternalUser } from "../users.schema";
-import { getUserName, type UserAccess, type UserAction } from "../users-ui";
-import { UserStatusBadge } from "./user-detail-sheet";
-import { UserActionsMenu } from "./user-row-actions";
+import { getUserName } from "../users-ui";
+import type { UserActionProps } from "./user-row-actions";
 import { UsersBulkActions } from "./users-bulk-actions";
+import { useUsersColumns } from "./users-columns";
 
 const noUsers: InternalUser[] = [];
-
-type UsersTableProps = {
-  actorId: string;
-  access: UserAccess;
-  resendingInvitation: boolean;
-  onAction: (action: UserAction, user: InternalUser) => void;
-};
-
-function useUsersColumns({
-  actorId,
-  access,
-  resendingInvitation,
-  onAction,
-}: UsersTableProps) {
-  const t = useTranslations("users");
-  const roles = useTranslations("roles");
-  const common = useTranslations("template");
-  const locale = useLocale();
-  const { container } = useWorkspace();
-
-  return useMemo<ColumnDef<InternalUser>[]>(() => {
-    const roleLabel = (user: InternalUser) =>
-      getRoleName(user.role, roles, locale);
-    const headers = {
-      name: t("fields.name"),
-      email: t("fields.email"),
-      role: t("fields.role"),
-      status: t("fields.status"),
-    };
-    const columns: ColumnDef<InternalUser>[] = [
-      {
-        id: "select",
-        enableHiding: false,
-        enableSorting: false,
-        meta: { className: "w-8" },
-        header: ({ table }) => (
-          <Checkbox
-            className="rounded-full shadow-xs"
-            checked={table.getIsAllPageRowsSelected()}
-            indeterminate={
-              table.getIsSomePageRowsSelected() &&
-              !table.getIsAllPageRowsSelected()
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(value)}
-            aria-label={common("selectAll")}
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            className="rounded-full shadow-xs"
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(value)}
-            aria-label={
-              common("selectRow") + " · " + getUserName(row.original, locale)
-            }
-          />
-        ),
-      },
-      {
-        id: "name",
-        accessorFn: (user) => getUserName(user, locale),
-        enableHiding: false,
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            container={container}
-            title={headers.name}
-          />
-        ),
-        sortFn: (left, right) =>
-          getUserName(left.original, locale).localeCompare(
-            getUserName(right.original, locale),
-            locale,
-          ),
-        cell: ({ row, getValue }) =>
-          access.detail ? (
-            <button
-              type="button"
-              onClick={() => onAction("viewDetails", row.original)}
-              className="block max-w-80 truncate text-start font-medium hover:underline"
-            >
-              {String(getValue())}
-            </button>
-          ) : (
-            <span className="block max-w-80 truncate font-medium">
-              {String(getValue())}
-            </span>
-          ),
-      },
-      {
-        accessorKey: "email",
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            container={container}
-            title={headers.email}
-          />
-        ),
-        cell: ({ row }) => (
-          <LabeledTooltip
-            label={row.original.email}
-            portalContainer={container}
-          >
-            <span className="block max-w-64 truncate" tabIndex={0}>
-              {row.original.email}
-            </span>
-          </LabeledTooltip>
-        ),
-      },
-      {
-        id: "role",
-        accessorFn: (user) => user.role.id,
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            container={container}
-            title={headers.role}
-          />
-        ),
-        sortFn: (left, right) =>
-          roleLabel(left.original).localeCompare(
-            roleLabel(right.original),
-            locale,
-          ),
-        filterFn: (row, columnId, values: string[]) =>
-          values.includes(row.getValue(columnId)),
-        cell: ({ row }) => (
-          <LabeledTooltip
-            label={roleLabel(row.original)}
-            portalContainer={container}
-          >
-            <span className="block max-w-64 truncate" tabIndex={0}>
-              {roleLabel(row.original)}
-            </span>
-          </LabeledTooltip>
-        ),
-      },
-      {
-        accessorKey: "status",
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            column={column}
-            container={container}
-            title={headers.status}
-          />
-        ),
-        filterFn: (row, columnId, values: string[]) =>
-          values.includes(row.getValue(columnId)),
-        sortFn: (left, right) =>
-          t(`statuses.${left.original.status}`).localeCompare(
-            t(`statuses.${right.original.status}`),
-            locale,
-          ),
-        cell: ({ row }) => <UserStatusBadge status={row.original.status} />,
-      },
-    ];
-
-    if (access.detail) {
-      columns.push({
-        id: "actions",
-        enableHiding: false,
-        enableSorting: false,
-        meta: { className: "w-10 text-end" },
-        header: () => <span className="sr-only">{t("actions")}</span>,
-        cell: ({ row }) => (
-          <UserActionsMenu
-            actorId={actorId}
-            user={row.original}
-            access={access}
-            resendingInvitation={resendingInvitation}
-            onAction={onAction}
-          />
-        ),
-      });
-    }
-
-    return columns;
-  }, [
-    access,
-    actorId,
-    common,
-    container,
-    locale,
-    onAction,
-    resendingInvitation,
-    roles,
-    t,
-  ]);
-}
 
 export function UsersTable({
   actorId,
   access,
   resendingInvitation,
   onAction,
-}: UsersTableProps) {
+}: UserActionProps) {
   const t = useTranslations("users");
   const roleLabels = useTranslations("roles");
   const dashboard = useTranslations("dashboard");
   const locale = useLocale();
-  const { container } = useWorkspace();
+  const { container } = useDashboardLayout();
   const params = useSearchParams();
-  const [search, setSearch] = useState("");
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnVisibility, setVisibility] = useState<ColumnVisibilityState>({});
-  const [rowSelection, setSelection] = useState<RowSelectionState>({});
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
   const query = useGetUsers(actorId, true);
   const rows = query.isSuccess ? query.data : noUsers;
   const columns = useUsersColumns({
@@ -254,6 +44,7 @@ export function UsersTable({
     access,
     resendingInvitation,
     onAction,
+    container,
   });
   const columnFilters = useMemo<ColumnFiltersState>(
     () =>
@@ -272,24 +63,10 @@ export function UsersTable({
         .filter(({ value }) => value.length > 0),
     [params],
   );
-  const table = useTable({
-    features: dataTableFeatures,
-    columns,
+  const table = useDataTable({
     data: rows,
+    columns,
     getRowId: (row) => row.userId,
-    autoResetPageIndex: false,
-    state: {
-      globalFilter: search,
-      sorting,
-      columnVisibility,
-      rowSelection,
-      pagination,
-      columnFilters,
-    },
-    onSortingChange: setSorting,
-    onColumnVisibilityChange: setVisibility,
-    onRowSelectionChange: setSelection,
-    onPaginationChange: setPagination,
     globalFilterFn: (row, _columnId, value) =>
       normalizeSearch(
         [
@@ -299,34 +76,25 @@ export function UsersTable({
           row.original.role.name,
         ].join(" "),
       ).includes(normalizeSearch(String(value))),
-    onGlobalFilterChange: (update) => {
-      setSearch(update);
-      setPagination((previous) => ({ ...previous, pageIndex: 0 }));
-    },
-    onColumnFiltersChange: (update) => {
-      const next =
-        typeof update === "function" ? update(columnFilters) : update;
-      const url = new URL(window.location.href);
-      url.searchParams.delete("status");
-      url.searchParams.delete("role");
+    columnFilters: {
+      state: columnFilters,
+      onChange: (update) => {
+        const next =
+          typeof update === "function" ? update(columnFilters) : update;
+        const url = new URL(window.location.href);
+        url.searchParams.delete("status");
+        url.searchParams.delete("role");
 
-      for (const { id, value } of next) {
-        for (const option of value as string[]) {
-          url.searchParams.append(id, option);
+        for (const { id, value } of next) {
+          for (const option of value as string[]) {
+            url.searchParams.append(id, option);
+          }
         }
-      }
 
-      window.history.replaceState(null, "", url);
-      setPagination((previous) => ({ ...previous, pageIndex: 0 }));
+        window.history.replaceState(null, "", url);
+      },
     },
   });
-  const lastPage = Math.max(0, table.getPageCount() - 1);
-
-  useEffect(() => {
-    if (pagination.pageIndex > lastPage) {
-      table.setPageIndex(lastPage);
-    }
-  }, [lastPage, pagination.pageIndex, table]);
 
   if (query.isError) {
     return (

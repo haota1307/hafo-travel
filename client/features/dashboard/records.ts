@@ -15,11 +15,9 @@ import {
   tourSamples,
   transactions,
 } from "./fixtures";
-import type { Section } from "./sections";
+import type { SampleSection } from "./sections";
 
 export type Labels = ReturnType<typeof useTranslations<"dashboard">>;
-
-export type SampleSection = Exclude<Section, "users" | "roles">;
 
 export type Column =
   | "tour"

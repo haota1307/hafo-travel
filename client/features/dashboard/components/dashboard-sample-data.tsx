@@ -15,7 +15,6 @@ import {
   type LocalInquiry,
 } from "../records";
 import { inquiries } from "../fixtures";
-import { visibleNavigation, type Destination } from "../sections";
 
 const storageKey = "dashboard-preview-inquiries-v1";
 const empty: SampleChanges = { inquiries: {}, added: [] };
@@ -71,26 +70,21 @@ function updateChanges(transform: (previous: SampleChanges) => SampleChanges) {
   window.dispatchEvent(new Event(storageKey));
 }
 
-type Workspace = {
-  destinations: Destination[];
-  navigation: ReturnType<typeof visibleNavigation>;
+type DashboardSampleData = {
   data: DashboardData;
-  container: HTMLDivElement | null;
   inquiryState: (id: string) => InquiryUpdate | undefined;
   addInquiry: (item: LocalInquiry) => void;
   editInquiries: (updates: Record<string, InquiryUpdate>) => void;
   changePublication: (ids: string[], value: string) => void;
 };
 
-const WorkspaceContext = createContext<Workspace | null>(null);
+const DashboardSampleDataContext = createContext<DashboardSampleData | null>(
+  null,
+);
 
-export function WorkspaceProvider({
-  destinations,
-  container,
+export function DashboardSampleDataProvider({
   children,
 }: {
-  destinations: Destination[];
-  container: HTMLDivElement | null;
   children: React.ReactNode;
 }) {
   const locale = useLocale();
@@ -145,12 +139,9 @@ export function WorkspaceProvider({
   }
 
   return (
-    <WorkspaceContext.Provider
+    <DashboardSampleDataContext.Provider
       value={{
-        destinations,
-        navigation: visibleNavigation(destinations),
         data,
-        container,
         inquiryState,
         addInquiry,
         editInquiries,
@@ -158,15 +149,15 @@ export function WorkspaceProvider({
       }}
     >
       {children}
-    </WorkspaceContext.Provider>
+    </DashboardSampleDataContext.Provider>
   );
 }
 
-export function useWorkspace() {
-  const context = useContext(WorkspaceContext);
+export function useDashboardSampleData() {
+  const context = useContext(DashboardSampleDataContext);
 
   if (!context) {
-    throw new Error("Dashboard workspace is missing.");
+    throw new Error("Dashboard sample data provider is missing.");
   }
 
   return context;

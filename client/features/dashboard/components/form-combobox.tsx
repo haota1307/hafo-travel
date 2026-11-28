@@ -13,7 +13,7 @@ import {
   ComboboxTrigger,
   ComboboxValue,
 } from "@/components/ui/combobox";
-import { useWorkspace } from "./workspace";
+import { useDashboardLayout } from "./dashboard-layout-context";
 
 type Option = { value: string; label: string };
 
@@ -41,7 +41,7 @@ export function FormCombobox({
   };
 }) {
   const id = useId();
-  const { container } = useWorkspace();
+  const { container } = useDashboardLayout();
   const t = useTranslations("dashboard");
 
   return (

@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 
 import { PageError } from "@/components/shared/page-error";
 import { Button } from "@/components/ui/button";
-import { PageHeading } from "@/features/dashboard/components/record-ui";
+import { PageHeading } from "@/components/shared/page-heading";
 import { dashboardPath } from "@/features/dashboard/sections";
 import { useRouter } from "@/i18n/navigation";
 

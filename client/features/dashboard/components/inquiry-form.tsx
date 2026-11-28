@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { FormCombobox } from "./form-combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { staff } from "../fixtures";
-import { useWorkspace } from "./workspace";
 import type { DashboardRecord } from "../records";
+import { useDashboardSampleData } from "./dashboard-sample-data";
 
 function FormField({
   label,
@@ -32,7 +32,8 @@ export function InquiryForm({
   onDone: () => void;
 }) {
   const t = useTranslations("dashboard");
-  const { data, inquiryState, addInquiry, editInquiries } = useWorkspace();
+  const { data, inquiryState, addInquiry, editInquiries } =
+    useDashboardSampleData();
   const current = row ? inquiryState(row.id) : undefined;
 
   function submit(event: React.FormEvent<HTMLFormElement>) {

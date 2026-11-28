@@ -1,26 +1,11 @@
 "use client";
 
-import { useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Ellipsis } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { DataTableRowActionsMenu } from "@/components/shared/data-table/row-actions-menu";
 import { toast } from "@/components/ui/toast";
-import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { useDashboardLayout } from "@/features/dashboard/components/dashboard-layout-context";
 
 import {
   getUserErrorKey,
@@ -31,23 +16,23 @@ import {
 import { useUpdateUserStatus } from "../users.queries";
 import type { InternalUser } from "../users.schema";
 
+export type UserActionProps = {
+  actorId: string;
+  access: UserAccess;
+  resendingInvitation: boolean;
+  onAction: (action: UserAction, user: InternalUser) => void;
+};
+
 export function UserActionsMenu({
   actorId,
   user,
   access,
   resendingInvitation,
   onAction,
-}: {
-  actorId: string;
-  user: InternalUser;
-  access: UserAccess;
-  resendingInvitation: boolean;
-  onAction: (action: UserAction, user: InternalUser) => void;
-}) {
+}: UserActionProps & { user: InternalUser }) {
   const t = useTranslations("users");
   const locale = useLocale();
-  const { container } = useWorkspace();
-  const selected = useRef<UserAction | null>(null);
+  const { container } = useDashboardLayout();
   const protectedAccess = user.accessProtected || user.userId === actorId;
   const actions: UserAction[] = ["viewDetails"];
 
@@ -65,50 +50,17 @@ export function UserActionsMenu({
   }
 
   return (
-    <DropdownMenu
-      modal={false}
-      onOpenChangeComplete={(open) => {
-        if (!open && selected.current) {
-          const action = selected.current;
-          selected.current = null;
-          onAction(action, user);
-        }
-      }}
-    >
-      <DropdownMenuTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8 data-popup-open:bg-accent"
-            aria-label={t("actionsFor", { name: getUserName(user, locale) })}
-          />
-        }
-      >
-        <Ellipsis />
-      </DropdownMenuTrigger>
-      {container && (
-        <DropdownMenuContent
-          portalContainer={container}
-          align="end"
-          className="w-max"
-        >
-          {actions.map((action) => (
-            <DropdownMenuItem
-              key={action}
-              variant={action === "lock" ? "destructive" : "default"}
-              disabled={action === "resendInvitation" && resendingInvitation}
-              onClick={() => {
-                selected.current = action;
-              }}
-            >
-              {t(action)}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      )}
-    </DropdownMenu>
+    <DataTableRowActionsMenu
+      container={container}
+      label={t("actionsFor", { name: getUserName(user, locale) })}
+      actions={actions.map((action) => ({
+        id: action,
+        label: t(action),
+        destructive: action === "lock",
+        disabled: action === "resendInvitation" && resendingInvitation,
+      }))}
+      onAction={(action) => onAction(action, user)}
+    />
   );
 }
 
@@ -125,7 +77,7 @@ export function UserStatusDialog({
 }) {
   const t = useTranslations("users");
   const locale = useLocale();
-  const { container } = useWorkspace();
+  const { container } = useDashboardLayout();
   const mutation = useUpdateUserStatus(actorId, user.userId);
   const locking = action === "lock";
 
@@ -143,45 +95,19 @@ export function UserStatusDialog({
     });
   }
 
-  if (!container) {
-    return null;
-  }
-
   return (
-    <Dialog
-      open
-      onOpenChange={(open) => {
-        if (!open && !mutation.isPending) {
-          onClose();
-        }
-      }}
-    >
-      <DialogContent portalContainer={container} showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>{t(action)}</DialogTitle>
-          <DialogDescription>
-            {t(locking ? "lockDescription" : "unlockDescription", {
-              name: getUserName(user, locale),
-            })}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            disabled={mutation.isPending}
-            onClick={onClose}
-          >
-            {t("cancel")}
-          </Button>
-          <Button
-            variant={locking ? "destructive" : "default"}
-            disabled={mutation.isPending}
-            onClick={confirm}
-          >
-            {t(action)}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      portalContainer={container}
+      title={t(action)}
+      description={t(locking ? "lockDescription" : "unlockDescription", {
+        name: getUserName(user, locale),
+      })}
+      cancelLabel={t("cancel")}
+      confirmLabel={t(action)}
+      confirmVariant={locking ? "destructive" : "default"}
+      pending={mutation.isPending}
+      onCancel={onClose}
+      onConfirm={confirm}
+    />
   );
 }

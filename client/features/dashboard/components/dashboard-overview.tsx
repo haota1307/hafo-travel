@@ -11,6 +11,7 @@ import {
   UserRoundSearch,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { PageHeading } from "@/components/shared/page-heading";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Table,
@@ -20,8 +21,10 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import { PageHeading, RecordIdentity, StatusBadge } from "./record-ui";
-import { useWorkspace } from "./workspace";
+import { useDashboardLayout } from "./dashboard-layout-context";
+import { useDashboardSampleData } from "./dashboard-sample-data";
+import { DashboardStatusBadge } from "./dashboard-status-badge";
+import { InquiryIdentity } from "./inquiry-identity";
 import { sampleDate } from "../fixtures";
 import { dashboardPath } from "../sections";
 import { formatDate } from "../records";
@@ -37,7 +40,7 @@ function OverviewLink({
   children: ReactNode;
   actionOnly?: boolean;
 }) {
-  const { destinations } = useWorkspace();
+  const { destinations } = useDashboardLayout();
   const [path] = href.split("?");
 
   if (destinations.some((page) => dashboardPath(page) === path)) {
@@ -54,7 +57,7 @@ function OverviewLink({
 export function DashboardOverview() {
   const locale = useLocale();
   const t = useTranslations("dashboard");
-  const { data, inquiryState } = useWorkspace();
+  const { data, inquiryState } = useDashboardSampleData();
   const cards = [
     {
       label: "newInquiries",
@@ -152,14 +155,14 @@ export function DashboardOverview() {
                       href={dashboardPath("inquiries", row.id)}
                       className="hover:underline"
                     >
-                      <RecordIdentity section="inquiries" row={row} />
+                      <InquiryIdentity row={row} />
                     </OverviewLink>
                   </TableCell>
                   <TableCell className="max-w-52 whitespace-normal">
                     {row.values.tour}
                   </TableCell>
                   <TableCell className="pe-5">
-                    <StatusBadge status={row.status!} />
+                    <DashboardStatusBadge status={row.status!} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -226,7 +229,7 @@ export function DashboardOverview() {
                     {item.values.date}
                   </span>
                 </span>
-                <StatusBadge status={item.status!} />
+                <DashboardStatusBadge status={item.status!} />
               </OverviewLink>
             ))}
           </div>

@@ -53,7 +53,7 @@ public/public-site/                Logo, icon, ảnh WebP và font có license
 
 - Giữ nguyên thứ tự tám section, sáu card hành trình, ba nhóm trải nghiệm, grid bốn ảnh của gallery và các control Base UI hiện có.
 - Các giá trị trang trải nghiệm và các bước trang chủ dùng cấu hình riêng, render chung `HowWorksItem`; giữ rich text, class compact và data-animation theo từng vị trí.
-- Giữ reveal qua IntersectionObserver/Web Animations API, menu Sheet, Popover trải nghiệm, Carousel mobile, scroll snap, sticky navigation và reduced motion. Thông số reveal vẫn ở `publicMotion`.
+- Reveal qua IntersectionObserver/Web Animations API dùng `publicMotion` trong `components/public-reveal.ts`. Điều hướng mục trong trang nằm trong `components/public-section-navigation.ts`. Các tương tác public gồm menu Sheet, Popover trải nghiệm, Carousel mobile, scroll snap và sticky navigation. Reveal và cuộn theo mục tôn trọng tùy chọn reduced motion.
 - Mục chuyên gia demo được thay bằng 12 góc nhìn du lịch Việt Nam. Card và Popover giới thiệu địa điểm, không tạo hồ sơ nhân viên hoặc chứng chỉ.
 - Card và detail cùng lấy giá/slug/ảnh từ `retreatDetails`. Giá có kiểu `number | null`; hiện là `null` và hiển thị “Liên hệ tư vấn”. Khi có giá thật, hiển thị VND theo locale, không quy đổi từ giá demo.
 - Lịch trình là gợi ý; chưa công bố ngày khởi hành, số chỗ, đánh giá khách hàng hay quan hệ đối tác. Các khối dấu ấn địa phương thay cho nhân sự demo.

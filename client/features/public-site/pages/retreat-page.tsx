@@ -1,9 +1,6 @@
-import { photoAssetsBySource } from "../data/image-assets";
-import { publicSiteConfig } from "../site.config";
-import { Fragment, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   BedDouble,
-  CalendarDays,
   Check,
   Coffee,
   Flower2,
@@ -17,22 +14,13 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Link } from "@/i18n/navigation";
-import { PublicButton } from "../components/public-button";
-import { PublicGallery } from "../components/public-gallery";
+import { useTranslations } from "next-intl";
+
 import { PublicImage } from "../components/public-image";
+import { RetreatIntro } from "../components/retreat-intro";
+import { RetreatNavigation } from "../components/retreat-navigation";
+import { RetreatSummary } from "../components/retreat-summary";
+import { photoAssetsBySource } from "../data/image-assets";
 import type { RetreatDetails } from "../data/retreat-details";
 import { FeaturedRetreats } from "../sections/featured-retreats";
 
@@ -76,80 +64,12 @@ function RetreatSection({
   );
 }
 
-function RetreatNavigation({ className }: { className: string }) {
-  const t = useTranslations("publicSite");
-  const sections = [
-    { id: "about", label: "aboutRetreats" },
-    { id: "full-program", label: "fullProgram" },
-    { id: "food", label: "food" },
-    { id: "team", label: "team" },
-    { id: "location", label: "location" },
-  ] as const;
-
-  return (
-    <nav
-      className={"retreat-page-info__nav " + className}
-      aria-label={t("retreatNavigation")}
-    >
-      {sections.map(({ id, label }) => (
-        <div className="retreat-page-info__link" key={id}>
-          <Button
-            variant="ghost"
-            className="retreat-section-link"
-            nativeButton={false}
-            render={<a data-target={id} href={"#" + id} />}
-          >
-            {t(label)}
-          </Button>
-        </div>
-      ))}
-    </nav>
-  );
-}
-
 export function RetreatPage({ retreat }: { retreat: RetreatDetails }) {
   const t = useTranslations("publicSite");
-  const format = useFormatter();
-  const details = [
-    { icon: MapPin, value: retreat.locationLabel },
-    { icon: CalendarDays, value: retreat.dates },
-    { icon: Users, value: retreat.guests },
-  ];
 
   return (
     <div className="page-padding">
-      <div className="retreat-page-intro padding-global">
-        <div className="container">
-          <div className="retreat-page-intro__in">
-            <div className="retreat-page-intro__head">
-              <Breadcrumb>
-                <BreadcrumbList className="flex-nowrap">
-                  <BreadcrumbItem>
-                    <BreadcrumbLink render={<Link href="/" />}>
-                      {t("home")}
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem className="min-w-0">
-                    <BreadcrumbPage className="truncate">
-                      {retreat.headline.join(" ")}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-              <h1 className="h2 mobile-no-br line-height-100">
-                {retreat.headline.map((line, index) => (
-                  <Fragment key={line}>
-                    {index > 0 && <br />}
-                    {line}
-                  </Fragment>
-                ))}
-              </h1>
-            </div>
-            <PublicGallery images={retreat.images} />
-          </div>
-        </div>
-      </div>
+      <RetreatIntro retreat={retreat} />
       <div className="retreat-page-content">
         <div className="container">
           <div className="retreat-page-content__in">
@@ -295,37 +215,7 @@ export function RetreatPage({ retreat }: { retreat: RetreatDetails }) {
                 </div>
               </RetreatSection>
             </div>
-            <aside className="retreat-page-content__sidebar">
-              <Card className="retreat-page-info gap-6 p-6">
-                <CardHeader className="p-0">
-                  <CardTitle className="retreat-price">
-                    <span>{t("from")}</span>
-                    <strong>
-                      {retreat.price === null
-                        ? t("priceOnRequest")
-                        : format.number(retreat.price, {
-                            style: "currency",
-                            currency: publicSiteConfig.currency,
-                            maximumFractionDigits: 0,
-                          })}
-                    </strong>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <ul className="retreat-summary-details">
-                    {details.map(({ icon: Icon, value }) => (
-                      <li key={value}>
-                        <Icon aria-hidden="true" />
-                        <span>{value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <Separator />
-                <RetreatNavigation className="mobile-hidden" />
-                <PublicButton href="/contacts">{t("getInTouch")}</PublicButton>
-              </Card>
-            </aside>
+            <RetreatSummary retreat={retreat} />
           </div>
         </div>
       </div>
