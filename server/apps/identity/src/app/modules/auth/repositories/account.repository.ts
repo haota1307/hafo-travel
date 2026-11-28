@@ -50,6 +50,7 @@ export class AccountRepository {
           ],
           passwordHash: { $type: 'string' },
           googleSubject: { $exists: false },
+          lockedAt: null,
         },
         { $set: { googleSubject } },
         { new: true, collation: { locale: 'simple' } },
@@ -75,6 +76,7 @@ export class AccountRepository {
           _id: profileId,
           passwordHash: { $exists: true },
           credentialVersion: version || { $exists: false },
+          lockedAt: null,
         },
         { $set: { passwordHash, credentialVersion: randomUUID() } },
       )

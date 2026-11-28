@@ -97,6 +97,17 @@ export class AuthController implements OnModuleInit {
     return requestGrpc(this.identity.resetPassword, body, { processId });
   }
 
+  @Post('accept-invitation')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  acceptInvitation(
+    @Body() body: ResetPasswordRequestDto,
+    @ProcessId() processId: string,
+  ) {
+    return requestGrpc(this.identity.acceptInvitation, body, { processId });
+  }
+
   @Post('google')
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @HttpCode(200)

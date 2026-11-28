@@ -10,6 +10,7 @@ import { AccountEmailService } from '@identity/auth/services/account-email.servi
 import { AccountService } from '@identity/auth/services/account.service';
 import { AuthService } from '@identity/auth/services/auth.service';
 import { RoleService } from '@identity/role/services/role.service';
+import { InternalUserService } from '@identity/user/services/internal-user.service';
 import { UserService } from '@identity/user/services/user.service';
 
 describe('Google sign-in', () => {
@@ -42,6 +43,7 @@ describe('Google sign-in', () => {
         { provide: AccountRepository, useValue: accounts },
         { provide: AuthService, useValue: { startSession } },
         { provide: AccountEmailService, useValue: { send } },
+        { provide: InternalUserService, useValue: {} },
         { provide: UserService, useValue: {} },
         {
           provide: RoleService,

@@ -24,3 +24,9 @@ export enum PERMISSION {
   ROLE_UPDATE = 'role.update',
   ROLE_DELETE = 'role.delete',
 }
+
+export const DASHBOARD_PERMISSIONS = Object.values(PERMISSION).filter(
+  (permission) =>
+    permission === PERMISSION.UI_DASHBOARD ||
+    permission.startsWith(`${PERMISSION.UI_DASHBOARD}/`),
+);

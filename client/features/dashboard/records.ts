@@ -20,6 +20,8 @@ import type { Section } from "./sections";
 
 export type Labels = ReturnType<typeof useTranslations<"dashboard">>;
 
+export type SampleSection = Exclude<Section, "users">;
+
 export type Column =
   | "tour"
   | "owner"
@@ -34,7 +36,6 @@ export type Column =
   | "method"
   | "language"
   | "path"
-  | "role"
   | "scope"
   | "members"
   | "guest"
@@ -48,21 +49,20 @@ export type DashboardRecord = {
   image?: string;
   status?: string;
   values: Partial<Record<Column, string>>;
-  links?: Partial<Record<Column, { section: Section; id: string }>>;
+  links?: Partial<Record<Column, { section: SampleSection; id: string }>>;
   message?: string;
   note?: string;
 };
 
-export type DashboardData = Record<Section, DashboardRecord[]>;
+export type DashboardData = Record<SampleSection, DashboardRecord[]>;
 
-export const listColumns: Record<Section, Column[]> = {
+export const listColumns: Record<SampleSection, Column[]> = {
   inquiries: ["tour", "owner", "date"],
   tours: ["location", "duration", "language"],
   departures: ["date", "capacity", "price"],
   bookings: ["tour", "date", "guests", "amount"],
   payments: ["booking", "guest", "method", "amount"],
   content: ["path", "language", "owner"],
-  users: ["email", "role"],
   roles: ["scope", "members"],
 };
 
@@ -85,7 +85,6 @@ export type SampleChanges = {
   inquiries: Record<string, InquiryUpdate>;
   added: LocalInquiry[];
   publication?: Record<string, string>;
-  userRoles?: Record<string, string>;
 };
 
 export function formatDate(value: string, locale: string) {
@@ -119,8 +118,6 @@ export function buildRecords(
   const bookingOf = (id: string) => bookings.find((item) => item.id === id)!;
   const total = (booking: (typeof bookings)[number]) =>
     money.format(departureOf(booking.departure).price * booking.seats);
-  const roleOf = (person: (typeof staff)[number]) =>
-    changes.userRoles?.[person.id] ?? person.role;
   const seeded = inquiries.map((item) => ({
     ...item,
     name: guests[item.guest][0],
@@ -153,12 +150,7 @@ export function buildRecords(
             ? formatDate(current.followUp, locale)
             : "—",
         },
-        links: {
-          tour: tourLink(item.tour),
-          ...(current.owner
-            ? { owner: { section: "users" as const, id: current.owner } }
-            : {}),
-        },
+        links: { tour: tourLink(item.tour) },
       };
     }),
     tours: tourSamples.map((item) => {
@@ -247,15 +239,6 @@ export function buildRecords(
         language: "VI / EN",
         owner: owner(item.owner),
       },
-      links: { owner: { section: "users", id: item.owner } },
-    })),
-    users: staff.map((item) => ({
-      id: item.id,
-      title: item.name,
-      subtitle: item.id,
-      status: item.status,
-      values: { email: item.email, role: t(`roleNames.${roleOf(item)}`) },
-      links: { role: { section: "roles", id: roleOf(item) } },
     })),
     roles: accessRoles.map((item) => ({
       id: item.id,
@@ -263,7 +246,7 @@ export function buildRecords(
       values: {
         scope: t(`scopes.${item.scope}`),
         members: String(
-          staff.filter((person) => roleOf(person) === item.id).length,
+          staff.filter((person) => person.role === item.id).length,
         ),
       },
     })),

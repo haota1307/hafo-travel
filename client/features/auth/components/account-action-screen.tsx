@@ -31,6 +31,13 @@ const titles = {
   "forgot-password": "forgot",
   "verify-email": "verify",
   "reset-password": "reset",
+  "accept-invitation": "acceptInvitation",
+} as const;
+
+const passwordSuccessMessages = {
+  "verify-email": "registered",
+  "reset-password": "passwordChanged",
+  "accept-invitation": "invitationAccepted",
 } as const;
 
 export function AccountActionScreen({ action }: { action: AccountAction }) {
@@ -118,10 +125,11 @@ function EmailForm({ action }: { action: "register" | "forgot-password" }) {
 function PasswordForm({
   action,
 }: {
-  action: "verify-email" | "reset-password";
+  action: keyof typeof passwordSuccessMessages;
 }) {
   const t = useTranslations("auth");
   const verify = action === "verify-email";
+  const acceptInvitation = action === "accept-invitation";
   const mutation = useAccountAction();
   const schema = z
     .object({
@@ -142,9 +150,12 @@ function PasswordForm({
       confirmPassword: "",
     },
   });
+  const errorStatus =
+    mutation.error instanceof HttpError ? mutation.error.status : undefined;
+  const invalidLink = errorStatus === 400 || !!form.formState.errors.root;
 
   if (mutation.isSuccess) {
-    return <p role="status">{t(verify ? "registered" : "passwordChanged")}</p>;
+    return <p role="status">{t(passwordSuccessMessages[action])}</p>;
   }
 
   return (
@@ -260,22 +271,24 @@ function PasswordForm({
               <AuthErrorToast
                 key={mutation.submittedAt}
                 message={t(
-                  mutation.error instanceof HttpError &&
-                    mutation.error.status === 400
+                  errorStatus === 400
                     ? "badLink"
-                    : mutation.error instanceof HttpError &&
-                        mutation.error.status === 429
+                    : errorStatus === 429
                       ? "limited"
                       : "unavailable",
                 )}
               />
             )}
-            <Link
-              className="text-primary underline"
-              href={verify ? "/auth/register" : "/auth/forgot-password"}
-            >
-              {t("requestAgain")}
-            </Link>
+            {acceptInvitation ? (
+              invalidLink && <p role="status">{t("requestInvitationAgain")}</p>
+            ) : (
+              <Link
+                className="text-primary underline"
+                href={verify ? "/auth/register" : "/auth/forgot-password"}
+              >
+                {t("requestAgain")}
+              </Link>
+            )}
           </div>
         )}
       </FieldGroup>

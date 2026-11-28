@@ -13,8 +13,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { dashboardPath, type Section } from "../sections";
-import type { Column, DashboardRecord } from "../records";
+import { dashboardPath } from "../sections";
+import type { Column, DashboardRecord, SampleSection } from "../records";
+import { staff } from "../fixtures";
 import { InquiryForm } from "./inquiry-form";
 import { StatusBadge } from "./record-ui";
 import { useWorkspace } from "./workspace";
@@ -25,13 +26,13 @@ export function RecordSheet({
   create = false,
   onClose,
 }: {
-  section: Section;
+  section: SampleSection;
   row?: DashboardRecord;
   create?: boolean;
   onClose: () => void;
 }) {
   const t = useTranslations("dashboard");
-  const { container, data, changeSetting, destinations } = useWorkspace();
+  const { container, data, changePublication, destinations } = useWorkspace();
   const publicPath =
     section === "tours" && row
       ? "/" + row.id
@@ -44,7 +45,7 @@ export function RecordSheet({
       : [];
   const relatedUsers =
     section === "roles" && destinations.includes("users")
-      ? data.users.filter((item) => item.links?.role?.id === row?.id)
+      ? staff.filter((item) => item.role === row?.id)
       : [];
 
   if (!container || (!row && !create)) {
@@ -151,14 +152,9 @@ export function RecordSheet({
                 <div>
                   <h3 className="mb-2 font-medium">{t("nav.users")}</h3>
                   {relatedUsers.map((item) => (
-                    <Link
-                      className="flex items-center justify-between border-t py-2.5"
-                      key={item.id}
-                      href={dashboardPath("users", item.id)}
-                    >
-                      {item.title}
-                      <ArrowUpRight className="size-4" />
-                    </Link>
+                    <p className="border-t py-2.5" key={item.id}>
+                      {item.name}
+                    </p>
                   ))}
                 </div>
               )}
@@ -167,50 +163,34 @@ export function RecordSheet({
           {section === "inquiries" && (
             <InquiryForm key={row?.id ?? "new"} row={row} onDone={onClose} />
           )}
-          {row &&
-            (section === "users" ||
-              section === "content" ||
-              section === "tours") && (
-              <form
-                key={row.id}
-                className="grid gap-3 border-t pt-4"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  const choice = String(
-                    new FormData(event.currentTarget).get("choice"),
-                  );
-                  changeSetting(
-                    section === "users" ? "userRoles" : "publication",
-                    [row.id],
-                    choice,
-                  );
-                  onClose();
-                }}
-              >
-                <FormCombobox
-                  name="choice"
-                  required
-                  label={section === "users" ? t("fields.role") : t("status")}
-                  defaultValue={
-                    section === "users" ? row.links?.role?.id : row.status
-                  }
-                  options={
-                    section === "users"
-                      ? data.roles.map((role) => ({
-                          value: role.id,
-                          label: role.title,
-                        }))
-                      : ["draft", "review", "published"].map((value) => ({
-                          value,
-                          label: t(`statuses.${value}`),
-                        }))
-                  }
-                />
-                <Button type="submit" className="justify-self-end">
-                  {t("save")}
-                </Button>
-              </form>
-            )}
+          {row && (section === "content" || section === "tours") && (
+            <form
+              key={row.id}
+              className="grid gap-3 border-t pt-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const choice = String(
+                  new FormData(event.currentTarget).get("choice"),
+                );
+                changePublication([row.id], choice);
+                onClose();
+              }}
+            >
+              <FormCombobox
+                name="choice"
+                required
+                label={t("status")}
+                defaultValue={row.status}
+                options={["draft", "review", "published"].map((value) => ({
+                  value,
+                  label: t(`statuses.${value}`),
+                }))}
+              />
+              <Button type="submit" className="justify-self-end">
+                {t("save")}
+              </Button>
+            </form>
+          )}
         </div>
       </SheetContent>
     </Sheet>

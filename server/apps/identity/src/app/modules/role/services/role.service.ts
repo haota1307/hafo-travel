@@ -10,6 +10,7 @@ import { Types } from 'mongoose';
 import { AuthorizationCache } from '@common/configuration/authorization-cache.config';
 import { PERMISSION } from '@common/constants/enum/role.enum';
 import type { CreateRoleRequest } from '@common/interfaces/grpc/identity/v1/identity';
+import type { Role } from '@common/schemas/role.schema';
 
 import { RoleRepository } from '@identity/role/repositories/role.repository';
 
@@ -88,7 +89,7 @@ export class RoleService {
 
   async withRoleAssignment<T>(
     ids: string[],
-    assign: (roleIds: [Types.ObjectId]) => Promise<T>,
+    assign: (roleIds: [Types.ObjectId], role: Role) => Promise<T>,
   ): Promise<T> {
     if (!Array.isArray(ids) || ids.length !== 1) {
       throw new BadRequestException('Exactly one role is required');
@@ -104,8 +105,18 @@ export class RoleService {
         throw new BadRequestException('One or more roles do not exist');
       }
 
-      return assign([role._id]);
+      return assign([role._id], role);
     });
+  }
+
+  withRoleLocks<T>(ids: string[], operation: () => Promise<T>) {
+    const keys = [...new Set(ids.map((id) => id.toLowerCase()))].sort();
+    const run = keys.reduceRight(
+      (next, key) => () => this.withRoleWrite(key, next),
+      operation,
+    );
+
+    return run();
   }
 
   async withClientRoleAssignment<T>(

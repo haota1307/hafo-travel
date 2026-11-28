@@ -1,12 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  CircleArrowUp,
-  Download,
-  UserRoundCheck,
-  ShieldCheck,
-} from "lucide-react";
+import { CircleArrowUp, Download, UserRoundCheck } from "lucide-react";
 import { DataTableBulkActions } from "@/components/shared/data-table/bulk-actions";
 import type { Table } from "@/components/shared/data-table/table-features";
 import { LabeledTooltip } from "@/components/shared/labeled-tooltip";
@@ -17,42 +12,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { downloadCsv } from "@/lib/download-csv";
 import { staff } from "../fixtures";
 import {
   listColumns,
   type DashboardRecord,
   type InquiryUpdate,
+  type SampleSection,
 } from "../records";
-import type { Section } from "../sections";
 import { useWorkspace } from "./workspace";
-
-function downloadCsv(section: Section, rows: string[][]) {
-  const escapeCell = (text: string) => {
-    const value = /^\s*[=+@-]|^[\t\r\n]/.test(text) ? "'" + text : text;
-
-    return '"' + value.replaceAll('"', '""') + '"';
-  };
-  const csv = rows.map((row) => row.map(escapeCell).join(",")).join("\r\n");
-  const url = URL.createObjectURL(
-    new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }),
-  );
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = section + ".csv";
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
 
 export function DashboardBulkActions({
   section,
   table,
 }: {
-  section: Section;
+  section: SampleSection;
   table: Table<DashboardRecord>;
 }) {
   const t = useTranslations("dashboard");
   const common = useTranslations("template");
-  const { container, data, changeSetting, inquiryState, editInquiries } =
+  const { container, changePublication, inquiryState, editInquiries } =
     useWorkspace();
   const records = table
     .getFilteredSelectedRowModel()
@@ -163,7 +142,7 @@ export function DashboardBulkActions({
           ).map((value) => ({ value, label: t(`statuses.${value}`) })),
           (value) => {
             if (publication) {
-              changeSetting("publication", ids, value);
+              changePublication(ids, value);
             } else {
               modifyInquiries("status", value);
             }
@@ -178,13 +157,6 @@ export function DashboardBulkActions({
             ...staff.map((item) => ({ value: item.id, label: item.name })),
           ],
           (value) => modifyInquiries("owner", value),
-        )}
-      {section === "users" &&
-        menu(
-          t("changeRole"),
-          <ShieldCheck />,
-          data.roles.map((row) => ({ value: row.id, label: row.title })),
-          (value) => changeSetting("userRoles", ids, value),
         )}
       <LabeledTooltip label={t("exportSelected")} portalContainer={container}>
         <Button

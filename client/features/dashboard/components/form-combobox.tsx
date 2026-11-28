@@ -23,12 +23,22 @@ export function FormCombobox({
   options,
   defaultValue,
   required,
+  disabled,
+  selection,
 }: {
   name: string;
   label: string;
   options: Option[];
   defaultValue?: string;
   required?: boolean;
+  disabled?: boolean;
+  selection?: {
+    value: string;
+    onChange: (value: string) => void;
+    onBlur: () => void;
+    invalid: boolean;
+    describedBy?: string;
+  };
 }) {
   const id = useId();
   const { container } = useWorkspace();
@@ -38,20 +48,38 @@ export function FormCombobox({
     <div className="grid min-w-0 gap-1.5">
       <label htmlFor={id} className="text-sm font-medium">
         {label}
+        {required && (
+          <span aria-hidden="true" className="ms-1 text-destructive">
+            *
+          </span>
+        )}
       </label>
       <Combobox
         name={name}
         items={options}
-        defaultValue={
-          options.find((option) => option.value === defaultValue) ??
-          options[0] ??
-          null
-        }
-        isItemEqualToValue={(item, value) => item.value === value.value}
+        {...(selection
+          ? {
+              value:
+                options.find((option) => option.value === selection.value) ??
+                null,
+              onValueChange: (option: Option | null) =>
+                selection.onChange(option?.value ?? ""),
+            }
+          : {
+              defaultValue:
+                options.find((option) => option.value === defaultValue) ??
+                options[0] ??
+                null,
+            })}
+        isItemEqualToValue={(item, value) => item?.value === value?.value}
         required={required}
+        disabled={disabled}
       >
         <ComboboxTrigger
           id={id}
+          onBlur={selection?.onBlur}
+          aria-invalid={selection?.invalid}
+          aria-describedby={selection?.describedBy}
           render={
             <Button
               variant="outline"
@@ -61,7 +89,7 @@ export function FormCombobox({
           }
         >
           <span className="truncate">
-            <ComboboxValue />
+            <ComboboxValue placeholder={label} />
           </span>
         </ComboboxTrigger>
         {container && (

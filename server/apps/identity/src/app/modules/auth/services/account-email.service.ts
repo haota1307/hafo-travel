@@ -20,6 +20,10 @@ import type { AuthConfiguration } from '@identity/config/auth.configuration';
 
 const messages = {
   vi: {
+    'accept-invitation': [
+      'Lời mời sử dụng tài khoản nội bộ',
+      'Mở liên kết trong vòng 30 phút để xác nhận email và đặt mật khẩu.',
+    ],
     'verify-google': [
       'Xác thực email đăng nhập Google',
       'Mở liên kết trong vòng 30 phút và chọn lại cùng tài khoản Google để hoàn tất đăng ký.',
@@ -34,6 +38,10 @@ const messages = {
     ],
   },
   en: {
+    'accept-invitation': [
+      'Your internal account invitation',
+      'Open this link within 30 minutes to verify your email and set a password.',
+    ],
     'verify-google': [
       'Verify your Google sign-in email',
       'Open this link within 30 minutes and select the same Google account to finish registration.',

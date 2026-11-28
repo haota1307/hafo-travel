@@ -34,6 +34,7 @@ proxy.ts                      Locale middleware
 
 - Page mỏng; nghiệp vụ nằm trong `features/<domain>`, không đưa nghiệp vụ thật vào dữ liệu demo.
 - Input một dòng và Button mặc định cao 36px (`h-9`). Form dùng kích thước từ `components/ui`; chỉ chọn biến thể kích thước khi thiết kế yêu cầu.
+- Luôn đặt dấu `*` màu đỏ ngay sau nhãn của trường bắt buộc, ví dụ `Họ tên *`. Dùng `text-destructive` và `aria-hidden="true"` cho dấu sao. Giữ `required` hoặc `aria-required` theo loại control và dùng cùng điều kiện với validation của form.
 - Trường chọn từ danh sách trong form dashboard dùng Combobox shadcn ở `components/ui/combobox.tsx`. Tái sử dụng `features/dashboard/components/form-combobox.tsx` để tìm theo nhãn tiếng Việt/Anh và gửi mã lựa chọn qua form. Trong Sheet, truyền container của layout cho popup để giữ theme. Bộ lọc nhiều lựa chọn trên bảng dùng `DataTableFacetedFilter`, số dòng mỗi trang dùng `Select`.
 - `app/globals.css` là nơi chỉnh màu, font và bo góc của public và demo admin. Theme áp dụng theo `.public-site` và `.template-scope`.
 - Cụm public dùng `app/[locale]/(public)` và `features/public-site/`. Assets local tại `public/public-site/`. Mọi selector và biến CSS riêng của public giới hạn trong `.public-site`, dùng font `Public Inter` và tiền tố `site-` cho tên kỹ thuật. Đơn vị fluid `--site-unit` áp dụng trong `.public-site` để giữ kích thước chữ mặc định của `html`. Không import template/provider admin vào public. Đọc [tài liệu public](public-site/README.md) khi sửa cụm này.
@@ -94,6 +95,7 @@ Route Next giữ mã `GOOGLE_EMAIL_CONFIRMATION_REQUIRED` khi BFF trả 403 ch�
 
 ### Lỗi và form
 
+- Dùng `PageError` cho lỗi chiếm vùng nội dung của trang, ví dụ không tải được danh sách, phiên đăng nhập gặp gián đoạn hoặc route trả 404. Component dùng chung `ErrorState` với các trang lỗi trong `/template` và chọn thông báo, hành động theo mã lỗi. Nút thử lại gọi lại query hoặc luồng phục hồi hiện có. Lỗi thao tác trong form tiếp tục dùng thông báo tại form hoặc toast.
 - Validation backend hiện trả HTTP 400 với `message: string[]`, không có field/path; không đoán field từ nội dung chuỗi. `getApiValidationErrors(error)` chỉ map khi HTTP 400/422 thực sự có issue `{ path, message }` trong `payload.message`; contract hiện tại trả `{}`. Map issue có cấu trúc vào field hợp lệ của form khi endpoint hỗ trợ.
 - `getApiErrorCode(error)` đọc code từ `payload.code`, `payload.message` (chuỗi hoặc mảng) và issue có cấu trúc; feature dịch code đã biết bằng namespace phù hợp.
 - `getApiErrorMessage(error, errorsT("UNKNOWN_ERROR"))` cho message tổng quát với fallback đã dịch. Không đưa raw payload/stack hoặc code kỹ thuật ra toast; abort không cần toast.

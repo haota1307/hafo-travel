@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import {
-  flexRender,
   useTable,
   type ColumnFiltersState,
   type PaginationState,
@@ -13,33 +12,25 @@ import {
 } from "@tanstack/react-table";
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DataTableGrid } from "@/components/shared/data-table/grid";
 import { DataTableToolbar } from "@/components/shared/data-table/toolbar";
 import { DataTablePagination } from "@/components/shared/data-table/pagination";
 import { dataTableFeatures } from "@/components/shared/data-table/table-features";
 import { useRouter } from "@/i18n/navigation";
 import { sampleDate } from "../fixtures";
-import type { Column } from "../records";
-import { dashboardPath, normalizeSearch, type Section } from "../sections";
+import type { Column, SampleSection } from "../records";
+import { dashboardPath, normalizeSearch } from "../sections";
 import { useWorkspace } from "./workspace";
 import { PageHeading } from "./record-ui";
 import { RecordSheet } from "./record-sheet";
 import { DashboardBulkActions } from "./dashboard-bulk-actions";
 import { useDashboardColumns } from "./dashboard-columns";
 
-const facetFields: Partial<Record<Section, Column>> = {
+const facetFields: Partial<Record<SampleSection, Column>> = {
   inquiries: "owner",
   bookings: "tour",
   payments: "method",
   content: "owner",
-  users: "role",
 };
 
 export function DashboardList({
@@ -47,7 +38,7 @@ export function DashboardList({
   recordId,
   queue,
 }: {
-  section: Section;
+  section: SampleSection;
   recordId?: string;
   queue?: string;
 }) {
@@ -232,57 +223,7 @@ export function DashboardList({
             </Button>
           )}
         </DataTableToolbar>
-        <div className="overflow-hidden rounded-md border">
-          <Table className="min-w-xl">
-            <TableHeader>
-              {table.getHeaderGroups().map((group) => (
-                <TableRow key={group.id}>
-                  {group.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className={header.column.columnDef.meta?.className}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() ? "selected" : undefined}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cell.column.columnDef.meta?.className}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-              {!table.getRowModel().rows.length && (
-                <TableRow>
-                  <TableCell
-                    className="h-24 text-center"
-                    colSpan={table.getVisibleLeafColumns().length}
-                  >
-                    {t("noResults")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTableGrid table={table} empty={t("noResults")} />
         <DataTablePagination table={table} container={container} />
         <DashboardBulkActions section={section} table={table} />
       </div>

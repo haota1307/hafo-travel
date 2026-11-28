@@ -37,7 +37,13 @@ const tones: Record<string, string> = {
     "border-rose-500/30 bg-rose-500/10 text-rose-800 dark:text-rose-300",
 };
 
-export function StatusBadge({ status }: { status: string }) {
+export function StatusBadge({
+  status,
+  label,
+}: {
+  status: string;
+  label?: string;
+}) {
   const t = useTranslations("dashboard.statuses");
   const colors: Record<string, string> = {
     active: "published",
@@ -47,6 +53,7 @@ export function StatusBadge({ status }: { status: string }) {
     review: "working",
     pending: "working",
     invited: "new",
+    locked: "cancelled",
     refunded: "new",
     full: "working",
   };
@@ -60,7 +67,7 @@ export function StatusBadge({ status }: { status: string }) {
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />
-      {t(status)}
+      {label ?? t(status)}
     </span>
   );
 }

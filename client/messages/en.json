@@ -141,6 +141,73 @@
       "manageContent": "Edit tours and website content"
     }
   },
+  "users": {
+    "account": "Account",
+    "invite": "Invite account",
+    "inviteDescription": "The recipient will verify their email and set their own password.",
+    "sendInvitation": "Send invitation",
+    "resendInvitation": "Resend invitation",
+    "invitationSent": "Invitation submitted for delivery",
+    "invitationUnconfirmed": "Could not confirm the invitation email was sent",
+    "invitationUnconfirmedDescription": "Choose Resend invitation from the account’s … menu.",
+    "detail": "Account details",
+    "viewDetails": "View details",
+    "actions": "Actions",
+    "actionsFor": "Actions for {name}",
+    "administrator": "Administrator",
+    "loading": "Loading accounts…",
+    "loadingDetail": "Loading account details…",
+    "loadingRoles": "Loading roles…",
+    "noRoles": "No roles have access to a dashboard page.",
+    "noAccounts": "There are no internal accounts yet.",
+    "noAccess": "You do not have permission to view the account list.",
+    "editName": "Edit name",
+    "nameUpdated": "Name saved",
+    "changeRole": "Change role",
+    "roleUpdated": "Role changed",
+    "bulkRole": "Change role for selected accounts",
+    "bulkRoleDescription": "The new role will replace the current role for {count} editable accounts.",
+    "bulkRoleResult": "Role change results",
+    "bulkRoleCounts": "Updated {changed}, skipped {skipped}, failed {failed}.",
+    "lock": "Lock account",
+    "unlock": "Unlock account",
+    "lockDescription": "{name} will lose access and their current sessions will end.",
+    "unlockDescription": "{name} can use the account once it is unlocked.",
+    "locked": "Account locked",
+    "unlocked": "Account unlocked",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "retry": "Try again",
+    "fields": {
+      "name": "Full name",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "createdAt": "Created",
+      "updatedAt": "Last updated"
+    },
+    "statuses": {
+      "pending": "Pending activation",
+      "active": "Active",
+      "locked": "Locked"
+    },
+    "errors": {
+      "email": "Enter a valid email address.",
+      "emailUsed": "An account already uses this email address.",
+      "name": "Enter between 1 and 100 characters.",
+      "role": "Select a role.",
+      "rolesUnavailable": "Roles could not be loaded.",
+      "session": "Your session has expired. Sign in again.",
+      "forbidden": "You do not have permission to perform this action.",
+      "notFound": "The internal account was not found.",
+      "changed": "The account changed. Reload the page and try again.",
+      "rateLimit": "Too many requests. Try again later.",
+      "unavailable": "The request could not be completed. Try again."
+    }
+  },
   "auth": {
     "or": "Or",
     "googleCheckInbox": "Open the verification email and select the same Google account to finish signing in.",
@@ -163,6 +230,9 @@
     "nameRule": "Enter your first and last name, up to 100 characters each.",
     "registered": "Your email is verified and your account is ready. You can now sign in.",
     "passwordChanged": "Your password has been changed. Sign in with your new password.",
+    "acceptInvitation": "Activate your staff account",
+    "invitationAccepted": "Your account is active. You can sign in with the password you just set.",
+    "requestInvitationAgain": "Ask your administrator to resend the invitation.",
     "badLink": "This link is invalid, has expired, or has already been used.",
     "requestAgain": "Request a new link",
     "existingMethod": "This Google account cannot be linked to the existing account. Use your original sign-in method.",
@@ -700,6 +770,38 @@
     "UNKNOWN_ERROR": "Something went wrong. Please try again.",
     "BACKEND_UNAVAILABLE": "The server is unavailable.",
     "BACKEND_NOT_CONFIGURED": "The server is not configured."
+  },
+  "errorScreens": {
+    "home": "Back to home",
+    "retry": "Try again",
+    "retrying": "Trying again…",
+    "signIn": "Sign in",
+    "status": {
+      "401": {
+        "title": "Your session has expired",
+        "description": "Sign in again to continue."
+      },
+      "403": {
+        "title": "Access denied",
+        "description": "You do not have permission to view this content."
+      },
+      "404": {
+        "title": "Page not found",
+        "description": "This page may have been moved or removed."
+      },
+      "429": {
+        "title": "Too many requests",
+        "description": "Wait a moment before trying again."
+      },
+      "500": {
+        "title": "Something went wrong",
+        "description": "The request could not be completed. Please try again."
+      },
+      "503": {
+        "title": "Service temporarily unavailable",
+        "description": "We could not connect to the service. Please try again in a moment."
+      }
+    }
   },
   "home": {
     "title": "Application",

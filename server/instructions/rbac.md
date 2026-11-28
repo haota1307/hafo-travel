@@ -6,7 +6,7 @@ Identity lưu hồ sơ, role và permission trong MongoDB. Hồ sơ mới có `u
 
 Một user có đúng một role; một role có nhiều permission. Quyền hiệu lực lấy từ role đó. Contract giữ trường `roles` dạng mảng nhưng bắt buộc đúng một phần tử khi tạo user hoặc thay role; kiểm tra tại HTTP DTO, service gRPC và schema MongoDB. Tên `administrator` không tự bỏ qua kiểm tra quyền; seed cấp danh sách permission cụ thể cho role này.
 
-Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, dùng chữ/số/gạch dưới/gạch ngang và tối đa 64 ký tự. Permission phải thuộc enum `PERMISSION`; thêm nghiệp vụ mới cần bổ sung permission và gắn vào endpoint tương ứng. Một số permission user đã được dự trữ nhưng chưa có API CRUD user tương ứng.
+Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, dùng chữ/số/gạch dưới/gạch ngang và tối đa 64 ký tự. Permission phải thuộc enum `PERMISSION`; thêm nghiệp vụ mới cần bổ sung permission và gắn vào endpoint tương ứng. Quyền `user.delete` được dự trữ.
 
 ## Cơ chế kiểm tra
 
@@ -50,6 +50,26 @@ Body tạo/thay role:
 ```
 
 Người có `user.assign_roles` có thể cấp mọi role hiện có, gồm administrator. Người có quyền tạo/sửa role có thể cấp mọi permission trong danh mục. Đây là các quyền quản trị nhạy cảm; không tự gán cho vai trò sản phẩm khi chưa chốt yêu cầu.
+
+### Tài khoản nội bộ
+
+Identity đưa tài khoản có đúng một vai trò và ít nhất một quyền UI dashboard được định nghĩa trong RBAC vào danh sách. Việc sửa quyền của vai trò có thể làm tài khoản xuất hiện hoặc rời danh sách.
+
+| Method | Endpoint                            | Quyền                               | Dữ liệu/kết quả                                                |
+| ------ | ----------------------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| GET    | `/user/internal`                    | `user.get_all`                      | Mảng hồ sơ nội bộ                                              |
+| GET    | `/user/internal/:userId`            | `user.get_by_id`                    | Hồ sơ nội bộ                                                   |
+| POST   | `/user/internal`                    | `user.create` + `user.assign_roles` | Họ tên, email, `roles: [roleId]`, `locale`; tạo và gửi lời mời |
+| POST   | `/user/internal/:userId/invitation` | `user.create` + `user.assign_roles` | `{ locale }`; gửi lời mời cho hồ sơ chờ kích hoạt              |
+| PATCH  | `/user/internal/:userId`            | `user.update`                       | `{ firstName, lastName }`; trả hồ sơ đã cập nhật               |
+| PATCH  | `/user/internal/:userId/roles`      | `user.assign_roles`                 | `{ roles: [roleId] }`; trả hồ sơ đã cập nhật                   |
+| PATCH  | `/user/internal/:userId/status`     | `user.update`                       | `{ locked: boolean }`; trả hồ sơ đã cập nhật                   |
+
+- Hồ sơ gồm `userId`, `firstName`, `lastName`, `email`, `role: { id, name }`, `status`, `accessProtected`, `createdAt` và `updatedAt`. Trạng thái là `pending` khi chưa có phương thức đăng nhập, `active` khi đã có phương thức đăng nhập, và `locked` khi bị khóa.
+- Khi tạo hoặc đổi vai trò nội bộ, vai trò được gán phải có quyền dashboard. Endpoint đổi vai trò và trạng thái nội bộ từ chối thao tác đổi vai trò hoặc khóa tài khoản đang đăng nhập và admin bootstrap.
+- Tạo lời mời trả 409 nếu email trùng với hồ sơ đã có. Tạo và gửi lại trả `{ user, invitationDelivery }`. `sent` nghĩa là Notification đã xác nhận nhà cung cấp tiếp nhận. Với `unconfirmed`, quản trị viên có thể gửi lại từ hồ sơ chờ kích hoạt.
+- `POST /api/auth/accept-invitation` nhận `{ token, password }` qua luồng cùng origin của Next. Token có mục đích riêng và hạn 30 phút. Identity xác nhận email và lưu mật khẩu qua một lần ghi có điều kiện. Sau khi kích hoạt hoặc khi tài khoản bị khóa, các liên kết đang chờ mất hiệu lực.
+- Khi khóa, Identity chặn đăng nhập và đổi phiên bản phiên để thu hồi access token lẫn refresh token. BFF kiểm tra phiên bản access qua cache người dùng. Khi mở khóa, người dùng cần đăng nhập lại. Hồ sơ cũ không có trạng thái khóa được đọc như tài khoản chưa khóa.
 
 ## Dữ liệu và seed role
 

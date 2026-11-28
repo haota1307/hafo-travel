@@ -51,7 +51,7 @@ export class AuthorizationCache implements OnModuleDestroy {
   }
 
   userKey(userId: string) {
-    return `authz:v1:user:${userId}`;
+    return `authz:v2:user:${userId}`;
   }
 
   roleKey(roleId: string) {

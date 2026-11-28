@@ -43,6 +43,7 @@ export const accountActionSchemas = {
   "forgot-password": EmailActionSchema,
   "verify-email": VerifyEmailSchema,
   "reset-password": ResetPasswordSchema,
+  "accept-invitation": ResetPasswordSchema,
 };
 
 export type AccountAction = keyof typeof accountActionSchemas;

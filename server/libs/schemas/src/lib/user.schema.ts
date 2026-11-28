@@ -35,6 +35,15 @@ export class User extends BaseSchema {
   @Prop({ type: String })
   credentialVersion?: string;
 
+  @Prop({ type: String })
+  accessVersion?: string;
+
+  @Prop({ type: Date })
+  lockedAt?: Date;
+
+  @Prop({ type: String, select: false })
+  invitationVersion?: string;
+
   @Prop({ type: Date })
   emailVerifiedAt?: Date;
 

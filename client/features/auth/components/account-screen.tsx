@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { PageError } from "@/components/shared/page-error";
 import { Button } from "@/components/ui/button";
 import { Link, getPathname } from "@/i18n/navigation";
 import { useGetSession, useLogout } from "../auth.queries";
@@ -19,13 +20,12 @@ export function AccountScreen() {
   }
   if (session.isError) {
     return (
-      <div className="space-y-3">
-        <AuthErrorToast
-          key={session.errorUpdatedAt}
-          message={t("unavailable")}
-        />
-        <Button onClick={() => session.refetch()}>{t("retry")}</Button>
-      </div>
+      <PageError
+        status={503}
+        className="min-h-72"
+        onRetry={() => session.refetch()}
+        retrying={session.isFetching}
+      />
     );
   }
   if (!session.data) {

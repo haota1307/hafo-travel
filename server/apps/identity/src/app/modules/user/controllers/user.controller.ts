@@ -30,7 +30,15 @@ export class UserController {
   async getUserById(params: GetUserByIdRequest): Promise<GetUserByIdResponse> {
     const user = await this.userService.getUserByUserId(params.userId);
 
-    return { user: user ? userProfileMapper(user) : undefined };
+    if (!user) {
+      return {};
+    }
+
+    return {
+      user: userProfileMapper(user),
+      ...(user.lockedAt && { locked: true }),
+      ...(user.accessVersion && { accessVersion: user.accessVersion }),
+    };
   }
 
   @GrpcMethod(IDENTITY_SERVICE_NAME, IDENTITY_SERVICE_METHODS.SET_USER_ROLES)

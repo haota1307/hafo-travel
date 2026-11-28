@@ -141,6 +141,73 @@
       "manageContent": "Biên tập hành trình và nội dung website"
     }
   },
+  "users": {
+    "account": "Tài khoản",
+    "invite": "Mời tài khoản",
+    "inviteDescription": "Người được mời sẽ xác nhận email và tự đặt mật khẩu.",
+    "sendInvitation": "Gửi lời mời",
+    "resendInvitation": "Gửi lại lời mời",
+    "invitationSent": "Đã gửi yêu cầu chuyển lời mời",
+    "invitationUnconfirmed": "Chưa xác nhận email mời đã được gửi",
+    "invitationUnconfirmedDescription": "Chọn Gửi lại lời mời trong menu … của tài khoản.",
+    "detail": "Chi tiết tài khoản",
+    "viewDetails": "Xem chi tiết",
+    "actions": "Thao tác",
+    "actionsFor": "Thao tác cho {name}",
+    "administrator": "Quản trị viên",
+    "loading": "Đang tải danh sách tài khoản…",
+    "loadingDetail": "Đang tải chi tiết tài khoản…",
+    "loadingRoles": "Đang tải vai trò…",
+    "noRoles": "Chưa có vai trò được cấp quyền trang quản trị.",
+    "noAccounts": "Chưa có tài khoản nội bộ.",
+    "noAccess": "Bạn chưa có quyền xem danh sách tài khoản.",
+    "editName": "Sửa họ tên",
+    "nameUpdated": "Đã lưu họ tên",
+    "changeRole": "Đổi vai trò",
+    "roleUpdated": "Đã đổi vai trò",
+    "bulkRole": "Đổi vai trò cho tài khoản đã chọn",
+    "bulkRoleDescription": "Vai trò mới sẽ thay thế vai trò hiện tại của {count} tài khoản có thể chỉnh sửa.",
+    "bulkRoleResult": "Kết quả đổi vai trò",
+    "bulkRoleCounts": "Đã đổi {changed}, bỏ qua {skipped}, lỗi {failed}.",
+    "lock": "Khóa tài khoản",
+    "unlock": "Mở khóa tài khoản",
+    "lockDescription": "{name} sẽ mất quyền truy cập và các phiên đăng nhập hiện tại sẽ hết hiệu lực.",
+    "unlockDescription": "{name} có thể sử dụng tài khoản sau khi mở khóa.",
+    "locked": "Đã khóa tài khoản",
+    "unlocked": "Đã mở khóa tài khoản",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "save": "Lưu",
+    "retry": "Thử lại",
+    "fields": {
+      "name": "Họ tên",
+      "firstName": "Tên",
+      "lastName": "Họ và tên đệm",
+      "email": "Email",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Cập nhật lần cuối"
+    },
+    "statuses": {
+      "pending": "Chờ kích hoạt",
+      "active": "Hoạt động",
+      "locked": "Đã khóa"
+    },
+    "errors": {
+      "email": "Nhập địa chỉ email hợp lệ.",
+      "emailUsed": "Địa chỉ email này đã có tài khoản.",
+      "name": "Nhập từ 1 đến 100 ký tự.",
+      "role": "Chọn một vai trò.",
+      "rolesUnavailable": "Chưa tải được danh sách vai trò.",
+      "session": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
+      "forbidden": "Bạn không có quyền thực hiện thao tác này.",
+      "notFound": "Không tìm thấy tài khoản nội bộ.",
+      "changed": "Trạng thái tài khoản đã thay đổi. Hãy tải lại và thử lại.",
+      "rateLimit": "Quá nhiều yêu cầu. Hãy thử lại sau.",
+      "unavailable": "Chưa thể hoàn tất yêu cầu. Hãy thử lại."
+    }
+  },
   "auth": {
     "or": "Hoặc",
     "googleCheckInbox": "Hãy mở email xác thực và chọn lại cùng tài khoản Google để hoàn tất đăng nhập.",
@@ -163,6 +230,9 @@
     "nameRule": "Nhập họ và tên, tối đa 100 ký tự mỗi trường.",
     "registered": "Đã xác thực email và tạo tài khoản. Bạn có thể đăng nhập ngay.",
     "passwordChanged": "Đã đổi mật khẩu. Hãy đăng nhập bằng mật khẩu mới.",
+    "acceptInvitation": "Kích hoạt tài khoản nội bộ",
+    "invitationAccepted": "Đã kích hoạt tài khoản. Bạn có thể đăng nhập bằng mật khẩu vừa đặt.",
+    "requestInvitationAgain": "Liên hệ quản trị viên để được gửi lại lời mời.",
     "badLink": "Liên kết không hợp lệ, đã hết hạn hoặc đã được sử dụng.",
     "requestAgain": "Yêu cầu liên kết mới",
     "existingMethod": "Không thể liên kết tài khoản Google này. Hãy đăng nhập bằng phương thức bạn đã dùng trước đây.",
@@ -700,6 +770,38 @@
     "UNKNOWN_ERROR": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "BACKEND_UNAVAILABLE": "Không thể kết nối máy chủ.",
     "BACKEND_NOT_CONFIGURED": "Máy chủ chưa được cấu hình."
+  },
+  "errorScreens": {
+    "home": "Về trang chủ",
+    "retry": "Thử lại",
+    "retrying": "Đang thử lại…",
+    "signIn": "Đăng nhập",
+    "status": {
+      "401": {
+        "title": "Phiên đăng nhập đã hết hạn",
+        "description": "Vui lòng đăng nhập lại để tiếp tục."
+      },
+      "403": {
+        "title": "Không có quyền truy cập",
+        "description": "Bạn chưa được cấp quyền xem nội dung này."
+      },
+      "404": {
+        "title": "Không tìm thấy trang",
+        "description": "Trang này có thể đã được chuyển sang địa chỉ khác hoặc bị xóa."
+      },
+      "429": {
+        "title": "Quá nhiều yêu cầu",
+        "description": "Vui lòng chờ một lát rồi thử lại."
+      },
+      "500": {
+        "title": "Đã xảy ra lỗi",
+        "description": "Chưa thể hoàn tất yêu cầu. Vui lòng thử lại."
+      },
+      "503": {
+        "title": "Dịch vụ tạm thời gián đoạn",
+        "description": "Chưa thể kết nối đến dịch vụ. Vui lòng thử lại sau ít phút."
+      }
+    }
   },
   "home": {
     "title": "Ứng dụng",

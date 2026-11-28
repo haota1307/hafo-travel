@@ -29,18 +29,26 @@ export class AuthorizationService implements OnModuleInit {
     );
   }
 
-  async permissions(userId: string, profileId: string, processId?: string) {
+  async permissions(
+    userId: string,
+    profileId: string,
+    processId?: string,
+    accessVersion?: string,
+  ) {
     const assignment = await this.cache.read(
       this.cache.userKey(userId),
       async () => {
-        const { user } = await requestGrpcData(
+        const response = await requestGrpcData(
           this.identity.getUserById,
           { userId },
           { processId },
         );
 
+        const { user, locked } = response;
+
         if (
           !user ||
+          locked ||
           user.userId !== userId ||
           user.roles.length !== 1 ||
           !user.roles[0]?.id
@@ -48,12 +56,17 @@ export class AuthorizationService implements OnModuleInit {
           throw new UnauthorizedException('Authentication is required');
         }
 
-        return { profileId: user.id, roleId: user.roles[0].id };
+        return {
+          profileId: user.id,
+          roleId: user.roles[0].id,
+          accessVersion: response.accessVersion,
+        };
       },
     );
 
     if (
       assignment.profileId !== profileId ||
+      assignment.accessVersion !== accessVersion ||
       typeof assignment.roleId !== 'string'
     ) {
       throw new UnauthorizedException('Authentication is required');

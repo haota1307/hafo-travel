@@ -6,13 +6,14 @@ import { AuthorizationService } from '@common/guards/authorization.service';
 import { GRPC_SERVICES, GrpcProvider } from '@common/configuration/grpc.config';
 
 import { UserController } from '@bff/user/controllers/user.controller';
+import { InternalUserController } from '@bff/user/controllers/internal-user.controller';
 
 @Module({
   imports: [
     AuthorizationCacheModule,
     ClientsModule.registerAsync([GrpcProvider(GRPC_SERVICES.IDENTITY_SERVICE)]),
   ],
-  controllers: [UserController],
+  controllers: [UserController, InternalUserController],
   providers: [AuthorizationService],
   exports: [AuthorizationService],
 })

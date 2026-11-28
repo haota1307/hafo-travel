@@ -7,6 +7,8 @@ import {
   IDENTITY_SERVICE_METHODS,
   type EmailActionRequest,
   type GoogleLoginRequest,
+  type InviteInternalUserRequest,
+  type ResendInternalUserInvitationRequest,
   type VerifyEmailRequest,
   type ResetPasswordRequest,
 } from '@common/interfaces/grpc/identity/v1/identity';
@@ -25,6 +27,41 @@ export class AccountController {
     call: ServerUnaryCall<EmailActionRequest, unknown>,
   ) {
     return this.accounts.register(request, grpcCallContext(metadata, call));
+  }
+
+  @GrpcMethod(
+    IDENTITY_SERVICE_NAME,
+    IDENTITY_SERVICE_METHODS.INVITE_INTERNAL_USER,
+  )
+  inviteInternalUser(
+    request: InviteInternalUserRequest,
+    metadata: Metadata,
+    call: ServerUnaryCall<InviteInternalUserRequest, unknown>,
+  ) {
+    return this.accounts.inviteInternalUser(
+      request,
+      grpcCallContext(metadata, call),
+    );
+  }
+
+  @GrpcMethod(
+    IDENTITY_SERVICE_NAME,
+    IDENTITY_SERVICE_METHODS.RESEND_INTERNAL_USER_INVITATION,
+  )
+  resendInternalUserInvitation(
+    request: ResendInternalUserInvitationRequest,
+    metadata: Metadata,
+    call: ServerUnaryCall<ResendInternalUserInvitationRequest, unknown>,
+  ) {
+    return this.accounts.resendInternalUserInvitation(
+      request,
+      grpcCallContext(metadata, call),
+    );
+  }
+
+  @GrpcMethod(IDENTITY_SERVICE_NAME, IDENTITY_SERVICE_METHODS.ACCEPT_INVITATION)
+  acceptInvitation(request: ResetPasswordRequest) {
+    return this.accounts.acceptInvitation(request);
   }
 
   @GrpcMethod(IDENTITY_SERVICE_NAME, IDENTITY_SERVICE_METHODS.FORGOT_PASSWORD)

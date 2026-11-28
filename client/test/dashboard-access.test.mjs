@@ -9,11 +9,31 @@ const requestPage = globalThis.fetch;
 test("dashboard and guest pages follow the current role across locales", async (t) => {
   let permissions = ["UI:dashboard", "UI:dashboard/roles"];
   let googleError = "GOOGLE_EMAIL_CONFIRMATION_REQUIRED";
-  const bff = createServer((request, response) => {
+  const invitations = [];
+  const bff = createServer(async (request, response) => {
     if (request.method === "POST" && request.url === "/auth/google") {
       request.resume();
       response.writeHead(403, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ statusCode: 403, message: googleError }));
+
+      return;
+    }
+
+    if (
+      request.method === "POST" &&
+      request.url === "/auth/accept-invitation"
+    ) {
+      const chunks = [];
+
+      for await (const chunk of request) {
+        chunks.push(chunk);
+      }
+
+      const body = JSON.parse(Buffer.concat(chunks).toString());
+      invitations.push(body);
+      const statusCode = body.token === "unused-link" ? 200 : 400;
+      response.writeHead(statusCode, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ statusCode, message: "OK", data: {} }));
 
       return;
     }
@@ -107,6 +127,7 @@ test("dashboard and guest pages follow the current role across locales", async (
   const usersHtml = await users.text();
   assert.match(usersHtml, /href="\/vi\/dashboard\/users"/);
   assert.doesNotMatch(usersHtml, /href="\/vi\/dashboard(?:\/roles)?"/);
+  assert.doesNotMatch(usersHtml, /Mời tài khoản<\/button>/);
   await expectRedirect("/vi/dashboard", signedIn, "/vi");
   await expectRedirect("/vi/dashboard/roles", signedIn, "/vi");
   await expectRedirect("/en/auth/login", signedIn, "/en/dashboard/users");
@@ -116,6 +137,20 @@ test("dashboard and guest pages follow the current role across locales", async (
     signedIn,
     "/en/dashboard/users?record=staff",
   );
+
+  permissions = [
+    "UI:dashboard/users",
+    "user.get_all",
+    "user.get_by_id",
+    "user.create",
+    "user.assign_roles",
+    "role.get_all",
+  ];
+  const adminUsers = await open("/vi/dashboard/users", signedIn);
+  assert.equal(adminUsers.status, 200);
+  const adminUsersHtml = await adminUsers.text();
+  assert.match(adminUsersHtml, /Mời tài khoản<\/button>/);
+  assert.doesNotMatch(adminUsersHtml, /minhanh@example.com/);
 
   permissions = ["role.get_all"];
 
@@ -130,6 +165,15 @@ test("dashboard and guest pages follow the current role across locales", async (
 
   for (const action of ["verify-email", "reset-password", "verify-google"]) {
     assert.equal((await open("/en/auth/" + action, signedIn)).status, 200);
+  }
+
+  for (const [locale, title] of [
+    ["vi", "Kích hoạt tài khoản nội bộ"],
+    ["en", "Activate your staff account"],
+  ]) {
+    const invitePage = await open(`/${locale}/auth/accept-invitation`);
+    assert.equal(invitePage.status, 200);
+    assert.ok((await invitePage.text()).includes(title));
   }
 
   const renewing = await open(
@@ -159,4 +203,38 @@ test("dashboard and guest pages follow the current role across locales", async (
   const forbidden = await googleLogin();
   assert.equal(forbidden.status, 403);
   assert.deepEqual(await forbidden.json(), { message: "AUTH_REQUEST_FAILED" });
+
+  function acceptInvitation(
+    token,
+    { path = "/api/auth/accept-invitation", from = origin } = {},
+  ) {
+    return requestPage(new URL(path, origin), {
+      method: "POST",
+      headers: { Origin: from, "Content-Type": "application/json" },
+      body: JSON.stringify({ token, password: "test-password" }),
+      signal: AbortSignal.timeout(10000),
+    });
+  }
+
+  const activation = await acceptInvitation("unused-link");
+  assert.equal(activation.status, 200);
+  assert.equal(activation.headers.get("set-cookie"), null);
+  assert.deepEqual(await activation.json(), { message: "OK" });
+  const invalidLink = await acceptInvitation("expired-link");
+  assert.equal(invalidLink.status, 400);
+  await invalidLink.json();
+  const invalidOrigin = await acceptInvitation("unused-link", {
+    from: "http://example.test",
+  });
+  assert.equal(invalidOrigin.status, 403);
+  await invalidOrigin.json();
+  const genericProxy = await acceptInvitation("unused-link", {
+    path: "/api/backend/auth/accept-invitation",
+  });
+  assert.equal(genericProxy.status, 404);
+  await genericProxy.json();
+  assert.deepEqual(invitations, [
+    { token: "unused-link", password: "test-password" },
+    { token: "expired-link", password: "test-password" },
+  ]);
 });

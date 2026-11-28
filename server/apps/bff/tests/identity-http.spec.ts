@@ -3,6 +3,7 @@ import { createServer, type AddressInfo } from 'node:net';
 
 import {
   ConflictException,
+  Controller,
   ForbiddenException,
   type INestApplication,
   type INestMicroservice,
@@ -12,7 +13,11 @@ import {
 } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
-import { ClientGrpcProxy, type GrpcOptions } from '@nestjs/microservices';
+import {
+  ClientGrpcProxy,
+  GrpcMethod,
+  type GrpcOptions,
+} from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Test } from '@nestjs/testing';
 import { Types } from 'mongoose';
@@ -37,7 +42,11 @@ import { GrpcLoggingInterceptor } from '@common/interceptors/grpc-logging.interc
 import { HttpResponseInterceptor } from '@common/interceptors/http-response.interceptor';
 import {
   IDENTITY_SERVICE_NAME,
+  IDENTITY_SERVICE_METHODS,
   type IdentityServiceClient,
+  type InternalUser,
+  type InviteInternalUserRequest,
+  type ListInternalUsersRequest,
   type LoginRequest,
 } from '@common/interfaces/grpc/identity/v1/identity';
 import { LoggerMiddleware } from '@common/middlewares/logger.middleware';
@@ -46,6 +55,7 @@ import { requestGrpcData } from '@common/utils/rpc.util';
 
 import { AuthController as BffAuthController } from '@bff/auth/controllers/auth.controller';
 import { RoleController as BffRoleController } from '@bff/role/controllers/role.controller';
+import { InternalUserController as BffInternalUserController } from '@bff/user/controllers/internal-user.controller';
 import { UserController as BffUserController } from '@bff/user/controllers/user.controller';
 import { AuthController as RpcAuthController } from '@identity/auth/controllers/auth.controller';
 import { AuthService } from '@identity/auth/services/auth.service';
@@ -69,6 +79,44 @@ async function freePort(): Promise<number> {
   );
 
   return port;
+}
+
+const internalUser = {
+  userId: 'pending-user',
+  firstName: 'Internal',
+  lastName: 'User',
+  email: 'internal@example.test',
+  role: { id: new Types.ObjectId().toHexString(), name: 'operations' },
+  status: 'pending',
+  accessProtected: false,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+} satisfies InternalUser;
+
+@Controller()
+class InternalUserRpcFixture {
+  @GrpcMethod(
+    IDENTITY_SERVICE_NAME,
+    IDENTITY_SERVICE_METHODS.LIST_INTERNAL_USERS,
+  )
+  list(request: ListInternalUsersRequest) {
+    return { users: request.actorUserId ? [internalUser] : [] };
+  }
+
+  @GrpcMethod(
+    IDENTITY_SERVICE_NAME,
+    IDENTITY_SERVICE_METHODS.INVITE_INTERNAL_USER,
+  )
+  invite(request: InviteInternalUserRequest) {
+    return {
+      user: {
+        ...internalUser,
+        firstName: request.firstName,
+        email: request.email,
+      },
+      invitationDelivery: 'unconfirmed',
+    };
+  }
 }
 
 describe('BFF HTTP over real gRPC services', () => {
@@ -301,7 +349,12 @@ describe('BFF HTTP over real gRPC services', () => {
     users = userClient.getService<IdentityServiceClient>(IDENTITY_SERVICE_NAME);
 
     const userModule = await Test.createTestingModule({
-      controllers: [RpcUserController, RpcRoleController, RpcAuthController],
+      controllers: [
+        RpcUserController,
+        RpcRoleController,
+        RpcAuthController,
+        InternalUserRpcFixture,
+      ],
       providers: [
         UserService,
         RoleService,
@@ -321,7 +374,12 @@ describe('BFF HTTP over real gRPC services', () => {
     process.env['AC_TOKEN_KEY'] = accessKey;
     const bffModule = await Test.createTestingModule({
       imports: [AccessTokenModule],
-      controllers: [BffUserController, BffRoleController, BffAuthController],
+      controllers: [
+        BffUserController,
+        BffRoleController,
+        BffAuthController,
+        BffInternalUserController,
+      ],
       providers: [
         AuthorizationService,
         { provide: AuthorizationCache, useValue: cache },
@@ -366,6 +424,8 @@ describe('BFF HTTP over real gRPC services', () => {
     entries.clear();
     administrator.permissions = Object.values(PERMISSION);
     fixture.roles = [administrator];
+    delete fixture.lockedAt;
+    delete fixture.accessVersion;
   });
 
   it.each([
@@ -538,6 +598,77 @@ describe('BFF HTTP over real gRPC services', () => {
       },
     });
     expect(repository.getByUserId).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns flat internal profiles and enforces read and invite permissions independently', async () => {
+    const list = await getProtected('user/internal');
+    expect(list.status).toBe(200);
+    expect(list.headers.get('cache-control')).toBe('no-store');
+    await expect(list.json()).resolves.toMatchObject({ data: [internalUser] });
+
+    const invite = (body: object) =>
+      fetch(`${baseUrl}/api/user/internal`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${tokenPair.accessToken}`,
+          'Content-Type': 'application/json',
+          Connection: 'close',
+        },
+        body: JSON.stringify(body),
+      });
+    const body = {
+      firstName: ' Internal ',
+      lastName: internalUser.lastName,
+      email: internalUser.email,
+      roles: [internalUser.role.id],
+      locale: 'vi',
+    };
+
+    expect((await invite({ ...body, roles: [] })).status).toBe(400);
+    const invited = await invite(body);
+    expect(invited.status).toBe(201);
+    await expect(invited.json()).resolves.toMatchObject({
+      data: { user: internalUser, invitationDelivery: 'unconfirmed' },
+    });
+
+    await cache.change(cache.roleKey(administrator.id), async () => {
+      administrator.permissions = [
+        PERMISSION.USER_GET_ALL,
+        PERMISSION.USER_CREATE,
+      ];
+    });
+    expect((await invite(body)).status).toBe(403);
+    expect((await getProtected('user/internal')).status).toBe(200);
+  });
+
+  it('rejects access for a cached account when locked and rejects old tokens after unlocking', async () => {
+    const previous = issueAccessToken();
+    const accessVersion = 'fixture-access-version';
+    expect((await getProtected('role', previous)).status).toBe(200);
+    expect(entries.has(cache.userKey(fixture.userId))).toBe(true);
+
+    await cache.change(cache.userKey(fixture.userId), async () => {
+      fixture.lockedAt = new Date();
+      fixture.accessVersion = accessVersion;
+    });
+    expect((await getProtected('role', previous)).status).toBe(401);
+    expect(
+      (await getProtected('role', issueAccessToken({ accessVersion }))).status,
+    ).toBe(401);
+
+    await cache.change(cache.userKey(fixture.userId), async () => {
+      delete fixture.lockedAt;
+    });
+
+    expect((await getProtected('role', previous)).status).toBe(401);
+    const me = await getProtected(
+      'user/me',
+      issueAccessToken({ accessVersion }),
+    );
+    expect(me.status).toBe(200);
+    const profile = (await me.json()) as { data: { user: object } };
+    expect(profile.data.user).not.toHaveProperty('accessVersion');
+    expect(profile.data.user).not.toHaveProperty('lockedAt');
   });
 
   it('rejects a profile lookup whose ID does not match the signed profile ID', async () => {

@@ -2,18 +2,19 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { PageError } from "@/components/shared/page-error";
 import { getPathname } from "@/i18n/navigation";
 import { authApiRequest } from "../auth.api";
-import { AuthErrorToast } from "./auth-error-toast";
 
 export function SessionRecovery({
   unavailable,
   guest,
+  className,
   children,
 }: {
   unavailable: boolean;
   guest: boolean;
+  className?: string;
   children: ReactNode;
 }) {
   const t = useTranslations("auth");
@@ -72,10 +73,11 @@ export function SessionRecovery({
 
   if (status === "error") {
     return (
-      <div className="space-y-3">
-        <AuthErrorToast message={t("unavailable")} />
-        <Button onClick={() => setStatus("loading")}>{t("retry")}</Button>
-      </div>
+      <PageError
+        status={503}
+        className={className}
+        onRetry={() => setStatus("loading")}
+      />
     );
   }
 

@@ -5,6 +5,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -16,6 +17,9 @@ import { OAuth2Client, type TokenPayload } from 'google-auth-library';
 import type {
   EmailActionRequest,
   GoogleLoginRequest,
+  InternalUser,
+  InviteInternalUserRequest,
+  ResendInternalUserInvitationRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
 } from '@common/interfaces/grpc/identity/v1/identity';
@@ -34,9 +38,11 @@ import { AccountEmailService } from '@identity/auth/services/account-email.servi
 import { AuthService } from '@identity/auth/services/auth.service';
 import type { AuthConfiguration } from '@identity/config/auth.configuration';
 import { RoleService } from '@identity/role/services/role.service';
+import { InternalUserService } from '@identity/user/services/internal-user.service';
 import { UserService } from '@identity/user/services/user.service';
 
-type EmailAction = 'verify-email' | 'reset-password' | 'verify-google';
+type EmailAction =
+  'verify-email' | 'reset-password' | 'verify-google' | 'accept-invitation';
 
 function duplicateKey(error: unknown) {
   return (
@@ -49,6 +55,7 @@ function duplicateKey(error: unknown) {
 
 @Injectable()
 export class AccountService {
+  private readonly logger = new Logger(AccountService.name);
   private readonly google = new OAuth2Client();
   private readonly config: AuthConfiguration;
   private readonly actionKey: Buffer;
@@ -56,6 +63,7 @@ export class AccountService {
   constructor(
     private readonly accounts: AccountRepository,
     private readonly users: UserService,
+    private readonly internalUsers: InternalUserService,
     private readonly sessions: AuthService,
     private readonly mail: AccountEmailService,
     private readonly jwt: JwtService,
@@ -83,6 +91,47 @@ export class AccountService {
 
     const token = await this.issueToken('verify-email', address);
     await this.mail.send('verify-email', address, token, locale, context);
+
+    return {};
+  }
+
+  async inviteInternalUser(
+    input: InviteInternalUserRequest,
+    context: GrpcCallContext,
+  ) {
+    const { user, invitationVersion } =
+      await this.internalUsers.createInvitation(input);
+
+    return this.sendInvitation(user, invitationVersion, input.locale, context);
+  }
+
+  async resendInternalUserInvitation(
+    input: ResendInternalUserInvitationRequest,
+    context: GrpcCallContext,
+  ) {
+    const { user, invitationVersion } =
+      await this.internalUsers.prepareInvitation(input);
+
+    return this.sendInvitation(user, invitationVersion, input.locale, context);
+  }
+
+  async acceptInvitation({ token, password }: ResetPasswordRequest) {
+    const { sub, version } = await this.readToken('accept-invitation', token);
+
+    if (!version || !isProvisioningPasswordValid(password)) {
+      throw new BadRequestException('Invalid account details');
+    }
+
+    const passwordHash = await hashPassword(password);
+    const accepted = await this.internalUsers.acceptInvitation(
+      sub,
+      version,
+      passwordHash,
+    );
+
+    if (!accepted) {
+      throw new BadRequestException('Invalid or used link');
+    }
 
     return {};
   }
@@ -132,7 +181,7 @@ export class AccountService {
   ) {
     const user = await this.users.getAuthProfileByEmail(email.trim());
 
-    if (user?.passwordHash && user.userId) {
+    if (user?.passwordHash && user.userId && !user.lockedAt) {
       const token = await this.issueToken(
         'reset-password',
         user._id.toHexString(),
@@ -282,6 +331,34 @@ export class AccountService {
     }
 
     return user;
+  }
+
+  private async sendInvitation(
+    user: InternalUser,
+    invitationVersion: string,
+    locale: string,
+    context: GrpcCallContext,
+  ) {
+    try {
+      const token = await this.issueToken('accept-invitation', user.userId, {
+        version: invitationVersion,
+      });
+      await this.mail.send(
+        'accept-invitation',
+        user.email,
+        token,
+        locale,
+        context,
+      );
+
+      return { user, invitationDelivery: 'sent' };
+    } catch {
+      this.logger.warn(
+        'Could not confirm internal account invitation delivery',
+      );
+
+      return { user, invitationDelivery: 'unconfirmed' };
+    }
   }
 
   private createClientAccount(

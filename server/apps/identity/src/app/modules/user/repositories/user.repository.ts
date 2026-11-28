@@ -79,4 +79,13 @@ export class UserRepository {
 
     return !!result;
   }
+
+  async existsInsensitive(email: string): Promise<boolean> {
+    const result = await this.userModel
+      .exists({ email })
+      .collation({ locale: 'en', strength: 2 })
+      .exec();
+
+    return !!result;
+  }
 }

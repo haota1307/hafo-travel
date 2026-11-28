@@ -22,6 +22,8 @@ export interface GetUserByIdRequest {
 
 export interface GetUserByIdResponse {
   user?: UserProfile | undefined;
+  locked?: boolean | undefined;
+  accessVersion?: string | undefined;
 }
 
 export interface UserProfile {
@@ -47,6 +49,79 @@ export interface RoleProfile {
 export interface SetUserRolesRequest {
   userId: string;
   roles: string[];
+}
+
+export interface InternalUserRole {
+  id: string;
+  name: string;
+}
+
+export interface InternalUser {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role?: InternalUserRole | undefined;
+  status: string;
+  accessProtected: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListInternalUsersRequest {
+  actorUserId: string;
+}
+
+export interface ListInternalUsersResponse {
+  users: InternalUser[];
+}
+
+export interface InternalUserTarget {
+  userId: string;
+  actorUserId: string;
+}
+
+export interface InternalUserResponse {
+  user?: InternalUser | undefined;
+}
+
+export interface UpdateInternalUserRequest {
+  userId: string;
+  actorUserId: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface SetInternalUserRoleRequest {
+  userId: string;
+  actorUserId: string;
+  roles: string[];
+}
+
+export interface SetInternalUserStatusRequest {
+  userId: string;
+  actorUserId: string;
+  locked: boolean;
+}
+
+export interface InviteInternalUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  roles: string[];
+  locale: string;
+  actorUserId: string;
+}
+
+export interface ResendInternalUserInvitationRequest {
+  userId: string;
+  actorUserId: string;
+  locale: string;
+}
+
+export interface InternalUserInvitationResponse {
+  user?: InternalUser | undefined;
+  invitationDelivery: string;
 }
 
 export type ListRolesRequest = Record<string, never>;
@@ -142,6 +217,38 @@ export interface IdentityServiceClient {
     request: SetUserRolesRequest,
     metadata?: Metadata,
   ): Observable<GetUserByIdResponse>;
+  listInternalUsers(
+    request: ListInternalUsersRequest,
+    metadata?: Metadata,
+  ): Observable<ListInternalUsersResponse>;
+  getInternalUser(
+    request: InternalUserTarget,
+    metadata?: Metadata,
+  ): Observable<InternalUserResponse>;
+  updateInternalUser(
+    request: UpdateInternalUserRequest,
+    metadata?: Metadata,
+  ): Observable<InternalUserResponse>;
+  setInternalUserRole(
+    request: SetInternalUserRoleRequest,
+    metadata?: Metadata,
+  ): Observable<InternalUserResponse>;
+  setInternalUserStatus(
+    request: SetInternalUserStatusRequest,
+    metadata?: Metadata,
+  ): Observable<InternalUserResponse>;
+  inviteInternalUser(
+    request: InviteInternalUserRequest,
+    metadata?: Metadata,
+  ): Observable<InternalUserInvitationResponse>;
+  resendInternalUserInvitation(
+    request: ResendInternalUserInvitationRequest,
+    metadata?: Metadata,
+  ): Observable<InternalUserInvitationResponse>;
+  acceptInvitation(
+    request: ResetPasswordRequest,
+    metadata?: Metadata,
+  ): Observable<AccountActionResponse>;
   listRoles(
     request: ListRolesRequest,
     metadata?: Metadata,
@@ -215,6 +322,62 @@ export interface IdentityServiceController {
     | Promise<GetUserByIdResponse>
     | Observable<GetUserByIdResponse>
     | GetUserByIdResponse;
+  listInternalUsers(
+    request: ListInternalUsersRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<ListInternalUsersResponse>
+    | Observable<ListInternalUsersResponse>
+    | ListInternalUsersResponse;
+  getInternalUser(
+    request: InternalUserTarget,
+    metadata?: Metadata,
+  ):
+    | Promise<InternalUserResponse>
+    | Observable<InternalUserResponse>
+    | InternalUserResponse;
+  updateInternalUser(
+    request: UpdateInternalUserRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<InternalUserResponse>
+    | Observable<InternalUserResponse>
+    | InternalUserResponse;
+  setInternalUserRole(
+    request: SetInternalUserRoleRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<InternalUserResponse>
+    | Observable<InternalUserResponse>
+    | InternalUserResponse;
+  setInternalUserStatus(
+    request: SetInternalUserStatusRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<InternalUserResponse>
+    | Observable<InternalUserResponse>
+    | InternalUserResponse;
+  inviteInternalUser(
+    request: InviteInternalUserRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<InternalUserInvitationResponse>
+    | Observable<InternalUserInvitationResponse>
+    | InternalUserInvitationResponse;
+  resendInternalUserInvitation(
+    request: ResendInternalUserInvitationRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<InternalUserInvitationResponse>
+    | Observable<InternalUserInvitationResponse>
+    | InternalUserInvitationResponse;
+  acceptInvitation(
+    request: ResetPasswordRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<AccountActionResponse>
+    | Observable<AccountActionResponse>
+    | AccountActionResponse;
   listRoles(
     request: ListRolesRequest,
     metadata?: Metadata,
@@ -293,6 +456,14 @@ export const IDENTITY_SERVICE_METHODS = {
   CREATE_USER: 'CreateUser',
   GET_USER_BY_ID: 'GetUserById',
   SET_USER_ROLES: 'SetUserRoles',
+  LIST_INTERNAL_USERS: 'ListInternalUsers',
+  GET_INTERNAL_USER: 'GetInternalUser',
+  UPDATE_INTERNAL_USER: 'UpdateInternalUser',
+  SET_INTERNAL_USER_ROLE: 'SetInternalUserRole',
+  SET_INTERNAL_USER_STATUS: 'SetInternalUserStatus',
+  INVITE_INTERNAL_USER: 'InviteInternalUser',
+  RESEND_INTERNAL_USER_INVITATION: 'ResendInternalUserInvitation',
+  ACCEPT_INVITATION: 'AcceptInvitation',
   LIST_ROLES: 'ListRoles',
   GET_ROLE: 'GetRole',
   CREATE_ROLE: 'CreateRole',

@@ -57,7 +57,8 @@ export class UserGuard implements CanActivate {
       throw new UnauthorizedException('Authentication is required');
     }
 
-    const { sub, profileId, roleId, iat, exp, aud, tokenUse } = claims;
+    const { sub, profileId, roleId, iat, exp, aud, tokenUse, accessVersion } =
+      claims;
     const now = Math.floor(Date.now() / 1000);
 
     if (
@@ -69,6 +70,8 @@ export class UserGuard implements CanActivate {
       !/^[a-f0-9]{24}$/.test(profileId) ||
       (roleId !== undefined &&
         (typeof roleId !== 'string' || !/^[a-f0-9]{24}$/.test(roleId))) ||
+      (accessVersion !== undefined &&
+        (typeof accessVersion !== 'string' || !accessVersion)) ||
       typeof iat !== 'number' ||
       !Number.isSafeInteger(iat) ||
       iat > now ||
@@ -87,6 +90,7 @@ export class UserGuard implements CanActivate {
         sub,
         profileId,
         request.processId,
+        accessVersion,
       ),
     };
 

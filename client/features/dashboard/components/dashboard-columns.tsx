@@ -7,13 +7,12 @@ import { LabeledTooltip } from "@/components/shared/labeled-tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/shared/data-table/column-header";
 import type { ColumnDef } from "@/components/shared/data-table/table-features";
-import type { DashboardRecord } from "../records";
+import type { DashboardRecord, SampleSection } from "../records";
 import { listColumns } from "../records";
-import type { Section } from "../sections";
 import { StatusBadge } from "./record-ui";
 
 export function useDashboardColumns(
-  section: Section,
+  section: SampleSection,
   container: HTMLElement | null,
   openRecord: (id: string) => void,
 ) {

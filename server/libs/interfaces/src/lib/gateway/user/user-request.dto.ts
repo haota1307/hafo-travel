@@ -1,12 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, IntersectionType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsEmail,
+  IsIn,
   IsMongoId,
   IsNotEmpty,
+  IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateUserRequestDto {
@@ -40,4 +45,51 @@ export class SetUserRolesRequestDto {
   @ArrayMaxSize(1)
   @IsMongoId({ each: true })
   roles: string[];
+}
+
+export class InternalUserNameRequestDto {
+  @ApiProperty()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  firstName: string;
+
+  @ApiProperty()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  lastName: string;
+}
+
+export class InternalUserInvitationLocaleRequestDto {
+  @ApiProperty({ required: false, enum: ['vi', 'en'] })
+  @IsOptional()
+  @IsIn(['vi', 'en'])
+  locale?: string;
+}
+
+export class InviteInternalUserRequestDto extends IntersectionType(
+  InternalUserNameRequestDto,
+  SetUserRolesRequestDto,
+  InternalUserInvitationLocaleRequestDto,
+) {
+  @ApiProperty()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsEmail()
+  @MaxLength(254)
+  email: string;
+}
+
+export class InternalUserStatusRequestDto {
+  @ApiProperty()
+  @IsBoolean()
+  locked: boolean;
 }

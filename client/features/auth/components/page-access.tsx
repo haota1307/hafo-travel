@@ -28,6 +28,7 @@ export async function PageAccess({
       <SessionRecovery
         unavailable={session === "unavailable"}
         guest={scope === "guest"}
+        className={scope === "dashboard" ? undefined : "min-h-72"}
       >
         {scope === "guest" ? children : null}
       </SessionRecovery>

@@ -149,6 +149,7 @@ export class AuthService {
   private hasValidRole(user: UserWithRoles | null): user is UserWithRoles {
     return !!(
       user?.userId?.trim() &&
+      !user.lockedAt &&
       user.roles.length === 1 &&
       user.roles[0]?.id
     );
@@ -182,6 +183,7 @@ export class AuthService {
           sub: user.userId,
           profileId: user._id.toHexString(),
           roleId: user.roles[0].id,
+          ...(user.accessVersion && { accessVersion: user.accessVersion }),
           jti: randomUUID(),
           iat: issuedAt,
         },

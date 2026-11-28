@@ -79,11 +79,7 @@ type Workspace = {
   inquiryState: (id: string) => InquiryUpdate | undefined;
   addInquiry: (item: LocalInquiry) => void;
   editInquiries: (updates: Record<string, InquiryUpdate>) => void;
-  changeSetting: (
-    group: "publication" | "userRoles",
-    ids: string[],
-    value: string,
-  ) => void;
+  changePublication: (ids: string[], value: string) => void;
 };
 
 const WorkspaceContext = createContext<Workspace | null>(null);
@@ -138,15 +134,11 @@ export function WorkspaceProvider({
     }));
   }
 
-  function changeSetting(
-    group: "publication" | "userRoles",
-    ids: string[],
-    value: string,
-  ) {
+  function changePublication(ids: string[], value: string) {
     updateChanges((previous) => ({
       ...previous,
-      [group]: {
-        ...previous[group],
+      publication: {
+        ...previous.publication,
         ...Object.fromEntries(ids.map((id) => [id, value])),
       },
     }));
@@ -162,7 +154,7 @@ export function WorkspaceProvider({
         inquiryState,
         addInquiry,
         editInquiries,
-        changeSetting,
+        changePublication,
       }}
     >
       {children}

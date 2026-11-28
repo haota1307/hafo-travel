@@ -261,6 +261,44 @@ describe('AuthService', () => {
     }
   });
 
+  it('blocks new sessions while locked and keeps existing refresh sessions revoked after unlock', async () => {
+    const initial = await service.login({ email: EMAIL, password: PASSWORD });
+    const original = user;
+
+    try {
+      user = {
+        ...original,
+        lockedAt: new Date(),
+        accessVersion: 'lock-version',
+        credentialVersion: 'lock-version',
+      };
+
+      await expect(
+        service.login({ email: EMAIL, password: PASSWORD }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.startSession(user, Date.now()),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.refreshSession(initial.refreshToken),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+
+      delete user.lockedAt;
+
+      await expect(
+        service.refreshSession(initial.refreshToken),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+      const current = await service.login({ email: EMAIL, password: PASSWORD });
+      const claims = await jwt.verifyAsync(current.accessToken);
+      expect(claims).toHaveProperty('accessVersion', 'lock-version');
+      await expect(
+        service.refreshSession(current.refreshToken),
+      ).resolves.toHaveProperty('accessToken');
+    } finally {
+      user = original;
+    }
+  });
+
   it('allows only one refresh winner and keeps the absolute session expiry', async () => {
     const initial = await service.login({ email: EMAIL, password: PASSWORD });
     const elapsedSeconds = ACCESS_TOKEN_MAX_AGE_SECONDS + 1;
