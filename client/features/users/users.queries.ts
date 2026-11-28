@@ -8,15 +8,16 @@ import {
 } from "@tanstack/react-query";
 
 import { HttpError } from "@/lib/http";
+import { rolesQueryKeys } from "@/features/roles/roles-query-keys";
 
 import { usersApiRequest } from "./users.api";
 import type { InternalUser, InviteUserForm, UserName } from "./users.schema";
 
-const usersQueryKeys = {
+export const usersQueryKeys = {
   list: (actorId: string) => ["users", actorId, "list"] as const,
+  details: (actorId: string) => ["users", actorId, "detail"] as const,
   detail: (actorId: string, userId: string | undefined) =>
-    ["users", actorId, "detail", userId] as const,
-  roleOptions: (actorId: string) => ["users", actorId, "roles"] as const,
+    [...usersQueryKeys.details(actorId), userId] as const,
 };
 
 export function useGetUsers(actorId: string, enabled: boolean) {
@@ -37,13 +38,14 @@ export function useGetUser(actorId: string, userId?: string) {
   });
 }
 
-export function useGetUserRoleOptions(actorId: string, enabled: boolean) {
-  return useQuery({
-    queryKey: usersQueryKeys.roleOptions(actorId),
-    queryFn: enabled
-      ? ({ signal }) => usersApiRequest.roleOptions(signal)
-      : skipToken,
-  });
+function useRefreshRoleCounts(actorId: string) {
+  const client = useQueryClient();
+
+  return () =>
+    Promise.all([
+      client.invalidateQueries({ queryKey: rolesQueryKeys.list(actorId) }),
+      client.invalidateQueries({ queryKey: rolesQueryKeys.details(actorId) }),
+    ]);
 }
 
 function useRefreshUsers(actorId: string) {
@@ -67,11 +69,14 @@ function useRefreshUsers(actorId: string) {
 
 export function useInviteUser(actorId: string) {
   const refresh = useRefreshUsers(actorId);
+  const refreshRoleCounts = useRefreshRoleCounts(actorId);
 
   return useMutation({
     mutationFn: ({ form, locale }: { form: InviteUserForm; locale: string }) =>
       usersApiRequest.invite(form, locale),
-    onSuccess: ({ user }) => refresh([user]),
+    onSuccess: async ({ user }) => {
+      await Promise.all([refresh([user]), refreshRoleCounts()]);
+    },
   });
 }
 
@@ -106,6 +111,7 @@ export function useUpdateUserStatus(actorId: string, userId: string) {
 
 export function useUpdateUsersRole(actorId: string) {
   const refresh = useRefreshUsers(actorId);
+  const refreshRoleCounts = useRefreshRoleCounts(actorId);
 
   return useMutation({
     mutationFn: async ({
@@ -138,6 +144,11 @@ export function useUpdateUsersRole(actorId: string) {
 
       return { updated, failures };
     },
-    onSuccess: ({ updated }) => refresh(updated),
+    onSuccess: async ({ updated }) => {
+      await Promise.all([
+        refresh(updated),
+        updated.length ? refreshRoleCounts() : undefined,
+      ]);
+    },
   });
 }

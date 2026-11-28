@@ -99,10 +99,7 @@ export function DashboardList({
   );
   const columns = useDashboardColumns(section, container, openRecord);
   const facet = facetFields[section];
-  const filterIds = [
-    ...(section === "roles" ? [] : ["status"]),
-    ...(facet ? [facet] : []),
-  ];
+  const filterIds = ["status", ...(facet ? [facet] : [])];
   const columnFilters: ColumnFiltersState = filterIds
     .filter((id) => params.has(id))
     .map((id) => ({ id, value: params.getAll(id) }));

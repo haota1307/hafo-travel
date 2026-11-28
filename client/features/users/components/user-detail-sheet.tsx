@@ -13,6 +13,7 @@ import {
 import { toast } from "@/components/ui/toast";
 import { StatusBadge } from "@/features/dashboard/components/record-ui";
 import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { getRoleName } from "@/features/roles/roles-ui";
 
 import {
   useGetUser,
@@ -23,7 +24,6 @@ import type { InternalUser } from "../users.schema";
 import {
   getUserErrorKey,
   getUserName,
-  getUserRoleName,
   type UserAccess,
   type UserEditAction,
 } from "../users-ui";
@@ -187,6 +187,8 @@ function UserDetail({
   onEditDone: () => void;
 }) {
   const t = useTranslations("users");
+  const roleLabels = useTranslations("roles");
+  const locale = useLocale();
   const format = useFormatter();
   const role = useUpdateUsersRole(actorId);
   const protectedAccess = user.accessProtected || user.userId === actorId;
@@ -196,7 +198,10 @@ function UserDetail({
   const dateFormat = { dateStyle: "medium", timeStyle: "short" } as const;
   const fields = [
     { label: t("fields.email"), value: user.email },
-    { label: t("fields.role"), value: getUserRoleName(user.role.name, t) },
+    {
+      label: t("fields.role"),
+      value: getRoleName(user.role, roleLabels, locale),
+    },
     {
       label: t("fields.createdAt"),
       value: format.dateTime(new Date(user.createdAt), dateFormat),

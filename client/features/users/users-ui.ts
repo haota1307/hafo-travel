@@ -37,10 +37,6 @@ export function getUserName(user: InternalUser, locale: string) {
   return names.filter(Boolean).join(" ") || user.email;
 }
 
-export function getUserRoleName(name: string, t: UserLabels) {
-  return name === "administrator" ? t("administrator") : name;
-}
-
 export function getUserErrorKey(error: unknown) {
   if (error instanceof HttpError) {
     switch (error.status) {

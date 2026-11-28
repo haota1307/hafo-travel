@@ -24,7 +24,7 @@ npm run dev
 - Cụm trang public Hafo Travel: trang chủ, `/experiences`, `/contacts`, 6 hành trình Việt Nam và 2 trang pháp lý dưới mỗi locale, đầy đủ nội dung/metadata tiếng Việt và tiếng Anh. Nút VI/EN ở header giữ trang, query và hash khi đổi ngôn ngữ. `/trai-nghiem` và `/coaches` dưới mỗi locale redirect 308 trực tiếp tới `/experiences` cùng locale. Xem [cấu trúc và cách sửa](documents/public-site/README.md).
 - Demo: /vi/template, /en/template.
 - Các mẫu trang lỗi tại `/[locale]/template/401`, `/403`, `/404`, `/500` và `/503` dùng chung bố cục với màn hình lỗi của ứng dụng. Dashboard hiển thị thông báo theo lỗi khi kiểm tra phiên hoặc tải danh sách tài khoản.
-- Dashboard mở tại `/vi/dashboard` hoặc `/en/dashboard`. Trang `/dashboard/users` dùng tài khoản nội bộ từ Identity. Các màn vận hành dùng dữ liệu mẫu; yêu cầu tư vấn và trạng thái nội dung chỉnh thử được lưu trong phiên của tab.
+- Dashboard mở tại `/vi/dashboard` hoặc `/en/dashboard`. Các trang `/dashboard/users`, `/dashboard/roles` và `/dashboard/permissions` dùng dữ liệu thật từ Identity. Các màn vận hành dùng dữ liệu mẫu; yêu cầu tư vấn và trạng thái nội dung chỉnh thử được lưu trong phiên của tab.
 - Locale mặc định vi; URL cũ /template điều hướng theo ngôn ngữ đã chọn.
 - Theme, font và layout của demo áp dụng cho cả hai locale. Popup nằm trong phạm vi của template đang mount để giữ style và tương tác khi đổi ngôn ngữ.
 - Chỉnh màu, font và bo góc của public và demo tại một chỗ. [app/globals.css](app/globals.css)
@@ -62,10 +62,14 @@ Mở `/[locale]/auth/login` để đăng nhập và `/[locale]/account` để xe
 
 Tại trang **Tài khoản**, dùng menu `…` ở cuối dòng để xem chi tiết, sửa họ tên, đổi vai trò, khóa và mở khóa theo quyền được cấp. Các form chọn vai trò dùng thêm quyền `role.get_all`. Người nhận lời mời mở liên kết `/[locale]/auth/accept-invitation` trong 30 phút và tự đặt mật khẩu. Nếu trang báo chưa xác nhận gửi email, chọn **Gửi lại lời mời** trong menu của tài khoản. [Quyền và contract tài khoản nội bộ](../server/instructions/rbac.md#tài-khoản-nội-bộ).
 
+Tại trang **Vai trò**, người được cấp quyền có thể tạo, sửa và xóa vai trò nghiệp vụ. Nhập tên tiếng Việt và tiếng Anh để ứng dụng hiển thị theo ngôn ngữ đang chọn. Số tài khoản tính mọi hồ sơ được gán, gồm tài khoản đang chờ kích hoạt và bị khóa. Liên kết trong chi tiết mở trang Tài khoản nội bộ đã lọc theo vai trò khi có quyền tra cứu. [Quyền và contract vai trò](../server/instructions/rbac.md#http-api).
+
+Tại trang **Phân quyền**, quyền được lưu khi bật hoặc tắt ô tương ứng. Ô ở đầu cột áp dụng cho tất cả chức năng hỗ trợ thao tác đó. Quyền **Sửa** ở hàng Tài khoản bao gồm đổi vai trò. Hai vai trò hệ thống `administrator` và `client` chỉ xem. Trang Vai trò dùng `UI:dashboard/roles` và trang Phân quyền dùng `UI:dashboard/permissions`.
+
 Đặt `API_URL` cho Next server. Đặt `NEXT_PUBLIC_SITE_URL` theo origin của frontend, ví dụ `http://localhost:3000` khi chạy local. Next.js dùng giá trị này cho metadata và kiểm tra origin của yêu cầu ghi. Khi triển khai, đặt origin HTTPS chính thức cho cả lúc build và lúc chạy. Cookie production dùng HttpOnly, Secure và SameSite=Lax. Xem [cách cấp tài khoản và quyền](../server/instructions/rbac.md).
 
 Để chạy kiểm thử xuyên suốt trên stack thử nghiệm, đặt `AUTH_TEST_ORIGIN`, `AUTH_TEST_EMAIL` và `AUTH_TEST_PASSWORD` trong môi trường của process, rồi chạy `node --test test/auth-e2e.test.mjs` từ `client`. Bài test đăng nhập với tài khoản thử, xoay token, thu hồi refresh token và kiểm tra access JWT đã cấp còn dùng được đến khi hết hạn.
 
-Sau khi build client, chạy `node --test test/dashboard-access.test.mjs` để kiểm tra quyền dashboard, luồng xác nhận email Google và route nhận lời mời ở cả hai locale. Bài test tự mở và đóng Next cùng BFF mô phỏng trên cổng loopback tạm thời.
+Sau khi build client, chạy `node --test test/dashboard-access.test.mjs` để kiểm tra quyền dashboard, truy vấn vai trò qua proxy, luồng xác nhận email Google và route nhận lời mời ở cả hai locale. Bài test tự mở và đóng Next cùng BFF mô phỏng trên cổng loopback tạm thời.
 
 Khi chỉ có BFF và Identity đang chạy, đặt `API_URL` khớp với `GLOBAL_PREFIX` của BFF, build client rồi chạy cùng lệnh với `AUTH_TEST_ORIGIN` để trống. Suite tự mở Next trên một cổng loopback tạm thời và đóng khi hoàn tất.

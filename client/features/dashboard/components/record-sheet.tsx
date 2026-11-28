@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/sheet";
 import { dashboardPath } from "../sections";
 import type { Column, DashboardRecord, SampleSection } from "../records";
-import { staff } from "../fixtures";
 import { InquiryForm } from "./inquiry-form";
 import { StatusBadge } from "./record-ui";
 import { useWorkspace } from "./workspace";
@@ -42,10 +41,6 @@ export function RecordSheet({
   const relatedPayments =
     section === "bookings" && destinations.includes("payments")
       ? data.payments.filter((item) => item.values.booking === row?.id)
-      : [];
-  const relatedUsers =
-    section === "roles" && destinations.includes("users")
-      ? staff.filter((item) => item.role === row?.id)
       : [];
 
   if (!container || (!row && !create)) {
@@ -148,16 +143,6 @@ export function RecordSheet({
                   <ArrowUpRight className="size-4" />
                 </Link>
               ))}
-              {relatedUsers.length > 0 && (
-                <div>
-                  <h3 className="mb-2 font-medium">{t("nav.users")}</h3>
-                  {relatedUsers.map((item) => (
-                    <p className="border-t py-2.5" key={item.id}>
-                      {item.name}
-                    </p>
-                  ))}
-                </div>
-              )}
             </>
           )}
           {section === "inquiries" && (

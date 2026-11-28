@@ -20,15 +20,26 @@ export class RoleController {
   @GrpcMethod(IDENTITY_SERVICE_NAME, IDENTITY_SERVICE_METHODS.LIST_ROLES)
   async list() {
     const roles = await this.roleService.getAll();
+    const memberCounts = await this.roleService.getMemberCounts(roles);
 
-    return { roles: roles.map(roleProfileMapper) };
+    return {
+      roles: roles.map((role) =>
+        roleProfileMapper(role, memberCounts.get(role.id) ?? 0),
+      ),
+    };
   }
 
   @GrpcMethod(IDENTITY_SERVICE_NAME, IDENTITY_SERVICE_METHODS.GET_ROLE)
   async get(params: RoleIdRequest) {
     const role = await this.roleService.getById(params.id);
 
-    return { role: roleProfileMapper(role) };
+    if (!params.includeMemberCount) {
+      return { role: roleProfileMapper(role) };
+    }
+
+    const memberCounts = await this.roleService.getMemberCounts([role]);
+
+    return { role: roleProfileMapper(role, memberCounts.get(role.id) ?? 0) };
   }
 
   @GrpcMethod(IDENTITY_SERVICE_NAME, IDENTITY_SERVICE_METHODS.CREATE_ROLE)

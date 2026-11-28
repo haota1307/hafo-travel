@@ -62,9 +62,11 @@ export class RoleController implements OnModuleInit {
   @Permissions([PERMISSION.ROLE_GET_BY_ID])
   @ApiOperation({ summary: 'Get a role by MongoDB ID' })
   get(@Param('id') id: string, @ProcessId() processId: string) {
-    return requestGrpc(this.users.getRole, { id }, { processId }).pipe(
-      map((response) => response.role),
-    );
+    return requestGrpc(
+      this.users.getRole,
+      { id, includeMemberCount: true },
+      { processId },
+    ).pipe(map((response) => response.role));
   }
 
   @Post()
@@ -78,7 +80,9 @@ export class RoleController implements OnModuleInit {
 
   @Put(':id')
   @Permissions([PERMISSION.ROLE_UPDATE])
-  @ApiOperation({ summary: 'Replace role name, description and permissions' })
+  @ApiOperation({
+    summary: 'Update the role code, display name and permissions',
+  })
   update(
     @Param('id') id: string,
     @Body() body: SaveRoleRequestDto,
@@ -89,6 +93,9 @@ export class RoleController implements OnModuleInit {
       {
         id,
         name: body.name,
+        displayName: body.displayName,
+        displayNameVi: body.displayNameVi,
+        displayNameEn: body.displayNameEn,
         description: body.description,
         permissions: body.permissions,
       },

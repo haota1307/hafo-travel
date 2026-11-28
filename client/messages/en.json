@@ -49,7 +49,8 @@
       "payments": "Payments & refunds",
       "content": "Website content",
       "users": "Accounts",
-      "roles": "Roles & permissions"
+      "roles": "Roles",
+      "permissions": "Permissions"
     },
     "descriptions": {
       "overview": "Keep track of guest inquiries and upcoming departures.",
@@ -60,7 +61,8 @@
       "payments": "Reconcile payments and refunds with their bookings.",
       "content": "Manage website pages and their translations.",
       "users": "Browse staff accounts and their assigned roles.",
-      "roles": "Review access permissions and accounts assigned to each role."
+      "roles": "Manage roles and review the accounts assigned to them.",
+      "permissions": "Review and grant permissions to roles by feature."
     },
     "primary": {
       "inquiries": "Guest",
@@ -127,18 +129,108 @@
       "contact": "Contact",
       "terms": "Terms and conditions",
       "privacy": "Privacy policy"
+    }
+  },
+  "roles": {
+    "add": "Add role",
+    "createDescription": "After adding the role, grant access on the Permissions page.",
+    "detail": "Role details",
+    "viewDetails": "View details",
+    "editRole": "Edit role",
+    "delete": "Delete role",
+    "actions": "Actions",
+    "actionsFor": "Actions for {name}",
+    "loading": "Loading roles…",
+    "loadingDetail": "Loading role details…",
+    "loadingPermissions": "Loading available permissions…",
+    "empty": "There are no roles yet.",
+    "noAccess": "You do not have permission to view the role list.",
+    "noPermissions": "No permissions.",
+    "scopeSummary": "{pages, plural, one {# dashboard page} other {# dashboard pages}} · {api, plural, one {# API permission} other {# API permissions}}",
+    "viewAccounts": "View accounts with this role",
+    "systemRole": "System roles are read-only.",
+    "deleteDescription": "Delete {name}? Only roles with no assigned accounts can be deleted.",
+    "removeAccessTitle": "Remove dashboard access",
+    "removeAccessDescription": "{count, plural, one {# account assigned this role will lose dashboard access and leave the internal account list.} other {# accounts assigned this role will lose dashboard access and leave the internal account list.}}",
+    "removeAccessUnknown": "Any accounts assigned this role will lose dashboard access and leave the internal account list.",
+    "confirmRemoveAccess": "Remove access",
+    "save": "Save",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "created": "Role added",
+    "updated": "Role updated",
+    "permissionsUpdated": "Permissions updated",
+    "deleted": "Role deleted",
+    "fields": {
+      "displayName": "Role name",
+      "displayNameVi": "Vietnamese name",
+      "displayNameEn": "English name",
+      "name": "Role code",
+      "description": "Description",
+      "createdAt": "Created",
+      "updatedAt": "Last updated"
     },
-    "roleNames": {
-      "admin": "Administrator",
-      "advisor": "Travel advisor",
-      "operator": "Tour operator",
-      "editor": "Content editor"
+    "permissionSummary": "Permissions by feature",
+    "partialPermission": "{action} (partial)",
+    "systemNames": {
+      "administrator": "Administrator",
+      "client": "Customer"
     },
-    "scopes": {
-      "manageAll": "Manage the entire workspace",
-      "manageInquiries": "Manage inquiries and look up bookings",
-      "manageDepartures": "Coordinate departures and manage bookings",
-      "manageContent": "Edit tours and website content"
+    "permissionControls": {
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "other": "Other permissions"
+    },
+    "matrix": {
+      "feature": "Feature",
+      "systemRole": "System",
+      "allow": "Allow",
+      "checkbox": "{role} · {feature} · {action}",
+      "columnCheckbox": "{role} · {action} for all applicable features",
+      "noAccess": "You do not have access to the permissions matrix.",
+      "readOnly": "The permissions matrix is read-only for your account.",
+      "saving": "Saving…",
+      "saveFailed": "Could not save permissions for {role}"
+    },
+    "permissionNames": {
+      "dashboard": "Overview",
+      "dashboard_inquiries": "Inquiries",
+      "dashboard_tours": "Tours",
+      "dashboard_departures": "Departures",
+      "dashboard_bookings": "Bookings",
+      "dashboard_payments": "Payments & refunds",
+      "dashboard_content": "Website content",
+      "dashboard_users": "Accounts",
+      "dashboard_roles": "Roles",
+      "dashboard_permissions": "Permissions",
+      "user_create": "Create accounts",
+      "user_get_by_id": "View account details",
+      "user_get_all": "View account list",
+      "user_update": "Update accounts",
+      "user_assign_roles": "Assign account roles",
+      "role_create": "Create roles",
+      "role_get_by_id": "View role details",
+      "role_get_all": "View role list and available permissions",
+      "role_update": "Update roles",
+      "role_delete": "Delete roles"
+    },
+    "errors": {
+      "displayName": "Enter a role name of 1 to 100 characters.",
+      "name": "Use only lowercase letters, digits, underscores, or hyphens.",
+      "description": "The description can be up to 500 characters.",
+      "permissions": "Deselect permissions that are no longer available and try again.",
+      "systemProtected": "System roles are read-only.",
+      "reservedName": "This code is reserved for a system role.",
+      "duplicate": "This role code is already in use.",
+      "assigned": "This role has assigned accounts. Move them to another role before deleting it.",
+      "invalid": "Check the role details and try again.",
+      "session": "Your session has expired. Sign in again.",
+      "forbidden": "You do not have permission to perform this action.",
+      "notFound": "The role was not found.",
+      "rateLimit": "Too many requests. Try again later.",
+      "unavailable": "The request could not be completed. Try again."
     }
   },
   "users": {
@@ -154,7 +246,6 @@
     "viewDetails": "View details",
     "actions": "Actions",
     "actionsFor": "Actions for {name}",
-    "administrator": "Administrator",
     "loading": "Loading accounts…",
     "loadingDetail": "Loading account details…",
     "loadingRoles": "Loading roles…",

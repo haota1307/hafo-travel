@@ -56,7 +56,7 @@ proxy.ts                      Locale middleware
 
 ## Mẫu module gọi API
 
-Đối chiếu [mã mẫu Vai trò](#ví-dụ-module-vai-trò) khi thêm hoặc sửa feature gọi API. Dùng contract của endpoint đang triển khai để xác định schema và query key.
+Đối chiếu [module Vai trò](#ví-dụ-module-vai-trò) khi thêm hoặc sửa feature gọi API. Dùng contract của endpoint đang triển khai để xác định schema và query key.
 
 - `page.tsx` gắn màn hình vào route. `features/<domain>/components/` giữ trạng thái tương tác, form, thông báo và gọi hook của feature.
 - `<domain>.schema.ts` mô tả request, response và dữ liệu form khi cần. Kiểu dữ liệu được suy ra từ schema. Form kiểm tra dữ liệu nhập, API kiểm tra `payload` bằng schema nếu cần xác thực response ở runtime.
@@ -104,25 +104,26 @@ Route Next giữ mã `GOOGLE_EMAIL_CONFIRMATION_REQUIRED` khi BFF trả 403 ch�
 
 ### Ví dụ module Vai trò
 
-Mã tham chiếu dựa trên `GET /role`, `GET /role/:id` và `PUT /role/:id` trong [controller BFF](../../server/apps/bff/src/app/modules/role/controllers/role.controller.ts) và [hợp đồng RBAC](../../server/instructions/rbac.md#http-api).
+Trang `/[locale]/dashboard/roles` và `/[locale]/dashboard/permissions` dùng module `features/roles`. Đối chiếu các endpoint và quyền tại [controller BFF](../../server/apps/bff/src/app/modules/role/controllers/role.controller.ts) và [hợp đồng RBAC](../../server/instructions/rbac.md#http-api).
 
-| File | Mẫu triển khai |
-| --- | --- |
-| [roles.schema.ts](examples/roles/roles.schema.ts) | Schema cho danh sách, chi tiết và body cập nhật. BFF kiểm tra permission theo danh mục hiện hành. |
-| [roles.api.ts](examples/roles/roles.api.ts) | API object gọi `http`, truyền `signal` và kiểm tra `payload` đã bóc từ envelope. |
-| [roles.queries.ts](examples/roles/roles.queries.ts) | Query key, điều kiện tải chi tiết và làm mới danh sách cùng đúng ID sau cập nhật. |
+| File                                                   | Mẫu triển khai                                                                                                     |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| [roles.schema.ts](../features/roles/roles.schema.ts)   | Schema đọc vai trò, danh mục quyền và dữ liệu form. Form yêu cầu tên tiếng Việt và tiếng Anh.                      |
+| [roles.api.ts](../features/roles/roles.api.ts)         | API object gọi `http`, chuyển `signal` khi đọc và kiểm tra `payload` đã bóc từ envelope.                           |
+| [roles.queries.ts](../features/roles/roles.queries.ts) | Query theo ID người thao tác, tái sử dụng danh sách trong form Tài khoản và làm mới dữ liệu liên quan sau khi ghi. |
 
 Luồng **mở danh sách → chọn vai trò → lưu chỉnh sửa** đi qua các lớp sau:
 
-1. **Mở danh sách.** Route `page.tsx` render màn hình trong `features/roles/components/`. Màn hình gọi `useGetRoles(canReadList)`. Hook dùng key `['roles', 'list']`, gọi `rolesApiRequest.list(signal)` và trả mảng lấy từ `payload`. Màn hình hiển thị trạng thái tải, lỗi hoặc danh sách rỗng theo kết quả query.
-2. **Chọn vai trò.** Màn hình giữ `selectedId` và gọi `useGetRole(selectedId, canReadDetail)`. Chi tiết có cache riêng theo ID và chỉ tải khi có ID cùng quyền đọc chi tiết. Khi mở form sửa, khởi tạo form từ dữ liệu của ID đang chọn và dùng `zodResolver(UpdateRoleBodySchema)` để kiểm tra dữ liệu nhập.
-3. **Lưu chỉnh sửa.** Component dùng `useUpdateRole()` và gọi `mutateAsync({ id, body })` trong `handleSubmit`. API gọi `PUT /role/:id`. Sau thành công, hook làm mới cache danh sách và chi tiết của ID vừa sửa, component báo thành công và đóng form. Trong lúc lưu, dùng `isPending` để khóa nút lưu. Khi lỗi, giữ form mở và hiển thị thông báo đã dịch.
+1. **Mở danh sách.** Route kiểm tra `UI:dashboard/roles` qua `PageAccess`. Với `role.get_all`, màn hình đọc `GET /role` và dùng `memberCount` từ Identity cho số tài khoản được gán. Tìm kiếm, sắp xếp và phân trang thực hiện trên bảng.
+2. **Chọn vai trò.** Mở Sheet **Xem chi tiết** qua `?record=<id>` và tải dữ liệu theo ID với `role.get_by_id`. Form tạo và sửa vai trò hiển thị tên tiếng Việt, tên tiếng Anh, mã và mô tả. Vai trò mới được tạo với danh sách quyền rỗng.
+3. **Phân quyền.** Trang **Phân quyền** dùng `UI:dashboard/permissions`. Ma trận tải vai trò và danh mục qua `GET /role` và `GET /role/permissions` với `role.get_all`. Cần thêm `role.get_by_id` và `role.update` để sửa. Ô **Xem** bật hoặc tắt quyền vào từng trang. Ma trận thêm quyền đọc cần thiết khi cấp thao tác và giữ quyền đọc còn được thao tác khác sử dụng. Quyền **Sửa** ở hàng Tài khoản gồm `user.update` và `user.assign_roles`. Để mời tài khoản cần cả **Tạo** và khả năng chọn vai trò thuộc nhóm **Sửa**.
+4. **Lưu chỉnh sửa.** Trang Phân quyền gửi thay đổi ngay khi bật hoặc tắt ô. API đọc vai trò mới nhất và ghép phần thay đổi trước khi gọi `PUT /role/:id`. Với vai trò đang được dùng, gỡ toàn bộ quyền vào dashboard cần xác nhận. Hook làm mới danh sách, chi tiết vai trò và dữ liệu Tài khoản sau yêu cầu. Khi lưu lỗi, ma trận bỏ trạng thái đang lưu và hiển thị quyền từ dữ liệu đã tải lại. Layout đọc lại session khi sửa vai trò của người thao tác.
 
-`canReadList`, `canReadDetail` và quyền sửa lấy từ session theo quyền `role.get_all`, `role.get_by_id` và `role.update`. BFF xác thực và kiểm tra quyền cho từng request.
+Màn Vai trò và Tài khoản chọn tên theo locale hiện tại. Với dữ liệu thiếu tên theo locale, dùng `displayName`, tên ngôn ngữ còn lại, rồi đến mã vai trò. Nhãn hai vai trò hệ thống lấy từ bộ messages.
+
+Quyền từng thao tác lấy từ session để điều khiển giao diện. BFF xác thực và kiểm tra quyền cho từng request. Sau khi mời hoặc đổi vai trò của tài khoản, làm mới query có số lượt gán theo vai trò.
 
 Khi áp dụng cho feature khác, đặt mã triển khai tại `client/features/<domain>/` và đối chiếu endpoint, DTO cùng response của feature đó trước khi chọn schema, hook và tham số của query key. Ví dụ, danh sách có bộ lọc gửi lên server cần đưa bộ lọc vào key. Màn hình chỉ đọc dùng query, màn hình có thao tác ghi dùng thêm mutation và xác định dữ liệu cần làm mới.
-
-Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, module cần lớp HTTP bóc đúng envelope BFF và phiên đăng nhập được truyền qua proxy.
 
 ### State, query và tìm kiếm
 
@@ -154,7 +155,7 @@ Mẫu nằm trong thư mục tài liệu. Để dùng trên một route thật, 
 
 ## Auth và database
 
-Trang dashboard và từng section truyền đích cụ thể vào `PageAccess` để kiểm tra quyền từ `GET /user/me` trong request hiện tại. Quyền khớp chính xác với đường dẫn của trang, ví dụ `UI:dashboard` và `UI:dashboard/users`. Khi thêm section, cập nhật danh mục quyền backend. Dùng danh sách đích được phép cho sidebar, tìm kiếm, các liên kết nội bộ và chuyển hướng sau login. Proxy giữ locale và đường dẫn đích khi chuyển khách sang login. Login/register chỉ dành cho khách. Các liên kết xác minh và khôi phục tài khoản xử lý theo token riêng. Khi cần xoay refresh token, trình duyệt dùng luồng refresh có khóa dùng chung trước khi tải lại trang. Hồ sơ và đăng xuất nằm tại `/[locale]/account`.
+Trang dashboard và từng section truyền đích cụ thể vào `PageAccess` để kiểm tra quyền từ `GET /user/me` trong request hiện tại. `dashboardPermission` ánh xạ từng đích sang mã UI. Trang Vai trò dùng `UI:dashboard/roles` và trang Phân quyền dùng `UI:dashboard/permissions`. Với dữ liệu cũ, giao diện cấp quyền Phân quyền cho vai trò hệ thống `administrator` đã có quyền Vai trò. Khi thêm mã UI mới, cập nhật danh mục quyền backend. Dùng danh sách đích được phép cho sidebar, tìm kiếm, các liên kết nội bộ và chuyển hướng sau login. Proxy giữ locale và đường dẫn đích khi chuyển khách sang login. Login/register chỉ dành cho khách. Các liên kết xác minh và khôi phục tài khoản xử lý theo token riêng. Khi cần xoay refresh token, trình duyệt dùng luồng refresh có khóa dùng chung trước khi tải lại trang. Hồ sơ và đăng xuất nằm tại `/[locale]/account`.
 
 Login trong template là mô phỏng. Luồng thực tế ở `features/auth` và `/[locale]/auth/login`. Next giữ access JWT và refresh JWT trong hai cookie HttpOnly. Proxy gửi access JWT dưới dạng Bearer đến BFF. Route refresh và logout chuyển giá trị refresh cookie đến Identity qua BFF. Route auth trả trạng thái cho browser và giữ credential ngoài JSON. Xem [cấu hình và kiểm thử](../README.md).
 

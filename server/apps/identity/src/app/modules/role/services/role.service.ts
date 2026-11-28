@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
@@ -8,9 +9,10 @@ import {
 import { Types } from 'mongoose';
 
 import { AuthorizationCache } from '@common/configuration/authorization-cache.config';
-import { PERMISSION } from '@common/constants/enum/role.enum';
+import { CODE_ERROR } from '@common/constants/enum/code-error.enum';
+import { PERMISSION, ROLE } from '@common/constants/enum/role.enum';
 import type { CreateRoleRequest } from '@common/interfaces/grpc/identity/v1/identity';
-import type { Role } from '@common/schemas/role.schema';
+import type { Role, RoleDisplayNames } from '@common/schemas/role.schema';
 
 import { RoleRepository } from '@identity/role/repositories/role.repository';
 
@@ -38,8 +40,21 @@ export class RoleService {
     return role;
   }
 
+  async getMemberCounts(roles: Role[]) {
+    if (roles.length === 0) {
+      return new Map<string, number>();
+    }
+
+    const rows = await this.roleRepository.getMemberCounts(
+      roles.map((role) => role._id),
+    );
+
+    return new Map(rows.map(({ _id, count }) => [_id.toHexString(), count]));
+  }
+
   async create(data: CreateRoleRequest) {
     const input = this.validateInput(data);
+    this.requireCustomName(input.name);
 
     try {
       return await this.roleRepository.create(input);
@@ -53,11 +68,14 @@ export class RoleService {
     const input = this.validateInput(data);
 
     try {
-      const role = await this.withRoleWrite(id, () =>
-        this.cache.change(this.cache.roleKey(id), () =>
+      const role = await this.withRoleWrite(id, async () => {
+        await this.requireEditableRole(id);
+        this.requireCustomName(input.name);
+
+        return this.cache.change(this.cache.roleKey(id), () =>
           this.roleRepository.update(id, input),
-        ),
-      );
+        );
+      });
 
       if (!role) {
         throw new NotFoundException('Role not found');
@@ -73,6 +91,8 @@ export class RoleService {
     this.validateId(id);
 
     const role = await this.withRoleWrite(id, async () => {
+      await this.requireEditableRole(id);
+
       if (await this.roleRepository.isAssigned(id)) {
         throw new ConflictException('Cannot delete a role assigned to a user');
       }
@@ -122,7 +142,7 @@ export class RoleService {
   async withClientRoleAssignment<T>(
     assign: (roleIds: [Types.ObjectId]) => Promise<T>,
   ): Promise<T> {
-    const role = await this.roleRepository.getByName('client');
+    const role = await this.roleRepository.getByName(ROLE.CLIENT);
 
     if (!role) {
       throw new ServiceUnavailableException('Client role is not configured');
@@ -133,7 +153,7 @@ export class RoleService {
     return this.withRoleWrite(id, async () => {
       const current = await this.roleRepository.getById(id);
 
-      if (current?.name !== 'client') {
+      if (current?.name !== ROLE.CLIENT) {
         throw new ServiceUnavailableException('Client role is not configured');
       }
 
@@ -166,6 +186,24 @@ export class RoleService {
     }
   }
 
+  private async requireEditableRole(id: string) {
+    const role = await this.getById(id);
+
+    if (this.isSystemRole(role.name)) {
+      throw new ForbiddenException(CODE_ERROR.ROLE_SYSTEM_PROTECTED);
+    }
+  }
+
+  private requireCustomName(name: string) {
+    if (this.isSystemRole(name)) {
+      throw new ConflictException(CODE_ERROR.ROLE_NAME_RESERVED);
+    }
+  }
+
+  private isSystemRole(name: string) {
+    return name === ROLE.ADMINISTRATOR || name === ROLE.CLIENT;
+  }
+
   private validateInput(data: CreateRoleRequest) {
     if (
       typeof data.name !== 'string' ||
@@ -176,6 +214,7 @@ export class RoleService {
     if (typeof data.description !== 'string' || data.description.length > 500) {
       throw new BadRequestException('Invalid role description');
     }
+
     if (
       !Array.isArray(data.permissions) ||
       new Set(data.permissions).size !== data.permissions.length ||
@@ -187,8 +226,31 @@ export class RoleService {
       throw new BadRequestException('Invalid role permissions');
     }
 
+    const displayNames: RoleDisplayNames = {};
+
+    for (const field of [
+      'displayName',
+      'displayNameVi',
+      'displayNameEn',
+    ] as const) {
+      const value = data[field];
+
+      if (value === undefined) {
+        continue;
+      }
+
+      const displayName = typeof value === 'string' ? value.trim() : '';
+
+      if (!displayName || displayName.length > 100) {
+        throw new BadRequestException('Invalid role display name');
+      }
+
+      displayNames[field] = displayName;
+    }
+
     return {
       name: data.name,
+      ...displayNames,
       description: data.description,
       permissions: data.permissions as PERMISSION[],
     };

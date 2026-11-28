@@ -25,20 +25,13 @@ import { PageError } from "@/components/shared/page-error";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useWorkspace } from "@/features/dashboard/components/workspace";
 import { normalizeSearch } from "@/features/dashboard/sections";
+import { RoleIdSchema } from "@/features/roles/roles.schema";
+import { getRoleName } from "@/features/roles/roles-ui";
 import { HttpError } from "@/lib/http";
 
 import { useGetUsers } from "../users.queries";
-import {
-  UserRoleIdSchema,
-  UserStatusSchema,
-  type InternalUser,
-} from "../users.schema";
-import {
-  getUserName,
-  getUserRoleName,
-  type UserAccess,
-  type UserAction,
-} from "../users-ui";
+import { UserStatusSchema, type InternalUser } from "../users.schema";
+import { getUserName, type UserAccess, type UserAction } from "../users-ui";
 import { UserStatusBadge } from "./user-detail-sheet";
 import { UserActionsMenu } from "./user-row-actions";
 import { UsersBulkActions } from "./users-bulk-actions";
@@ -59,13 +52,14 @@ function useUsersColumns({
   onAction,
 }: UsersTableProps) {
   const t = useTranslations("users");
+  const roles = useTranslations("roles");
   const common = useTranslations("template");
   const locale = useLocale();
   const { container } = useWorkspace();
 
   return useMemo<ColumnDef<InternalUser>[]>(() => {
     const roleLabel = (user: InternalUser) =>
-      getUserRoleName(user.role.name, t);
+      getRoleName(user.role, roles, locale);
     const headers = {
       name: t("fields.name"),
       email: t("fields.email"),
@@ -228,6 +222,7 @@ function useUsersColumns({
     locale,
     onAction,
     resendingInvitation,
+    roles,
     t,
   ]);
 }
@@ -239,6 +234,7 @@ export function UsersTable({
   onAction,
 }: UsersTableProps) {
   const t = useTranslations("users");
+  const roleLabels = useTranslations("roles");
   const dashboard = useTranslations("dashboard");
   const locale = useLocale();
   const { container } = useWorkspace();
@@ -268,10 +264,9 @@ export function UsersTable({
             .getAll(id)
             .filter(
               (value) =>
-                (id === "status"
-                  ? UserStatusSchema
-                  : UserRoleIdSchema
-                ).safeParse(value).success,
+                (id === "status" ? UserStatusSchema : RoleIdSchema).safeParse(
+                  value,
+                ).success,
             ),
         }))
         .filter(({ value }) => value.length > 0),
@@ -300,7 +295,8 @@ export function UsersTable({
         [
           getUserName(row.original, locale),
           row.original.email,
-          getUserRoleName(row.original.role.name, t),
+          getRoleName(row.original.role, roleLabels, locale),
+          row.original.role.name,
         ].join(" "),
       ).includes(normalizeSearch(String(value))),
     onGlobalFilterChange: (update) => {
@@ -345,7 +341,7 @@ export function UsersTable({
   }
 
   const roles = new Map(
-    rows.map(({ role }) => [role.id, getUserRoleName(role.name, t)]),
+    rows.map(({ role }) => [role.id, getRoleName(role, roleLabels, locale)]),
   );
   const filters = [
     {

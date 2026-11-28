@@ -106,8 +106,7 @@ export function DashboardBulkActions({
     const fields = listColumns[section].filter((field) =>
       table.getColumn(field)?.getIsVisible(),
     );
-    const showStatus =
-      section !== "roles" && table.getColumn("status")?.getIsVisible();
+    const showStatus = table.getColumn("status")?.getIsVisible();
     downloadCsv(section, [
       [
         "ID",

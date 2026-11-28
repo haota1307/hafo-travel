@@ -115,7 +115,7 @@ export function grpcOptions(
         longs: Number,
         enums: String,
         defaults: true,
-        oneofs: true,
+        oneofs: service !== GRPC_SERVICES.IDENTITY_SERVICE,
         includeDirs: [protoRoot],
       },
       channelOptions: { 'grpc.enable_retries': 0 },

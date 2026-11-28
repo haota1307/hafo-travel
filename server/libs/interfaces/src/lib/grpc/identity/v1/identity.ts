@@ -44,6 +44,10 @@ export interface RoleProfile {
   permissions: string[];
   createdAt: string;
   updatedAt: string;
+  displayName?: string | undefined;
+  memberCount?: number | undefined;
+  displayNameVi?: string | undefined;
+  displayNameEn?: string | undefined;
 }
 
 export interface SetUserRolesRequest {
@@ -54,6 +58,9 @@ export interface SetUserRolesRequest {
 export interface InternalUserRole {
   id: string;
   name: string;
+  displayName?: string | undefined;
+  displayNameVi?: string | undefined;
+  displayNameEn?: string | undefined;
 }
 
 export interface InternalUser {
@@ -132,12 +139,16 @@ export interface ListRolesResponse {
 
 export interface RoleIdRequest {
   id: string;
+  includeMemberCount?: boolean | undefined;
 }
 
 export interface CreateRoleRequest {
   name: string;
   description: string;
   permissions: string[];
+  displayName?: string | undefined;
+  displayNameVi?: string | undefined;
+  displayNameEn?: string | undefined;
 }
 
 export interface UpdateRoleRequest {
@@ -145,6 +156,9 @@ export interface UpdateRoleRequest {
   name: string;
   description: string;
   permissions: string[];
+  displayName?: string | undefined;
+  displayNameVi?: string | undefined;
+  displayNameEn?: string | undefined;
 }
 
 export interface RoleResponse {

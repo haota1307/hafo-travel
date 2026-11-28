@@ -5,7 +5,6 @@ import {
 } from "@/features/public-site/data/retreats";
 import type { PublicContentReader } from "@/features/public-site/data/localized-content";
 import {
-  accessRoles,
   bookings,
   contentPages,
   departures,
@@ -20,7 +19,7 @@ import type { Section } from "./sections";
 
 export type Labels = ReturnType<typeof useTranslations<"dashboard">>;
 
-export type SampleSection = Exclude<Section, "users">;
+export type SampleSection = Exclude<Section, "users" | "roles">;
 
 export type Column =
   | "tour"
@@ -36,8 +35,6 @@ export type Column =
   | "method"
   | "language"
   | "path"
-  | "scope"
-  | "members"
   | "guest"
   | "email"
   | "followUp";
@@ -63,7 +60,6 @@ export const listColumns: Record<SampleSection, Column[]> = {
   bookings: ["tour", "date", "guests", "amount"],
   payments: ["booking", "guest", "method", "amount"],
   content: ["path", "language", "owner"],
-  roles: ["scope", "members"],
 };
 
 export type InquiryUpdate = {
@@ -238,16 +234,6 @@ export function buildRecords(
         path: item.path,
         language: "VI / EN",
         owner: owner(item.owner),
-      },
-    })),
-    roles: accessRoles.map((item) => ({
-      id: item.id,
-      title: t(`roleNames.${item.id}`),
-      values: {
-        scope: t(`scopes.${item.scope}`),
-        members: String(
-          staff.filter((person) => person.role === item.id).length,
-        ),
       },
     })),
   };

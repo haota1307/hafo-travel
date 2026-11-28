@@ -4,7 +4,6 @@ import {
   InternalUserSchema,
   InternalUsersSchema,
   UserInvitationResultSchema,
-  UserRoleOptionsSchema,
   type InviteUserForm,
   type UserName,
 } from "./users.schema";
@@ -28,12 +27,6 @@ export const usersApiRequest = {
     });
 
     return InternalUserSchema.parse(payload);
-  },
-
-  async roleOptions(signal: AbortSignal) {
-    const { payload } = await http.getAuthenticated("/role", { signal });
-
-    return UserRoleOptionsSchema.parse(payload);
   },
 
   async invite({ roleId, ...form }: InviteUserForm, locale: string) {

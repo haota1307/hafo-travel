@@ -9,6 +9,17 @@ const requestPage = globalThis.fetch;
 test("dashboard and guest pages follow the current role across locales", async (t) => {
   let permissions = ["UI:dashboard", "UI:dashboard/roles"];
   let googleError = "GOOGLE_EMAIL_CONFIRMATION_REQUIRED";
+  const role = {
+    id: "68a3f2f1b3e811435a8ad006",
+    name: "operator",
+    displayName: "Tour operations",
+    description: "",
+    permissions: ["UI:dashboard/roles"],
+    memberCount: 1,
+    createdAt: "2026-11-01T00:00:00.000Z",
+    updatedAt: "2026-11-01T00:00:00.000Z",
+  };
+  let sessionRoleName = role.name;
   const invitations = [];
   const bff = createServer(async (request, response) => {
     if (request.method === "POST" && request.url === "/auth/google") {
@@ -38,9 +49,25 @@ test("dashboard and guest pages follow the current role across locales", async (
       return;
     }
 
-    assert.equal(request.url, "/user/me");
     assert.equal(request.headers.authorization, "Bearer test.access.token");
     response.setHeader("Content-Type", "application/json");
+
+    if (request.method === "GET" && request.url === "/role") {
+      if (!permissions.includes("role.get_all")) {
+        response.statusCode = 403;
+        response.end(JSON.stringify({ statusCode: 403, message: "Forbidden" }));
+
+        return;
+      }
+
+      response.end(
+        JSON.stringify({ statusCode: 200, message: "OK", data: [role] }),
+      );
+
+      return;
+    }
+
+    assert.equal(request.url, "/user/me");
     response.end(
       JSON.stringify({
         statusCode: 200,
@@ -52,7 +79,7 @@ test("dashboard and guest pages follow the current role across locales", async (
             email: "staff@example.test",
             firstName: "Test",
             lastName: "User",
-            roles: [{ id: "role", name: "operator" }],
+            roles: [{ id: role.id, name: sessionRoleName }],
           },
         },
       }),
@@ -98,7 +125,7 @@ test("dashboard and guest pages follow the current role across locales", async (
     await response.text();
   }
 
-  const section = "/en/dashboard/roles?record=role";
+  const section = `/en/dashboard/roles?record=${role.id}`;
   const login = "/en/auth/login?next=" + encodeURIComponent(section);
   await expectRedirect(section, "", login);
   assert.equal((await open("/vi/auth/register")).status, 200);
@@ -111,8 +138,54 @@ test("dashboard and guest pages follow the current role across locales", async (
   );
   const allowed = await open(section, signedIn);
   assert.equal(allowed.status, 200);
-  assert.match(await allowed.text(), /data-slot="sidebar"/);
+  const allowedHtml = await allowed.text();
+  assert.match(allowedHtml, /data-slot="sidebar"/);
+  assert.match(allowedHtml, /Access denied<\/h2>/);
+  const deniedRoles = await open("/api/backend/role", signedIn);
+  assert.equal(deniedRoles.status, 403);
+  await deniedRoles.json();
   assert.equal((await open("/vi/dashboard", signedIn)).status, 200);
+  await expectRedirect("/en/dashboard/permissions", signedIn, "/en");
+
+  permissions = ["UI:dashboard/permissions"];
+  const deniedMatrix = await open("/en/dashboard/permissions", signedIn);
+  assert.equal(deniedMatrix.status, 200);
+  assert.match(await deniedMatrix.text(), /Access denied<\/h2>/);
+
+  permissions = ["UI:dashboard/roles", "role.get_all"];
+  const rolePage = await open("/vi/dashboard/roles", signedIn);
+  assert.equal(rolePage.status, 200);
+  const rolePageHtml = await rolePage.text();
+  assert.match(rolePageHtml, /Vai trò<\/h1>/);
+  assert.doesNotMatch(rolePageHtml, /Không có quyền truy cập<\/h2>/);
+  assert.doesNotMatch(rolePageHtml, /Thêm vai trò<\/button>/);
+  assert.doesNotMatch(rolePageHtml, /href="\/vi\/dashboard\/permissions"/);
+  await expectRedirect("/vi/dashboard/permissions", signedIn, "/vi");
+
+  permissions = ["UI:dashboard/permissions", "role.get_all"];
+  const matrix = await open("/vi/dashboard/permissions", signedIn);
+  assert.equal(matrix.status, 200);
+  const matrixHtml = await matrix.text();
+  assert.match(matrixHtml, /Phân quyền<\/h1>/);
+  assert.doesNotMatch(matrixHtml, /Không có quyền truy cập<\/h2>/);
+  assert.doesNotMatch(matrixHtml, /href="\/vi\/dashboard\/roles"/);
+  await expectRedirect("/vi/dashboard/roles", signedIn, "/vi");
+
+  sessionRoleName = "administrator";
+  permissions = ["UI:dashboard/roles", "role.get_all"];
+  const legacyAdminMatrix = await open("/vi/dashboard/permissions", signedIn);
+  assert.equal(legacyAdminMatrix.status, 200);
+  assert.match(await legacyAdminMatrix.text(), /Phân quyền<\/h1>/);
+  sessionRoleName = role.name;
+
+  const roleList = await open("/api/backend/role", signedIn);
+  assert.equal(roleList.status, 200);
+  assert.deepEqual((await roleList.json()).data, [role]);
+
+  permissions = ["UI:dashboard/roles", "role.get_all", "role.create"];
+  const roleAdmin = await open("/en/dashboard/roles", signedIn);
+  assert.equal(roleAdmin.status, 200);
+  assert.match(await roleAdmin.text(), /Add role<\/button>/);
 
   permissions = ["UI:dashboard"];
   await expectRedirect("/vi/dashboard/users", signedIn, "/vi");
@@ -130,6 +203,7 @@ test("dashboard and guest pages follow the current role across locales", async (
   assert.doesNotMatch(usersHtml, /Mời tài khoản<\/button>/);
   await expectRedirect("/vi/dashboard", signedIn, "/vi");
   await expectRedirect("/vi/dashboard/roles", signedIn, "/vi");
+  await expectRedirect("/vi/dashboard/permissions", signedIn, "/vi");
   await expectRedirect("/en/auth/login", signedIn, "/en/dashboard/users");
   await expectRedirect(login, signedIn, "/en/dashboard/users");
   await expectRedirect(
@@ -157,6 +231,7 @@ test("dashboard and guest pages follow the current role across locales", async (
   for (const path of [
     "/vi/dashboard",
     "/vi/dashboard/roles",
+    "/vi/dashboard/permissions",
     "/vi/auth/register",
     "/vi/auth/login",
   ]) {

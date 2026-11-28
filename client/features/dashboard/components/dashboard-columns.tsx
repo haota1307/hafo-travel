@@ -47,23 +47,21 @@ export function useDashboardColumns(
       }),
     );
 
-    if (section !== "roles") {
-      fields.push({
-        id: "status",
-        accessorKey: "status",
-        header: ({ column }) => (
-          <DataTableColumnHeader
-            container={container}
-            column={column}
-            title={t("status")}
-          />
-        ),
-        filterFn: (row, id, values: string[]) =>
-          values.includes(row.getValue(id)),
-        cell: ({ row }) =>
-          row.original.status && <StatusBadge status={row.original.status} />,
-      });
-    }
+    fields.push({
+      id: "status",
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          container={container}
+          column={column}
+          title={t("status")}
+        />
+      ),
+      filterFn: (row, id, values: string[]) =>
+        values.includes(row.getValue(id)),
+      cell: ({ row }) =>
+        row.original.status && <StatusBadge status={row.original.status} />,
+    });
 
     return [
       {

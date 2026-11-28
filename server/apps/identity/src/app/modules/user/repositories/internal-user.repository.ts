@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import type { Types } from 'mongoose';
 
 import { DASHBOARD_PERMISSIONS } from '@common/constants/enum/role.enum';
-import { type RoleModel, RoleModelName } from '@common/schemas/role.schema';
+import {
+  type RoleDisplayNames,
+  type RoleModel,
+  RoleModelName,
+} from '@common/schemas/role.schema';
 import {
   type User,
   type UserModel,
@@ -15,7 +19,7 @@ export type InternalUserRecord = Pick<
   'firstName' | 'lastName' | 'email' | 'createdAt' | 'updatedAt'
 > & {
   userId: string;
-  role: { _id: Types.ObjectId; name: string };
+  role: { _id: Types.ObjectId; name: string } & RoleDisplayNames;
   status: 'pending' | 'active' | 'locked';
   initialAdministrator: boolean;
 };
@@ -155,7 +159,14 @@ export class InternalUserRepository {
             foreignField: '_id',
             pipeline: [
               { $match: { permissions: { $in: DASHBOARD_PERMISSIONS } } },
-              { $project: { name: 1 } },
+              {
+                $project: {
+                  name: 1,
+                  displayName: 1,
+                  displayNameVi: 1,
+                  displayNameEn: 1,
+                },
+              },
             ],
             as: 'role',
           },

@@ -70,7 +70,7 @@ BFF cung cấp `POST /api/auth/login`, `/api/auth/refresh`, `/api/auth/logout` v
 
 TypeORM đã bỏ entity sản phẩm và dùng autoLoadEntities. Đăng ký entity mới qua TypeOrmModule.forFeature và bổ sung TYPEORM_CONFIG/TypeOrmProviders ở service sử dụng. synchronize mặc định tắt; quản lý schema bằng migration của dự án mới.
 
-RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `PermissionGuard` và decorator `Permissions`. Tạo user cần đồng thời `user.create` và `user.assign_roles`; đổi role cần `user.assign_roles`. Trường `roles` giữ dạng mảng nhưng bắt buộc đúng một phần tử. Không xóa role đang được user sử dụng. Role có CRUD và danh mục permission. Tên administrator không có bypass đặc biệt. Xem [contract và quyền truy cập](instructions/rbac.md). gRPC chưa kiểm tra quyền caller, phải nằm trong mạng riêng cho service tin cậy.
+RBAC theo user → đúng một role → nhiều permission, kiểm tra bằng `PermissionGuard` và decorator `Permissions`. Tạo user cần đồng thời `user.create` và `user.assign_roles`. Đổi role cần `user.assign_roles`. Trường `roles` là mảng đúng một phần tử. Trang Vai trò quản lý role tùy chỉnh và dùng `UI:dashboard/roles`. Trang Phân quyền dùng `UI:dashboard/permissions` cùng quyền API đọc và cập nhật role. Role tùy chỉnh có mã duy nhất và hỗ trợ tên tiếng Việt, tiếng Anh. API đọc role trả số tài khoản được gán. API từ chối xóa khi role đang được sử dụng và từ chối sửa hoặc xóa hai role hệ thống `administrator` và `client`. gRPC nằm trong mạng riêng cho service tin cậy. Xem [contract và quyền truy cập](instructions/rbac.md).
 
 Identity xử lý lần lượt các thao tác ghi liên quan đến cùng một role trong một tiến trình. Triển khai hiện tại dùng một tiến trình Identity nhận các thao tác ghi role và gán role.
 
@@ -90,7 +90,7 @@ Source ứng dụng giữ CommonJS, dùng `module`/`moduleResolution: nodenext` 
 
 ## Tích hợp frontend
 
-Next đọc quyền từ `GET /api/user/me` để kiểm tra từng trang độc lập. Ví dụ, `UI:dashboard` mở trang tổng quan, `UI:dashboard/users` mở trang Người dùng. Với database đang sử dụng, cấp các mã tương ứng cho từng role qua API theo [hướng dẫn RBAC](instructions/rbac.md#cơ-chế-kiểm-tra).
+Next đọc quyền từ `GET /api/user/me` để kiểm tra từng trang độc lập. Ví dụ, `UI:dashboard` mở trang tổng quan, `UI:dashboard/users` mở trang Người dùng. Với database đang sử dụng, cấp các mã tương ứng cho role tùy chỉnh qua API theo [hướng dẫn RBAC](instructions/rbac.md#cơ-chế-kiểm-tra).
 
 Client ở [../client](../client/README.md), cấu hình mẫu `API_URL=http://localhost:3300/api` theo `PORT=3300`, `GLOBAL_PREFIX=api` của `.env.example`. Nếu đổi cấu hình backend, cập nhật URL phía client tương ứng.
 

@@ -86,7 +86,13 @@ const internalUser = {
   firstName: 'Internal',
   lastName: 'User',
   email: 'internal@example.test',
-  role: { id: new Types.ObjectId().toHexString(), name: 'operations' },
+  role: {
+    id: new Types.ObjectId().toHexString(),
+    name: 'operations',
+    displayName: 'Operations',
+    displayNameVi: 'Điều hành',
+    displayNameEn: 'Operations',
+  },
   status: 'pending',
   accessProtected: false,
   createdAt: '2026-01-01T00:00:00.000Z',
@@ -189,52 +195,70 @@ describe('BFF HTTP over real gRPC services', () => {
   };
   const administrator = fixture.roles[0];
   administrator.id = administrator._id.toString();
-  const storedRoles = new Map([[administrator.id, administrator]]);
+  const clientRoleId = new Types.ObjectId();
+  const clientRole: (typeof fixture.roles)[number] = {
+    ...administrator,
+    _id: clientRoleId,
+    id: clientRoleId.toHexString(),
+    name: ROLE.CLIENT,
+    description: 'Client',
+    permissions: [],
+  };
+  const storedRoles = new Map([
+    [administrator.id, administrator],
+    [clientRole.id, clientRole],
+  ]);
+  type RoleInput = Pick<
+    typeof administrator,
+    | 'name'
+    | 'displayName'
+    | 'displayNameVi'
+    | 'displayNameEn'
+    | 'description'
+    | 'permissions'
+  >;
+
   const roleRepository = {
     isAssigned: jest.fn(async (id: string) =>
       fixture.roles.some((role) => role.id === id),
     ),
     getAll: jest.fn(async () => [...storedRoles.values()]),
     getById: jest.fn(async (id: string) => storedRoles.get(id)),
-    create: jest.fn(
-      async (data: {
-        name: string;
-        description: string;
-        permissions: PERMISSION[];
-      }) => {
-        if ([...storedRoles.values()].some((role) => role.name === data.name)) {
-          throw { code: 11000 };
-        }
-
-        const _id = new Types.ObjectId();
-        const role = {
-          ...data,
-          _id,
-          id: _id.toString(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        storedRoles.set(role.id, role);
-
-        return role;
-      },
+    getMemberCounts: jest.fn(async (ids: Types.ObjectId[]) =>
+      ids.flatMap((_id) =>
+        fixture.roles.some((role) => role._id.equals(_id))
+          ? [{ _id, count: 1 }]
+          : [],
+      ),
     ),
-    update: jest.fn(
-      async (
-        id: string,
-        data: { name: string; description: string; permissions: PERMISSION[] },
-      ) => {
-        const role = storedRoles.get(id);
+    create: jest.fn(async (data: RoleInput) => {
+      if ([...storedRoles.values()].some((role) => role.name === data.name)) {
+        throw { code: 11000 };
+      }
 
-        if (!role) {
-          return null;
-        }
+      const _id = new Types.ObjectId();
+      const role = {
+        ...data,
+        _id,
+        id: _id.toString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      storedRoles.set(role.id, role);
 
-        Object.assign(role, data);
+      return role;
+    }),
+    update: jest.fn(async (id: string, data: RoleInput) => {
+      const role = storedRoles.get(id);
 
-        return role;
-      },
-    ),
+      if (!role) {
+        return null;
+      }
+
+      Object.assign(role, data);
+
+      return role;
+    }),
     delete: jest.fn(async (id: string) => {
       const role = storedRoles.get(id);
       storedRoles.delete(id);
@@ -338,6 +362,24 @@ describe('BFF HTTP over real gRPC services', () => {
     });
   }
 
+  function writeRole(
+    method: 'POST' | 'PUT' | 'DELETE',
+    id?: string,
+    body?: object,
+  ) {
+    const path = id ? `role/${id}` : 'role';
+
+    return fetch(`${baseUrl}/api/${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${tokenPair.accessToken}`,
+        'Content-Type': 'application/json',
+        Connection: 'close',
+      },
+      body: body && JSON.stringify(body),
+    });
+  }
+
   beforeAll(async () => {
     jest.spyOn(Logger, 'log').mockImplementation(() => undefined);
     jest.spyOn(Logger, 'error').mockImplementation(() => undefined);
@@ -423,6 +465,9 @@ describe('BFF HTTP over real gRPC services', () => {
     jest.clearAllMocks();
     entries.clear();
     administrator.permissions = Object.values(PERMISSION);
+    storedRoles.clear();
+    storedRoles.set(administrator.id, administrator);
+    storedRoles.set(clientRole.id, clientRole);
     fixture.roles = [administrator];
     delete fixture.lockedAt;
     delete fixture.accessVersion;
@@ -563,15 +608,22 @@ describe('BFF HTTP over real gRPC services', () => {
   );
 
   it('reuses cached grants and applies role edits to an existing JWT on the next request', async () => {
+    const role = await roleRepository.create({
+      name: 'operator',
+      description: 'Operations',
+      permissions: Object.values(PERMISSION),
+    });
+    fixture.roles = [role];
+
     expect((await getProtected('role')).status).toBe(200);
     expect((await getProtected('role')).status).toBe(200);
     expect(repository.getByUserId).toHaveBeenCalledTimes(1);
     expect(roleRepository.getById).toHaveBeenCalledTimes(1);
 
     await requestGrpcData(users.updateRole, {
-      id: administrator.id,
-      name: administrator.name,
-      description: administrator.description,
+      id: role.id,
+      name: role.name,
+      description: role.description,
       permissions: [],
     });
 
@@ -581,7 +633,7 @@ describe('BFF HTTP over real gRPC services', () => {
       permissions: [PERMISSION.ROLE_GET_ALL],
     });
     expect((await getProtected('role', legacyToken)).status).toBe(403);
-    expect(roleRepository.getById).toHaveBeenCalledTimes(2);
+    expect(roleRepository.getById).toHaveBeenCalledTimes(3);
     expect(repository.getByUserId).toHaveBeenCalledTimes(1);
 
     const me = await getProtected('user/me');
@@ -592,7 +644,7 @@ describe('BFF HTTP over real gRPC services', () => {
         user: {
           id: fixture.id,
           userId: fixture.userId,
-          roles: [{ id: administrator.id, permissions: [] }],
+          roles: [{ id: role.id, permissions: [] }],
         },
         permissions: [],
       },
@@ -773,7 +825,7 @@ describe('BFF HTTP over real gRPC services', () => {
       requestGrpcData(users.createRole, { ...input, permissions: ['invalid'] }),
     ).rejects.toMatchObject({ status: 400 });
     await expect(requestGrpcData(users.listRoles, {})).resolves.toMatchObject({
-      roles: expect.arrayContaining([created.role]),
+      roles: expect.arrayContaining([{ ...created.role, memberCount: 0 }]),
     });
     await expect(requestGrpcData(users.getRole, { id })).resolves.toEqual(
       created,
@@ -802,6 +854,133 @@ describe('BFF HTTP over real gRPC services', () => {
     await expect(requestGrpcData(users.getRole, { id })).rejects.toMatchObject({
       status: 404,
     });
+  });
+
+  it('round-trips localized role names and returns member counts only for role reads', async () => {
+    const input = { name: 'operator', description: '', permissions: [] };
+
+    for (const invalidName of [
+      { displayName: null },
+      { displayNameVi: ' ' },
+      { displayNameEn: 'x'.repeat(101) },
+    ]) {
+      const invalid = await writeRole('POST', undefined, {
+        ...input,
+        ...invalidName,
+      });
+
+      expect(invalid.status).toBe(400);
+    }
+
+    const created = await writeRole('POST', undefined, {
+      ...input,
+      displayNameVi: '  Điều hành  ',
+      displayNameEn: '  Operations  ',
+    });
+    expect(created.status).toBe(201);
+    const { data: role } = (await created.json()) as {
+      data: { id: string };
+    };
+    expect(role).toMatchObject({
+      displayName: 'Điều hành',
+      displayNameVi: 'Điều hành',
+      displayNameEn: 'Operations',
+    });
+    expect(role).not.toHaveProperty('memberCount');
+    expect(role).not.toHaveProperty('_displayNameVi');
+
+    const updated = await writeRole('PUT', role.id, {
+      ...input,
+      description: 'Operations',
+      displayNameEn: '  Tour operations  ',
+    });
+    expect(updated.status).toBe(200);
+    await expect(updated.json()).resolves.toMatchObject({
+      data: {
+        id: role.id,
+        description: 'Operations',
+        displayName: 'Điều hành',
+        displayNameVi: 'Điều hành',
+        displayNameEn: 'Tour operations',
+      },
+    });
+    expect(roleRepository.update).toHaveBeenCalledWith(role.id, {
+      ...input,
+      description: 'Operations',
+      displayNameEn: 'Tour operations',
+    });
+
+    const me = await getProtected('user/me');
+    const { data: profile } = (await me.json()) as {
+      data: { user: { roles: object[] } };
+    };
+    expect(profile.user.roles[0]).not.toHaveProperty('memberCount');
+    expect(roleRepository.getMemberCounts).not.toHaveBeenCalled();
+
+    const list = await getProtected('role');
+    expect(list.status).toBe(200);
+    await expect(list.json()).resolves.toMatchObject({
+      data: expect.arrayContaining([
+        expect.objectContaining({ id: administrator.id, memberCount: 1 }),
+        expect.objectContaining({ id: clientRole.id, memberCount: 0 }),
+        expect.objectContaining({
+          id: role.id,
+          memberCount: 0,
+          displayNameVi: 'Điều hành',
+          displayNameEn: 'Tour operations',
+        }),
+      ]),
+    });
+    expect(roleRepository.getMemberCounts).toHaveBeenCalledTimes(1);
+
+    const detail = await getProtected(`role/${role.id}`);
+    expect(detail.status).toBe(200);
+    const { data } = (await detail.json()) as { data: object };
+    expect(data).toMatchObject({
+      id: role.id,
+      memberCount: 0,
+      displayNameVi: 'Điều hành',
+      displayNameEn: 'Tour operations',
+    });
+    expect(data).not.toHaveProperty('_memberCount');
+    expect(roleRepository.getMemberCounts).toHaveBeenLastCalledWith([
+      new Types.ObjectId(role.id),
+    ]);
+  });
+
+  it('rejects editing or deleting built-in roles and assigning their codes to custom roles', async () => {
+    const custom = await roleRepository.create({
+      name: 'operator',
+      description: 'Operations',
+      permissions: [],
+    });
+    const input = { name: 'renamed', description: '', permissions: [] };
+
+    for (const builtIn of [administrator, clientRole]) {
+      const update = await writeRole('PUT', builtIn.id, input);
+      const deletion = await writeRole('DELETE', builtIn.id);
+
+      for (const response of [update, deletion]) {
+        expect(response.status).toBe(403);
+        await expect(response.json()).resolves.toMatchObject({
+          message: CODE_ERROR.ROLE_SYSTEM_PROTECTED,
+        });
+      }
+
+      const reserved = { ...input, name: builtIn.name };
+      const create = await writeRole('POST', undefined, reserved);
+      const rename = await writeRole('PUT', custom.id, reserved);
+
+      for (const response of [create, rename]) {
+        expect(response.status).toBe(409);
+        await expect(response.json()).resolves.toMatchObject({
+          message: CODE_ERROR.ROLE_NAME_RESERVED,
+        });
+      }
+    }
+
+    expect(roleRepository.update).not.toHaveBeenCalled();
+    expect(roleRepository.delete).not.toHaveBeenCalled();
   });
 
   it('keeps a missing lookup optional instead of fabricating an empty user', async () => {

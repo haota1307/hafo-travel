@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { FileText, ShieldCheck } from "lucide-react";
+import { FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DashboardRecord } from "../records";
 import type { Section } from "../sections";
@@ -105,13 +105,9 @@ export function RecordIdentity({
           {initials}
         </span>
       )}
-      {(section === "roles" || section === "content") && (
+      {section === "content" && (
         <span className="grid size-8 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground">
-          {section === "roles" ? (
-            <ShieldCheck className="size-4" />
-          ) : (
-            <FileText className="size-4" />
-          )}
+          <FileText className="size-4" />
         </span>
       )}
       <span>

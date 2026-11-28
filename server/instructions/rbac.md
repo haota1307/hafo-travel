@@ -6,11 +6,11 @@ Identity lưu hồ sơ, role và permission trong MongoDB. Hồ sơ mới có `u
 
 Một user có đúng một role; một role có nhiều permission. Quyền hiệu lực lấy từ role đó. Contract giữ trường `roles` dạng mảng nhưng bắt buộc đúng một phần tử khi tạo user hoặc thay role; kiểm tra tại HTTP DTO, service gRPC và schema MongoDB. Tên `administrator` không tự bỏ qua kiểm tra quyền; seed cấp danh sách permission cụ thể cho role này.
 
-Tên role là khóa động dạng chữ thường, bắt đầu bằng chữ, dùng chữ/số/gạch dưới/gạch ngang và tối đa 64 ký tự. Permission phải thuộc enum `PERMISSION`; thêm nghiệp vụ mới cần bổ sung permission và gắn vào endpoint tương ứng. Quyền `user.delete` được dự trữ.
+Mã role (`name`) là duy nhất, bắt đầu bằng chữ thường, dùng chữ thường, số, gạch dưới hoặc gạch ngang và dài tối đa 64 ký tự. Vai trò tùy chỉnh có tên tiếng Việt (`displayNameVi`) và tiếng Anh (`displayNameEn`). API tiếp nhận từng tên khi có gửi, cắt khoảng trắng hai đầu và kiểm tra độ dài từ 1 đến 100 ký tự. Trường `displayName` lưu tên chung của dữ liệu cũ. Permission phải thuộc enum `PERMISSION`. Thêm nghiệp vụ mới cần bổ sung permission và gắn vào endpoint tương ứng. Mã `user.delete` được giữ để tương thích với vai trò đã lưu và được ẩn trên giao diện phân quyền.
 
 ## Cơ chế kiểm tra
 
-Quyền UI và quyền API dùng chung trường `permissions` của role. Mỗi mã UI cấp quyền cho đúng một trang. Ví dụ, role chỉ có `UI:dashboard/users` vào được trang Người dùng. Trang tổng quan yêu cầu riêng `UI:dashboard`. BFF trả các mã này qua `GET /user/me` và kiểm tra quyền nghiệp vụ riêng cho từng API. Seed cấp đầy đủ quyền trang dashboard cho role administrator trên DB mới. Với DB đang dùng, người có `role.update` cập nhật từng role bằng `PUT /role/:id` với tên, mô tả và danh sách quyền mong muốn. Giữ các quyền hiện có khi bổ sung quyền mới. Cập nhật qua API để làm mới cache quyền của role.
+Quyền UI và quyền API dùng chung trường `permissions` của role. Trang Tài khoản dùng `UI:dashboard/users` và trang Tổng quan dùng `UI:dashboard`. Trang Vai trò dùng `UI:dashboard/roles` và trang Phân quyền dùng `UI:dashboard/permissions`. BFF trả các mã đã cấp qua `GET /user/me` và kiểm tra quyền nghiệp vụ riêng cho từng API. Seed cấp đầy đủ quyền trang dashboard cho role administrator trên DB mới. Với dữ liệu cũ, Next cho administrator đã có quyền Vai trò truy cập thêm trang Phân quyền. Người có `role.update` cập nhật từng role tùy chỉnh bằng `PUT /role/:id` với mã role, mô tả, danh sách quyền mong muốn và tên hiển thị khi cần. Giữ các quyền hiện có khi bổ sung quyền mới. Cập nhật qua API để làm mới cache quyền của role.
 
 - `UserGuard` yêu cầu bearer token cho route bảo vệ. BFF xác minh chữ ký HS256, issuer, audience và thời hạn. Access JWT chứa `sub`, `profileId` và `roleId` tại thời điểm cấp. BFF tra role hiện tại theo `userId` và permissions theo `roleId`. Hai giá trị được cache riêng trong Redis để các user cùng role dùng chung danh sách quyền. Route public có khai báo permission vẫn yêu cầu xác thực.
 - Khi thiếu cache, BFF lấy dữ liệu từ Identity qua gRPC. Identity đánh dấu key trước khi ghi thay đổi role hoặc gán lại role cho user. Trong lúc ghi, request đọc trực tiếp từ Identity. Khi ghi xong, Identity xóa key liên quan. Request sau đó nhận quyền mới ngay cả khi dùng access token đã cấp. Kết quả đọc bắt đầu trước khi đổi quyền không thể ghi đè cache mới.
@@ -19,6 +19,7 @@ Quyền UI và quyền API dùng chung trường `permissions` của role. Mỗi
 - `PermissionGuard` yêu cầu đủ tất cả permission khai báo, trả 401 khi thiếu xác thực và 403 khi thiếu quyền.
 - Role ID phải hợp lệ và tồn tại trước khi gán. Tạo user kiểm tra role trước khi lưu hồ sơ. Mảng role rỗng hoặc nhiều hơn một phần tử trả 400.
 - Không xóa role đang được user sử dụng; API trả 409. Cần chuyển user sang role khác trước khi xóa. Role có thể có permission rỗng nếu user không được thực hiện tác vụ quản trị.
+- `administrator` và `client` là role hệ thống. Yêu cầu sửa hoặc xóa hai role này trả 403 với `message: "ROLE_SYSTEM_PROTECTED"`. Yêu cầu tạo hoặc đổi mã của role tùy chỉnh sang hai mã này trả 409 với `message: "ROLE_NAME_RESERVED"`.
 - Identity xử lý lần lượt các thao tác sửa, xóa và gán liên quan đến cùng một role. Kiểm tra role tồn tại hoặc đang được sử dụng nằm trong cùng lượt ghi, gồm cả lúc tạo hồ sơ và tự đăng ký. Việc điều phối chạy trong tiến trình Identity đang xử lý thao tác ghi.
 
 ## HTTP API
@@ -31,10 +32,10 @@ Các route dưới đây yêu cầu bearer hợp lệ và dùng prefix mẫu `/a
 | POST   | `/user`               | `user.create` + `user.assign_roles` | Tạo user với đúng một role; kết quả là chuỗi thông báo  |
 | PATCH  | `/user/:userId/roles` | `user.assign_roles`                 | `{ roles: [roleId] }` thay role hiện tại; trả hồ sơ mới |
 | GET    | `/role/permissions`   | `role.get_all`                      | Danh sách permission hợp lệ                             |
-| GET    | `/role`               | `role.get_all`                      | Danh sách role, chưa phân trang                         |
-| GET    | `/role/:id`           | `role.get_by_id`                    | Chi tiết role                                           |
+| GET    | `/role`               | `role.get_all`                      | Danh sách role kèm `memberCount`, chưa phân trang       |
+| GET    | `/role/:id`           | `role.get_by_id`                    | Chi tiết role kèm `memberCount`                         |
 | POST   | `/role`               | `role.create`                       | Tạo role                                                |
-| PUT    | `/role/:id`           | `role.update`                       | Thay toàn bộ name/description/permissions               |
+| PUT    | `/role/:id`           | `role.update`                       | Thay mã, mô tả, quyền và tên hiển thị khi có gửi        |
 | DELETE | `/role/:id`           | `role.delete`                       | Xóa role chưa được sử dụng; role đang được gán trả 409  |
 
 `:userId` là trường `user.userId` của hồ sơ. `:id` và phần tử trong `roles` là ID MongoDB của role.
@@ -44,12 +45,16 @@ Body tạo/thay role:
 ```json
 {
   "name": "operator",
+  "displayNameVi": "Điều hành tour",
+  "displayNameEn": "Tour operator",
   "description": "Nhân viên được tạo hồ sơ người dùng",
   "permissions": ["user.create"]
 }
 ```
 
-Người có `user.assign_roles` có thể cấp mọi role hiện có, gồm administrator. Người có quyền tạo/sửa role có thể cấp mọi permission trong danh mục. Đây là các quyền quản trị nhạy cảm; không tự gán cho vai trò sản phẩm khi chưa chốt yêu cầu.
+PUT giữ giá trị đã lưu của từng trường tên bị bỏ qua trong body. POST và PUT trả role sau khi lưu. Response cấp `displayName` cho client cũ theo thứ tự tên chung đã lưu, tên tiếng Việt, rồi tên tiếng Anh. Hai API đọc role trả số tài khoản đang được gán, kể cả khách hàng, tài khoản chờ kích hoạt hoặc bị khóa. Mỗi tài khoản được đếm một lần cho mỗi role. Hồ sơ người dùng và tra cứu quyền tại guard dùng dữ liệu role không có số tài khoản.
+
+Người có `user.assign_roles` có thể cấp mọi role hiện có, gồm administrator. Người có quyền tạo/sửa role tùy chỉnh có thể cấp mọi permission trong danh mục.
 
 ### Tài khoản nội bộ
 
@@ -65,7 +70,7 @@ Identity đưa tài khoản có đúng một vai trò và ít nhất một quy�
 | PATCH  | `/user/internal/:userId/roles`      | `user.assign_roles`                 | `{ roles: [roleId] }`; trả hồ sơ đã cập nhật                   |
 | PATCH  | `/user/internal/:userId/status`     | `user.update`                       | `{ locked: boolean }`; trả hồ sơ đã cập nhật                   |
 
-- Hồ sơ gồm `userId`, `firstName`, `lastName`, `email`, `role: { id, name }`, `status`, `accessProtected`, `createdAt` và `updatedAt`. Trạng thái là `pending` khi chưa có phương thức đăng nhập, `active` khi đã có phương thức đăng nhập, và `locked` khi bị khóa.
+- Hồ sơ gồm `userId`, `firstName`, `lastName`, `email`, `role: { id, name, displayName?, displayNameVi?, displayNameEn? }`, `status`, `accessProtected`, `createdAt` và `updatedAt`. Trạng thái là `pending` khi chưa có phương thức đăng nhập, `active` khi đã có phương thức đăng nhập, và `locked` khi bị khóa.
 - Khi tạo hoặc đổi vai trò nội bộ, vai trò được gán phải có quyền dashboard. Endpoint đổi vai trò và trạng thái nội bộ từ chối thao tác đổi vai trò hoặc khóa tài khoản đang đăng nhập và admin bootstrap.
 - Tạo lời mời trả 409 nếu email trùng với hồ sơ đã có. Tạo và gửi lại trả `{ user, invitationDelivery }`. `sent` nghĩa là Notification đã xác nhận nhà cung cấp tiếp nhận. Với `unconfirmed`, quản trị viên có thể gửi lại từ hồ sơ chờ kích hoạt.
 - `POST /api/auth/accept-invitation` nhận `{ token, password }` qua luồng cùng origin của Next. Token có mục đích riêng và hạn 30 phút. Identity xác nhận email và lưu mật khẩu qua một lần ghi có điều kiện. Sau khi kích hoạt hoặc khi tài khoản bị khóa, các liên kết đang chờ mất hiệu lực.

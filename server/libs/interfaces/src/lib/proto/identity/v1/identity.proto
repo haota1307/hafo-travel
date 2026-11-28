@@ -70,6 +70,10 @@ message RoleProfile {
   repeated string permissions = 4;
   string created_at = 5;
   string updated_at = 6;
+  optional string display_name = 7;
+  optional uint32 member_count = 8;
+  optional string display_name_vi = 9;
+  optional string display_name_en = 10;
 }
 
 message SetUserRolesRequest {
@@ -80,6 +84,9 @@ message SetUserRolesRequest {
 message InternalUserRole {
   string id = 1;
   string name = 2;
+  optional string display_name = 3;
+  optional string display_name_vi = 4;
+  optional string display_name_en = 5;
 }
 
 message InternalUser {
@@ -158,12 +165,16 @@ message ListRolesResponse {
 
 message RoleIdRequest {
   string id = 1;
+  optional bool include_member_count = 2;
 }
 
 message CreateRoleRequest {
   string name = 1;
   string description = 2;
   repeated string permissions = 3;
+  optional string display_name = 4;
+  optional string display_name_vi = 5;
+  optional string display_name_en = 6;
 }
 
 message UpdateRoleRequest {
@@ -171,6 +182,9 @@ message UpdateRoleRequest {
   string name = 2;
   string description = 3;
   repeated string permissions = 4;
+  optional string display_name = 5;
+  optional string display_name_vi = 6;
+  optional string display_name_en = 7;
 }
 
 message RoleResponse {

@@ -9,9 +9,8 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormCombobox } from "@/features/dashboard/components/form-combobox";
 import { accessibleDestinations } from "@/features/dashboard/sections";
-
-import { useGetUserRoleOptions } from "../users.queries";
-import { getUserRoleName } from "../users-ui";
+import { useGetRoles } from "@/features/roles/roles.queries";
+import { getRoleOptionLabel } from "@/features/roles/roles-ui";
 
 type UserFormField = "firstName" | "lastName" | "email";
 
@@ -91,15 +90,15 @@ export function UserNameFields({
 }
 
 export function useInternalRoleOptions(actorId: string) {
-  const t = useTranslations("users");
   const locale = useLocale();
-  const query = useGetUserRoleOptions(actorId, true);
+  const roles = useTranslations("roles");
+  const query = useGetRoles(actorId);
   const options = query.isSuccess
     ? query.data
         .filter((role) => accessibleDestinations(role.permissions).length > 0)
         .map((role) => ({
           value: role.id,
-          label: getUserRoleName(role.name, t),
+          label: getRoleOptionLabel(role, roles, locale),
         }))
         .sort((left, right) => left.label.localeCompare(right.label, locale))
     : [];

@@ -13,12 +13,26 @@ export class Role extends BaseSchema {
   @Prop({ type: String, required: true, unique: true })
   name: string;
 
+  @Prop({ type: String, trim: true, minlength: 1, maxlength: 100 })
+  displayName?: string;
+
+  @Prop({ type: String, trim: true, minlength: 1, maxlength: 100 })
+  displayNameVi?: string;
+
+  @Prop({ type: String, trim: true, minlength: 1, maxlength: 100 })
+  displayNameEn?: string;
+
   @Prop({ type: String })
   description: string;
 
   @Prop({ type: [String], enum: PERMISSION, default: [] })
   permissions: PERMISSION[];
 }
+
+export type RoleDisplayNames = Pick<
+  Role,
+  'displayName' | 'displayNameVi' | 'displayNameEn'
+>;
 
 export const RoleModelName = Role.name;
 

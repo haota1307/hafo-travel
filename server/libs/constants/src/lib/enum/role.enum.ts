@@ -1,5 +1,6 @@
 export enum ROLE {
   ADMINISTRATOR = 'administrator',
+  CLIENT = 'client',
 }
 
 export enum PERMISSION {
@@ -12,6 +13,7 @@ export enum PERMISSION {
   UI_DASHBOARD_CONTENT = 'UI:dashboard/content',
   UI_DASHBOARD_USERS = 'UI:dashboard/users',
   UI_DASHBOARD_ROLES = 'UI:dashboard/roles',
+  UI_DASHBOARD_PERMISSIONS = 'UI:dashboard/permissions',
   USER_CREATE = 'user.create',
   USER_GET_BY_ID = 'user.get_by_id',
   USER_GET_ALL = 'user.get_all',

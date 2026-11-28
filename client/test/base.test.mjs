@@ -12,7 +12,10 @@ function moduleUrl(name) {
   }
 
   const source = readFileSync(
-    new URL(`../lib/${name}.ts`, import.meta.url),
+    new URL(
+      `../${name.includes("/") ? name : `lib/${name}`}.ts`,
+      import.meta.url,
+    ),
     "utf8",
   );
   const { outputText } = ts.transpileModule(source, {
@@ -22,7 +25,7 @@ function moduleUrl(name) {
     },
   });
   const code = outputText.replace(
-    /from (['"])\.\/([\w-]+)\1/g,
+    /from (['"])(?:\.\/|@\/lib\/)([\w-]+)\1/g,
     (_, quote, dependency) => `from "${moduleUrl(dependency)}"`,
   );
   const url = `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`;
@@ -38,6 +41,48 @@ const {
 } = await import(moduleUrl("http"));
 const { getApiValidationErrors, getApiErrorMessage, getApiErrorCode } =
   await import(moduleUrl("api-error"));
+
+test("role labels follow the current locale and support older roles", async () => {
+  const { getRoleName, getRoleOptionLabel } = await import(
+    moduleUrl("features/roles/roles-ui")
+  );
+  const role = {
+    id: "68a3f2f1b3e811435a8ad006",
+    name: "operator",
+    displayNameVi: "Điều hành tour",
+    displayNameEn: "Tour operator",
+  };
+  const legacyRole = {
+    id: role.id,
+    name: role.name,
+    displayName: "Operations",
+  };
+
+  for (const [locale, name, administrator] of [
+    ["vi", role.displayNameVi, "Quản trị viên"],
+    ["en", role.displayNameEn, "Administrator"],
+  ]) {
+    const messages = JSON.parse(
+      readFileSync(
+        new URL(`../messages/${locale}.json`, import.meta.url),
+        "utf8",
+      ),
+    );
+    const t = createTranslator({ locale, messages, namespace: "roles" });
+
+    assert.equal(getRoleName(role, t, locale), name);
+    assert.equal(getRoleOptionLabel(role, t, locale), `${name} · operator`);
+    assert.equal(getRoleName(legacyRole, t, locale), "Operations");
+    assert.equal(
+      getRoleName({ id: role.id, name: role.name }, t, locale),
+      "operator",
+    );
+    assert.equal(
+      getRoleName({ ...role, name: "administrator" }, t, locale),
+      administrator,
+    );
+  }
+});
 
 test("Template preferences remain readable across locale-prefixed routes and reset", async (t) => {
   const originalDocument = globalThis.document;

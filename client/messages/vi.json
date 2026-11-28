@@ -49,7 +49,8 @@
       "payments": "Thanh toán & hoàn tiền",
       "content": "Nội dung website",
       "users": "Tài khoản",
-      "roles": "Vai trò & quyền"
+      "roles": "Vai trò",
+      "permissions": "Phân quyền"
     },
     "descriptions": {
       "overview": "Theo dõi yêu cầu tư vấn và các chuyến sắp khởi hành.",
@@ -60,7 +61,8 @@
       "payments": "Đối chiếu giao dịch thu tiền và hoàn tiền theo đơn đặt tour.",
       "content": "Quản lý các trang và bản dịch trên website.",
       "users": "Tra cứu tài khoản nội bộ và vai trò được cấp.",
-      "roles": "Xem phạm vi quyền và tài khoản thuộc từng vai trò."
+      "roles": "Quản lý vai trò và xem các tài khoản được gán.",
+      "permissions": "Xem và cấp quyền cho từng vai trò theo chức năng."
     },
     "primary": {
       "inquiries": "Khách liên hệ",
@@ -127,18 +129,108 @@
       "contact": "Liên hệ",
       "terms": "Điều khoản sử dụng",
       "privacy": "Chính sách bảo mật"
+    }
+  },
+  "roles": {
+    "add": "Thêm vai trò",
+    "createDescription": "Sau khi tạo, cấp quyền cho vai trò mới tại trang Phân quyền.",
+    "detail": "Chi tiết vai trò",
+    "viewDetails": "Xem chi tiết",
+    "editRole": "Sửa vai trò",
+    "delete": "Xóa vai trò",
+    "actions": "Thao tác",
+    "actionsFor": "Thao tác cho {name}",
+    "loading": "Đang tải danh sách vai trò…",
+    "loadingDetail": "Đang tải chi tiết vai trò…",
+    "loadingPermissions": "Đang tải danh mục quyền…",
+    "empty": "Chưa có vai trò.",
+    "noAccess": "Bạn chưa có quyền xem danh sách vai trò.",
+    "noPermissions": "Chưa có quyền nào.",
+    "scopeSummary": "{pages, number} trang quản trị · {api, number} quyền API",
+    "viewAccounts": "Xem tài khoản thuộc vai trò",
+    "systemRole": "Vai trò hệ thống chỉ cho phép xem.",
+    "deleteDescription": "Bạn có muốn xóa vai trò {name}? Chỉ có thể xóa vai trò chưa được gán cho tài khoản nào.",
+    "removeAccessTitle": "Gỡ quyền truy cập quản trị",
+    "removeAccessDescription": "Sau khi lưu, {count, number} tài khoản thuộc vai trò này sẽ mất quyền vào các trang quản trị và rời danh sách tài khoản nội bộ.",
+    "removeAccessUnknown": "Sau khi lưu, các tài khoản đang thuộc vai trò này sẽ mất quyền vào các trang quản trị và rời danh sách tài khoản nội bộ.",
+    "confirmRemoveAccess": "Gỡ quyền",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "retry": "Thử lại",
+    "created": "Đã thêm vai trò",
+    "updated": "Đã cập nhật vai trò",
+    "permissionsUpdated": "Đã cập nhật quyền",
+    "deleted": "Đã xóa vai trò",
+    "fields": {
+      "displayName": "Tên vai trò",
+      "displayNameVi": "Tên tiếng Việt",
+      "displayNameEn": "Tên tiếng Anh",
+      "name": "Mã vai trò",
+      "description": "Mô tả",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Cập nhật lần cuối"
     },
-    "roleNames": {
-      "admin": "Quản trị viên",
-      "advisor": "Nhân viên tư vấn",
-      "operator": "Điều hành tour",
-      "editor": "Biên tập nội dung"
+    "permissionSummary": "Quyền theo chức năng",
+    "partialPermission": "{action} (một phần)",
+    "systemNames": {
+      "administrator": "Quản trị viên",
+      "client": "Khách hàng"
     },
-    "scopes": {
-      "manageAll": "Quản lý toàn bộ không gian quản trị",
-      "manageInquiries": "Tiếp nhận tư vấn và tra cứu đơn đặt",
-      "manageDepartures": "Điều phối chuyến đi và quản lý đơn đặt",
-      "manageContent": "Biên tập hành trình và nội dung website"
+    "permissionControls": {
+      "view": "Xem",
+      "create": "Tạo",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "other": "Quyền khác"
+    },
+    "matrix": {
+      "feature": "Chức năng",
+      "systemRole": "Hệ thống",
+      "allow": "Cho phép",
+      "checkbox": "{role} · {feature} · {action}",
+      "columnCheckbox": "{role} · {action} cho tất cả chức năng áp dụng",
+      "noAccess": "Bạn chưa có quyền xem ma trận phân quyền.",
+      "readOnly": "Bạn đang xem ma trận ở chế độ chỉ đọc.",
+      "saving": "Đang lưu…",
+      "saveFailed": "Chưa lưu được quyền của {role}"
+    },
+    "permissionNames": {
+      "dashboard": "Tổng quan",
+      "dashboard_inquiries": "Yêu cầu tư vấn",
+      "dashboard_tours": "Hành trình",
+      "dashboard_departures": "Lịch khởi hành",
+      "dashboard_bookings": "Đơn đặt tour",
+      "dashboard_payments": "Thanh toán & hoàn tiền",
+      "dashboard_content": "Nội dung website",
+      "dashboard_users": "Tài khoản",
+      "dashboard_roles": "Vai trò",
+      "dashboard_permissions": "Phân quyền",
+      "user_create": "Tạo tài khoản",
+      "user_get_by_id": "Xem chi tiết tài khoản",
+      "user_get_all": "Xem danh sách tài khoản",
+      "user_update": "Cập nhật tài khoản",
+      "user_assign_roles": "Gán vai trò cho tài khoản",
+      "role_create": "Tạo vai trò",
+      "role_get_by_id": "Xem chi tiết vai trò",
+      "role_get_all": "Xem danh sách vai trò và danh mục quyền",
+      "role_update": "Cập nhật vai trò",
+      "role_delete": "Xóa vai trò"
+    },
+    "errors": {
+      "displayName": "Nhập tên vai trò từ 1 đến 100 ký tự.",
+      "name": "Chỉ dùng chữ thường, chữ số, dấu gạch dưới hoặc gạch ngang.",
+      "description": "Mô tả dài tối đa 500 ký tự.",
+      "permissions": "Bỏ chọn các quyền không còn trong danh mục rồi thử lại.",
+      "systemProtected": "Vai trò hệ thống chỉ cho phép xem.",
+      "reservedName": "Mã này dành cho vai trò hệ thống.",
+      "duplicate": "Mã vai trò này đã được sử dụng.",
+      "assigned": "Vai trò đang được gán cho tài khoản. Hãy chuyển các tài khoản sang vai trò khác trước khi xóa.",
+      "invalid": "Dữ liệu vai trò chưa hợp lệ. Kiểm tra lại thông tin rồi thử lại.",
+      "session": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
+      "forbidden": "Bạn không có quyền thực hiện thao tác này.",
+      "notFound": "Không tìm thấy vai trò.",
+      "rateLimit": "Quá nhiều yêu cầu. Hãy thử lại sau.",
+      "unavailable": "Chưa thể hoàn tất yêu cầu. Hãy thử lại."
     }
   },
   "users": {
@@ -154,7 +246,6 @@
     "viewDetails": "Xem chi tiết",
     "actions": "Thao tác",
     "actionsFor": "Thao tác cho {name}",
-    "administrator": "Quản trị viên",
     "loading": "Đang tải danh sách tài khoản…",
     "loadingDetail": "Đang tải chi tiết tài khoản…",
     "loadingRoles": "Đang tải vai trò…",

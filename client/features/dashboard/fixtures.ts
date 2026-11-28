@@ -229,10 +229,3 @@ export const contentPages = [
     status: "published",
   },
 ];
-
-export const accessRoles = [
-  { id: "admin", scope: "manageAll" },
-  { id: "advisor", scope: "manageInquiries" },
-  { id: "operator", scope: "manageDepartures" },
-  { id: "editor", scope: "manageContent" },
-];

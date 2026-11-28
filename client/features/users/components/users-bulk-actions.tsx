@@ -18,11 +18,12 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import { useWorkspace } from "@/features/dashboard/components/workspace";
+import { getRoleName } from "@/features/roles/roles-ui";
 import { downloadCsv } from "@/lib/download-csv";
 
 import { useUpdateUsersRole } from "../users.queries";
 import type { InternalUser } from "../users.schema";
-import { getUserErrorKey, getUserName, getUserRoleName } from "../users-ui";
+import { getUserErrorKey, getUserName } from "../users-ui";
 import { UserRoleForm } from "./user-forms";
 
 type RoleResult = {
@@ -40,6 +41,7 @@ export function UsersBulkActions({
   canAssignRole: boolean;
 }) {
   const t = useTranslations("users");
+  const roleLabels = useTranslations("roles");
   const dashboard = useTranslations("dashboard");
   const locale = useLocale();
   const { container } = useWorkspace();
@@ -59,7 +61,7 @@ export function UsersBulkActions({
       { id: "email", get: (user: InternalUser) => user.email },
       {
         id: "role",
-        get: (user: InternalUser) => getUserRoleName(user.role.name, t),
+        get: (user: InternalUser) => getRoleName(user.role, roleLabels, locale),
       },
       {
         id: "status",

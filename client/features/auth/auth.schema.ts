@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { withSystemDashboardPermissions } from "@/features/dashboard/sections";
+
 export const LoginSchema = z.object({
   email: z.string().trim().min(1).max(254).includes("@"),
   password: z.string().min(1).max(1024),
@@ -59,13 +61,21 @@ export function isAccountAction(action: string): action is AccountAction {
   return Object.hasOwn(accountActionSchemas, action);
 }
 
-export const SessionSchema = z.object({
-  user: z.object({
-    userId: z.string().min(1),
-    email: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
-    roles: z.array(z.object({ id: z.string(), name: z.string() })).length(1),
-  }),
-  permissions: z.array(z.string()),
-});
+export const SessionSchema = z
+  .object({
+    user: z.object({
+      userId: z.string().min(1),
+      email: z.string(),
+      firstName: z.string(),
+      lastName: z.string(),
+      roles: z.array(z.object({ id: z.string(), name: z.string() })).length(1),
+    }),
+    permissions: z.array(z.string()),
+  })
+  .transform((session) => ({
+    ...session,
+    permissions: withSystemDashboardPermissions(
+      session.user.roles[0].name,
+      session.permissions,
+    ),
+  }));

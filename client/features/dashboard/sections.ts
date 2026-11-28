@@ -7,6 +7,7 @@ import {
   MessagesSquare,
   NotebookTabs,
   ShieldCheck,
+  SlidersHorizontal,
   UsersRound,
 } from "lucide-react";
 
@@ -23,7 +24,7 @@ export const sections = [
 
 export type Section = (typeof sections)[number];
 
-export type Destination = Section | "overview";
+export type Destination = Section | "overview" | "permissions";
 
 export const navigation: { label: string; pages: Destination[] }[] = [
   {
@@ -37,7 +38,10 @@ export const navigation: { label: string; pages: Destination[] }[] = [
       "payments",
     ],
   },
-  { label: "administration", pages: ["content", "users", "roles"] },
+  {
+    label: "administration",
+    pages: ["content", "users", "roles", "permissions"],
+  },
 ];
 
 export const sectionIcons = {
@@ -50,6 +54,7 @@ export const sectionIcons = {
   content: FileText,
   users: UsersRound,
   roles: ShieldCheck,
+  permissions: SlidersHorizontal,
 };
 
 export function dashboardPath(section: Destination, id?: string) {
@@ -58,11 +63,30 @@ export function dashboardPath(section: Destination, id?: string) {
   return id ? `${base}?record=${encodeURIComponent(id)}` : base;
 }
 
-export function accessibleDestinations(permissions: readonly string[]) {
-  const destinations: Destination[] = ["overview", ...sections];
+export function dashboardPermission(destination: Destination) {
+  return `UI:${dashboardPath(destination).slice(1)}`;
+}
 
-  return destinations.filter((page) =>
-    permissions.includes(`UI:${dashboardPath(page).slice(1)}`),
+export function withSystemDashboardPermissions(
+  roleName: string,
+  permissions: string[],
+) {
+  const access = dashboardPermission("permissions");
+
+  if (
+    roleName === "administrator" &&
+    permissions.includes(dashboardPermission("roles")) &&
+    !permissions.includes(access)
+  ) {
+    return [...permissions, access];
+  }
+
+  return permissions;
+}
+
+export function accessibleDestinations(permissions: readonly string[]) {
+  return navigation.flatMap(({ pages }) =>
+    pages.filter((page) => permissions.includes(dashboardPermission(page))),
   );
 }
 
