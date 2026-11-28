@@ -311,16 +311,10 @@
 
 .template-scope.light,
 :root:has(.template-scope.light) [data-slot="toast-viewport"] {
-  --background: #f8f8f8;
-  --foreground: #262626;
+  --background: #f7f9f8;
   --card: #fff;
-  --secondary: #f3f3f3;
-  --secondary-foreground: var(--foreground);
-  --muted-foreground: #646464;
-  --accent: #ececec;
-  --accent-foreground: var(--foreground);
-  --border: #e3e3e3;
-  --input: #d6d6d6;
+  --secondary: #f0f4f2;
+  --accent: #e6efe9;
   --sidebar: var(--background);
 }
 

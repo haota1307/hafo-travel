@@ -40,9 +40,11 @@ const tones: Record<string, string> = {
 export function StatusBadge({
   status,
   label,
+  className,
 }: {
   status: string;
   label?: string;
+  className?: string;
 }) {
   const t = useTranslations("dashboard.statuses");
   const colors: Record<string, string> = {
@@ -64,6 +66,7 @@ export function StatusBadge({
         "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium",
         tones[colors[status] ?? status] ??
           "border-border bg-muted text-muted-foreground",
+        className,
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />

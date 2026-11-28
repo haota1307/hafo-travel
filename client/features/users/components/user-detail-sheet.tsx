@@ -29,6 +29,14 @@ import {
 } from "../users-ui";
 import { EditUserNameForm, InviteUserForm, UserRoleForm } from "./user-forms";
 
+const userStatusColors: Record<InternalUser["status"], string> = {
+  active:
+    "border-green-500/30 bg-green-500/10 text-green-800 dark:text-green-300",
+  pending:
+    "border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300",
+  locked: "border-red-500/30 bg-red-500/10 text-red-800 dark:text-red-300",
+};
+
 export function UserStatusBadge({
   status,
 }: {
@@ -38,8 +46,9 @@ export function UserStatusBadge({
 
   return (
     <StatusBadge
-      status={status === "pending" ? "invited" : status}
+      status={status}
       label={t(`statuses.${status}`)}
+      className={userStatusColors[status]}
     />
   );
 }
